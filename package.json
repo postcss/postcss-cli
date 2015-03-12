@@ -1,11 +1,11 @@
 {
   "name": "postcss-cli",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "CLI for postcss",
   "main": "index.js",
   "bin": {
     "postcss": "./bin/postcss"
-    },
+  },
   "repository": "https://github.com/code42day/postcss-cli.git",
   "keywords": [
     "postcss",

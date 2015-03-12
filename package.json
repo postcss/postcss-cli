@@ -3,12 +3,21 @@
   "version": "0.0.0",
   "description": "CLI for postcss",
   "main": "index.js",
-  "bin": "./bin/postcss",
+  "bin": {
+    "postcss": "./bin/postcss"
+    },
   "repository": "https://github.com/code42day/postcss-cli.git",
   "keywords": [
     "postcss",
     "cli"
   ],
   "author": "Damian Krzeminski <pirxpilot@code42day.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "postcss": "^4.0.6",
+    "yargs": "^3.5.3"
+  },
+  "devDependencies": {
+    "jshint": "^2.6.3"
+  }
 }

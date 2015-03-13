@@ -24,7 +24,7 @@ JSON file with plugin configuration. Plugin names should be the keys.
 
 ````json
 {
-    "autoprefixer-core": {
+    "autoprefixer": {
         "browsers": "> 5%"
     },
     "postcss-cachify": {
@@ -47,11 +47,11 @@ Show help
 
 Use autoprefixer as a postcss plugin pass parameters from a json file
 
-    postcss --use autoprefixer-core -c options.json -o screen.css screen.css
+    postcss --use autoprefixer -c options.json -o screen.css screen.css
 
 Use more than one plugin and pass config parameters
 
-    postcss --use autoprefixer-core --autoprefixer-code.browsers "> 5%" \
+    postcss --use autoprefixer --autoprefixer.browsers "> 5%" \
         --use postcss-cachify --postcss-cachify.baseUrl /res \
         -o screen.css screen.css
 

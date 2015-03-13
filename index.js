@@ -1,8 +1,8 @@
 var argv = require("yargs")
   .usage('Usage: $0 -use|-p plugin [--config|-c config.json] --output|-o output.css input.css')
-  .example('postcss --use autoprefixer-core -c options.json -o screen.css screen.css',
+  .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
     'Use autoprefixer as a postcss plugin')
-  .example('postcss --use autoprefixer-core --autoprefixer-code.browsers "> 5%" -o screen.css screen.css',
+  .example('postcss --use autoprefixer --autoprefixer.browsers "> 5%" -o screen.css screen.css',
     'Pass plugin parameters in plugin.option notation')
   .demand(1, 'Please specify input file.')
   .config('c')

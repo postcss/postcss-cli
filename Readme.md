@@ -35,6 +35,10 @@ JSON file with plugin configuration. Plugin names should be the keys.
 
 Alternatively configuration options can be passed as `--plugin.option` parameters.
 
+### `--safe`
+
+Enable Safe Mode, in which PostCSS will try to fix CSS syntax errors.
+
 #### `-h, --help`
 
 Show help

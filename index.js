@@ -15,6 +15,8 @@ var argv = require("yargs")
   .describe('o', 'Output file')
   .demand('o', 'Please specify output file.')
   .requiresArg(['p', 'c', 'o'])
+  .boolean('safe')
+  .describe('safe', 'Enable postcss safe mode.')
   .help('h')
   .alias('h', 'help')
   .wrap()
@@ -46,6 +48,7 @@ var css = fs.readFileSync(input, 'utf8');
 var postcss = require('postcss');
 var processor = postcss(plugins);
 var result = processor.process(css, {
+  safe: argv.safe,
   from: input,
   to: output
 });

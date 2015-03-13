@@ -17,6 +17,13 @@ var argv = require("yargs")
   .requiresArg(['p', 'c', 'o'])
   .boolean('safe')
   .describe('safe', 'Enable postcss safe mode.')
+  .version(function() {
+    return [
+      'postcss version',
+      require('./node_modules/postcss/package.json').version
+    ].join(' ')
+  }, 'v')
+  .alias('v', 'version')
   .help('h')
   .alias('h', 'help')
   .wrap()

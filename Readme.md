@@ -10,11 +10,11 @@ npm install postcss-cli
 
     postcss [options] -o output-file input-file
 
-#### `-o, --output`
+#### `--output|-o`
 
 Output file name - required
 
-#### `--use|-p`
+#### `--use|-u`
 
 Plugin to be used. Multiple plugins can be specified. At least one is required.
 

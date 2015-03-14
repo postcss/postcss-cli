@@ -18,6 +18,7 @@
     "yargs": "^3.5.3"
   },
   "devDependencies": {
-    "jshint": "^2.6.3"
+    "jshint": "^2.6.3",
+    "postcss-url": "^2.1.0"
   }
 }

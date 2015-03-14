@@ -18,6 +18,7 @@
     "yargs": "^3.5.3"
   },
   "devDependencies": {
+    "autoprefixer": "^5.1.0",
     "jshint": "^2.6.3"
   }
 }

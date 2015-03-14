@@ -15,7 +15,7 @@ test-version:
 	./bin/postcss --version
 
 test/build/opts.css: test/in.css
-	./bin/postcss -u autoprefixer --autoprefixer.browsers='> 5%' -o $@ $<
+	./bin/postcss -u postcss-url --postcss-url.url=rebase -o $@ $<
 	$(DIFF) $@ $(subst build,ref,$@)
 
 test/build/safe.css: test/invalid.css
@@ -23,7 +23,7 @@ test/build/safe.css: test/invalid.css
 	$(DIFF) --side-by-side $@ $(subst build,ref,$@)
 
 test/build/config.css: test/in.css
-	./bin/postcss -u autoprefixer -c test/config.json -o $@ $<
+	./bin/postcss -u postcss-url -c test/config.json -o $@ $<
 	$(DIFF) $@ $(subst build,ref,$@)
 
 test/build:

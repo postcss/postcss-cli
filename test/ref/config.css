@@ -1,7 +1,4 @@
 body {
-  color: white;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
+  background: url(data:image/png;base64,bm90IHJlYWxseSBhbiBpbWFnZQo=);
   display: flex;
 }

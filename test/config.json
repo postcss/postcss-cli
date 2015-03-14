@@ -1,5 +1,5 @@
 {
-  "autoprefixer": {
-    "browsers": "> 1%"
+  "postcss-url": {
+    "url": "inline"
   }
 }

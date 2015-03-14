@@ -6,6 +6,9 @@
   "bin": {
     "postcss": "./bin/postcss"
   },
+  "scripts": {
+    "test": "make"
+  },
   "repository": "https://github.com/code42day/postcss-cli.git",
   "keywords": [
     "postcss",

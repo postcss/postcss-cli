@@ -2,3 +2,4 @@ Makefile
 test
 History.md
 .jshintrc
+.travis.yml

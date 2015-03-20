@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "postcss": "^4.0.6",
-    "yargs": "^3.5.3"
+    "yargs": "pirxpilot/yargs#3.5.4-postcss-cli"
   },
   "devDependencies": {
     "jshint": "^2.6.3",

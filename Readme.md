@@ -37,6 +37,18 @@ JSON file with plugin configuration. Plugin names should be the keys.
 }
 ````
 
+JS configuration can be used if functions are allowed as plugins parameters:
+
+````js
+module.exports = {
+  "postcss-url": {
+    url: function(url) { return "http://example.com/" + url; }
+  },
+  autoprefixer: {
+        browsers: "> 5%"
+  }
+};
+````
 Alternatively configuration options can be passed as `--plugin.option` parameters.
 
 ### `--safe`

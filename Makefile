@@ -6,13 +6,17 @@ lint:
 TESTS = opts safe config js-config
 DIFF = diff -q
 
-test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS))
+test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi
 
 test-help:
 	./bin/postcss --help
 
 test-version:
 	./bin/postcss --version
+
+test-multi:
+	./bin/postcss -u postcss-url --dir test/build test/multi*.css
+	$(DIFF) test/build/multi*.css --to-file=test/ref
 
 test/build/opts.css: test/in.css
 	./bin/postcss -u postcss-url --postcss-url.url=rebase -o $@ $<
@@ -36,4 +40,4 @@ test/build:
 clean:
 	rm -rf test/build
 
-.PHONY: all lint clean test test-help test-version
+.PHONY: all lint clean test test-help test-version test-multi

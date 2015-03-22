@@ -16,7 +16,12 @@ npm install postcss-cli
 
 #### `--output|-o`
 
-Output file name - required
+Output file name
+
+#### `--dir|-d`
+
+Output files location. Either `--output` or `--dir` option, but not both of them, need to be specified.
+`--dir` needs to be used if multiple input file is provided.
 
 #### `--use|-u`
 
@@ -70,6 +75,10 @@ Use more than one plugin and pass config parameters
     postcss --use autoprefixer --autoprefixer.browsers "> 5%" \
         --use postcss-cachify --postcss-cachify.baseUrl /res \
         -o screen.css screen.css
+
+Use multiple plugins and multiple input files
+
+    postcss -u postcss-cachify -u autoprefixer -d build *.css
 
 ## Licence
 

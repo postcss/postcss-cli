@@ -1,4 +1,10 @@
 
+1.0.0 / 2015-03-22
+==================
+
+ * use official yargs version
+ * add support for multiple input files
+
 0.3.0 / 2015-03-19
 ==================
 

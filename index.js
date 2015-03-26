@@ -68,6 +68,9 @@ var processor = postcss(plugins);
 function processCSS(processor, input, output, fn) {
   function doProcess(css, fn) {
     function onResult(result) {
+      if (typeof result.warnings === 'function') {
+        result.warnings().forEach(console.error);
+      }
       fn(null, result);
     }
 
@@ -98,7 +101,11 @@ async.forEach(argv._, function(input, fn) {
   processCSS(processor, input, output, fn);
 }, function(err) {
   if (err) {
-    console.error(err);
+    if (err.message && typeof err.showSourceCode === 'function') {
+      console.error(err.message, err.showSourceCode());
+    } else {
+      console.error(err);
+    }
     process.exit(1);
   }
 });

@@ -3,7 +3,7 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts safe config js-config
+TESTS = opts safe config js-config invalid
 DIFF = diff -q
 
 test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi
@@ -25,6 +25,9 @@ test/build/opts.css: test/in.css
 test/build/safe.css: test/invalid.css
 	./bin/postcss --use ./test/dummy-plugin --safe -o $@ $<
 	$(DIFF) --side-by-side $@ $(subst build,ref,$@)
+
+test/build/invalid.css: test/in.css
+	./bin/postcss --use ./test/dummy-plugin -o $@ $< || echo Error is OK here....
 
 test/build/config.css: test/in.css
 	./bin/postcss -u postcss-url -c test/config.json -o $@ $<

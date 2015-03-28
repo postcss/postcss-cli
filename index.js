@@ -59,25 +59,46 @@ var plugins = argv.use.map(function(name) {
   return plugin;
 });
 
+var async = require('neo-async');
 var fs = require('fs');
 var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
 
-function process(processor, input, output) {
-  var css = fs.readFileSync(input, 'utf8');
-  var result = processor.process(css, {
-    safe: argv.safe,
-    from: input,
-    to: output
-  });
-  fs.writeFileSync(output, result.css);
+function processCSS(processor, input, output, fn) {
+  function doProcess(css, fn) {
+    function onResult(result) {
+      fn(null, result);
+    }
+
+    var result = processor.process(css, {
+      safe: argv.safe,
+      from: input,
+      to: output
+    });
+    if (typeof result.then === 'function') {
+      result.then(onResult).catch(fn);
+    } else{
+      process.nextTick(onResult.bind(null, result));
+    }
+  }
+
+  async.waterfall([
+    async.apply(fs.readFile, input, 'utf8'),
+    doProcess,
+    async.apply(fs.writeFile, output)
+  ], fn);
 }
 
-argv._.forEach(function(input) {
+async.forEach(argv._, function(input, fn) {
   var output = argv.output;
   if(!output) {
     output = path.join(argv.dir, path.basename(input));
   }
-  process(processor, input, output);
+  processCSS(processor, input, output, fn);
+}, function(err) {
+  if (err) {
+    console.error(err);
+    process.exit(1);
+  }
 });

@@ -12,6 +12,7 @@
   "repository": "https://github.com/code42day/postcss-cli.git",
   "keywords": [
     "postcss",
+    "postcssrunner",
     "cli"
   ],
   "author": "Damian Krzeminski <pirxpilot@code42day.com>",

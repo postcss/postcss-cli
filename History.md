@@ -1,4 +1,10 @@
 
+1.2.0 / 2015-04-02
+==================
+
+ * display warnings and errors
+ * stop testing on node 0.10
+
 1.1.0 / 2015-03-28
 ==================
 

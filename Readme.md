@@ -6,7 +6,7 @@
 
 Traditional CLI for [postcss]
 
-## Instalation
+## Installation
 
 npm install postcss-cli
 

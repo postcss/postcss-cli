@@ -12,11 +12,15 @@ npm install postcss-cli
 
 ## Usage
 
-    postcss [options] -o output-file input-file
+    postcss [options] [-o output-file|-d output-directory] [input-file]
 
 #### `--output|-o`
 
-Output file name
+Output file name. If no output file is specified, `postcss` will write to `stdout`, however plugins
+that rely on output file location will not work properly.
+
+Similarly, if no input file is specified, `postcss` will read from `stdin`.
+Plugins that rely on input file location will not work properly.
 
 #### `--dir|-d`
 

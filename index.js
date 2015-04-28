@@ -1,12 +1,11 @@
 var argv = require("yargs")
-  .usage('Usage: $0 -use|-p plugin [--config|-c config.json] [--output|-o output.css] input.css')
+  .usage('Usage: $0 -use|-p plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
   .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
     'Use autoprefixer as a postcss plugin')
   .example('postcss --use autoprefixer --autoprefixer.browsers "> 5%" -o screen.css screen.css',
     'Pass plugin parameters in plugin.option notation')
   .example('postcss -u postcss-cachify -u autoprefixer -d build *.css',
     'Use multiple plugins and multiple input files')
-  .demand(1, 'Please specify at least one input file.')
   .config('c')
   .alias('c', 'config')
   .describe('c', 'JSON file with plugin configuration')
@@ -58,6 +57,7 @@ var plugins = argv.use.map(function(name) {
 
 var async = require('neo-async');
 var fs = require('fs');
+var readFile = require('read-file-stdin');
 var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
@@ -93,10 +93,15 @@ function processCSS(processor, input, output, fn) {
   }
 
   async.waterfall([
-    async.apply(fs.readFile, input, 'utf8'),
+    async.apply(readFile, input),
     doProcess,
     async.apply(writeFile, output)
   ], fn);
+}
+
+if (!argv._.length) {
+  // use stdin if nothing else is specified
+  argv._ = [undefined];
 }
 
 async.forEach(argv._, function(input, fn) {

@@ -28,7 +28,6 @@ var argv = require("yargs")
   .alias('v', 'version')
   .help('h')
   .alias('h', 'help')
-  .wrap()
   .check(function(argv) {
     if (argv._.length > 1 && !argv.dir) {
       throw 'Please specify --dir [output directory] for your files';

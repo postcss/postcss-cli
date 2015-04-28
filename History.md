@@ -1,4 +1,9 @@
 
+1.3.0 / 2015-04-28
+==================
+
+ * add support for stdin/stdout if no input/output file specified
+
 1.2.1 / 2015-04-20
 ==================
 

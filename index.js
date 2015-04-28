@@ -1,12 +1,11 @@
 var argv = require("yargs")
-  .usage('Usage: $0 -use|-p plugin [--config|-c config.json] --output|-o output.css input.css')
+  .usage('Usage: $0 -use|-p plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
   .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
     'Use autoprefixer as a postcss plugin')
   .example('postcss --use autoprefixer --autoprefixer.browsers "> 5%" -o screen.css screen.css',
     'Pass plugin parameters in plugin.option notation')
   .example('postcss -u postcss-cachify -u autoprefixer -d build *.css',
     'Use multiple plugins and multiple input files')
-  .demand(1, 'Please specify at least one input file.')
   .config('c')
   .alias('c', 'config')
   .describe('c', 'JSON file with plugin configuration')
@@ -14,7 +13,7 @@ var argv = require("yargs")
   .describe('u', 'postcss plugin name (can be used multiple times)')
   .demand('u', 'Please specify at least one plugin name.')
   .alias('o', 'output')
-  .describe('o', 'Output file')
+  .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
   .describe('d', 'Output directory')
   .requiresArg(['u', 'c', 'o', 'd'])
@@ -37,9 +36,6 @@ var argv = require("yargs")
     if (argv.output && argv.dir) {
       throw 'Both `output file` and `output directory` provided: please use either --output or --dir option.';
     }
-    if (!argv.output && !argv.dir) {
-      throw 'Please specify --output [output file name] or --dir [out files location]';
-    }
     return true;
   })
   .argv;
@@ -61,9 +57,19 @@ var plugins = argv.use.map(function(name) {
 
 var async = require('neo-async');
 var fs = require('fs');
+var readFile = require('read-file-stdin');
 var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
+
+
+function writeFile(name, content, fn) {
+  if (!name) {
+    process.stdout.write(content);
+    return fn();
+  }
+  fs.writeFile(name, content, fn);
+}
 
 function processCSS(processor, input, output, fn) {
   function doProcess(css, fn) {
@@ -71,7 +77,7 @@ function processCSS(processor, input, output, fn) {
       if (typeof result.warnings === 'function') {
         result.warnings().forEach(console.error);
       }
-      fn(null, result);
+      fn(null, result.css);
     }
 
     var result = processor.process(css, {
@@ -87,15 +93,20 @@ function processCSS(processor, input, output, fn) {
   }
 
   async.waterfall([
-    async.apply(fs.readFile, input, 'utf8'),
+    async.apply(readFile, input),
     doProcess,
-    async.apply(fs.writeFile, output)
+    async.apply(writeFile, output)
   ], fn);
+}
+
+if (!argv._.length) {
+  // use stdin if nothing else is specified
+  argv._ = [undefined];
 }
 
 async.forEach(argv._, function(input, fn) {
   var output = argv.output;
-  if(!output) {
+  if (argv.dir) {
     output = path.join(argv.dir, path.basename(input));
   }
   processCSS(processor, input, output, fn);

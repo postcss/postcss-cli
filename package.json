@@ -20,6 +20,7 @@
   "dependencies": {
     "neo-async": "^0.6.3",
     "postcss": "^4.0.6",
+    "read-file-stdin": "^0.2.0",
     "yargs": "^3.6.0"
   },
   "devDependencies": {

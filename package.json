@@ -20,7 +20,7 @@
   "dependencies": {
     "neo-async": "^0.6.3",
     "postcss": "^4.0.6",
-    "yargs": "^3.6.0"
+    "yargs": "^3.8.0"
   },
   "devDependencies": {
     "jshint": "^2.6.3",

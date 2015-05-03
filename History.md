@@ -1,4 +1,9 @@
 
+1.3.1 / 2015-05-03
+==================
+
+ * update npm keyword: postcssrunner -> postcss-runner
+
 1.3.0 / 2015-04-28
 ==================
 

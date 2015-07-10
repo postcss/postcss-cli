@@ -11,7 +11,6 @@ var argv = require("yargs")
   .describe('c', 'JSON file with plugin configuration')
   .alias('u', 'use')
   .describe('u', 'postcss plugin name (can be used multiple times)')
-  .demand('u', 'Please specify at least one plugin name.')
   .alias('o', 'output')
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
@@ -39,6 +38,9 @@ var argv = require("yargs")
   })
   .argv;
 
+if (!argv.use) {
+  throw 'Please specify at least one plugin name.';
+}
 if (!Array.isArray(argv.use)) {
   argv.use = [argv.use];
 }

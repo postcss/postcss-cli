@@ -101,18 +101,19 @@ function processCSS(processor, input, output, fn) {
   ], fn);
 }
 
-if (!argv._.length) {
-  // use stdin if nothing else is specified
-  argv._ = argv.input || [undefined];
-  if (!Array.isArray(argv._)) {
-    argv._ = [argv._];
+var inputs = argv._;
+if (!inputs.length) {
+  if(argv.input) {
+    inputs = Array.isArray(argv.input) ? argv.input : [argv.input];
+  } else { // use stdin if nothing else is specified
+    inputs = [undefined];
   }
 }
-if (argv._.length > 1 && !argv.dir) {
+if (inputs.length > 1 && !argv.dir) {
   throw 'Please specify --dir [output directory] for your files';
 }
 
-async.forEach(argv._, function(input, fn) {
+async.forEach(inputs, function(input, fn) {
   var output = argv.output;
   if (argv.dir) {
     output = path.join(argv.dir, path.basename(input));

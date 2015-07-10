@@ -66,6 +66,7 @@ Note that command-line options can also be specified in the config file:
 ````json
 {
     "use": ["autoprefixer", "postcss-cachify"],
+    "input": "screen.css",
     "output": "bundle.css",
     "autoprefixer": {
         "browsers": "> 5%"

@@ -11,12 +11,12 @@ var argv = require("yargs")
   .describe('c', 'JSON file with plugin configuration')
   .alias('u', 'use')
   .describe('u', 'postcss plugin name (can be used multiple times)')
-  .demand('u', 'Please specify at least one plugin name.')
+  .alias('i', 'input')
   .alias('o', 'output')
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
   .describe('d', 'Output directory')
-  .requiresArg(['u', 'c', 'o', 'd'])
+  .requiresArg(['u', 'c', 'i', 'o', 'd'])
   .boolean('safe')
   .describe('safe', 'Enable postcss safe mode.')
   .version(function() {
@@ -29,8 +29,8 @@ var argv = require("yargs")
   .help('h')
   .alias('h', 'help')
   .check(function(argv) {
-    if (argv._.length > 1 && !argv.dir) {
-      throw 'Please specify --dir [output directory] for your files';
+    if (argv._.length && argv.input) {
+      throw 'Both positional arguments and --input option used for `input file`: please only use one of them.';
     }
     if (argv.output && argv.dir) {
       throw 'Both `output file` and `output directory` provided: please use either --output or --dir option.';
@@ -39,6 +39,9 @@ var argv = require("yargs")
   })
   .argv;
 
+if (!argv.use) {
+  throw 'Please specify at least one plugin name.';
+}
 if (!Array.isArray(argv.use)) {
   argv.use = [argv.use];
 }
@@ -98,12 +101,19 @@ function processCSS(processor, input, output, fn) {
   ], fn);
 }
 
-if (!argv._.length) {
-  // use stdin if nothing else is specified
-  argv._ = [undefined];
+var inputs = argv._;
+if (!inputs.length) {
+  if(argv.input) {
+    inputs = Array.isArray(argv.input) ? argv.input : [argv.input];
+  } else { // use stdin if nothing else is specified
+    inputs = [undefined];
+  }
+}
+if (inputs.length > 1 && !argv.dir) {
+  throw 'Please specify --dir [output directory] for your files';
 }
 
-async.forEach(argv._, function(input, fn) {
+async.forEach(inputs, function(input, fn) {
   var output = argv.output;
   if (argv.dir) {
     output = path.join(argv.dir, path.basename(input));

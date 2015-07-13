@@ -29,7 +29,8 @@ Output files location. Either `--output` or `--dir` option, but not both of them
 
 #### `--use|-u`
 
-Plugin to be used. Multiple plugins can be specified. At least one is required.
+Plugin to be used. Multiple plugins can be specified. At least one is required unless specified
+within config file.
 
 #### `--config|-c`
 
@@ -59,6 +60,22 @@ module.exports = {
 };
 ````
 Alternatively configuration options can be passed as `--plugin.option` parameters.
+
+Note that command-line options can also be specified in the config file:
+
+````json
+{
+    "use": ["autoprefixer", "postcss-cachify"],
+    "input": "screen.css",
+    "output": "bundle.css",
+    "autoprefixer": {
+        "browsers": "> 5%"
+    },
+    "postcss-cachify": {
+        "baseUrl": "/res"
+    }
+}
+````
 
 ### `--safe`
 

@@ -3,7 +3,7 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts stdout stdin safe config js-config invalid
+TESTS = opts stdout stdin safe config config-all js-config js-config-all invalid
 DIFF = diff -q
 
 test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi
@@ -41,8 +41,16 @@ test/build/config.css: test/in.css
 	./bin/postcss -u postcss-url -c test/config.json -o $@ $<
 	$(DIFF) $@ $(subst build,ref,$@)
 
+test/build/config-all.css: test/in.css
+	./bin/postcss -c test/config-all.json
+	$(DIFF) $@ $(subst build,ref,$@)
+
 test/build/js-config.css: test/in.css
 	./bin/postcss -u postcss-url -c test/config.js -o $@ $<
+	$(DIFF) $@ $(subst build,ref,$@)
+
+test/build/js-config-all.css: test/in.css
+	./bin/postcss -c test/config-all.js
 	$(DIFF) $@ $(subst build,ref,$@)
 
 test/build:

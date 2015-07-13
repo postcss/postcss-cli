@@ -1,4 +1,10 @@
 
+1.4.0 / 2015-07-12
+==================
+
+ * allow specifying input file via config file
+ * allow specifying -u|--use via config file
+
 1.3.1 / 2015-05-03
 ==================
 

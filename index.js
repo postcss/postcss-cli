@@ -29,6 +29,9 @@ var argv = require("yargs")
   .help('h')
   .alias('h', 'help')
   .check(function(argv) {
+    if (!argv.use) {
+      throw 'Please specify at least one plugin name.';
+    }
     if (argv._.length && argv.input) {
       throw 'Both positional arguments and --input option used for `input file`: please only use one of them.';
     }
@@ -39,11 +42,20 @@ var argv = require("yargs")
   })
   .argv;
 
-if (!argv.use) {
-  throw 'Please specify at least one plugin name.';
-}
 if (!Array.isArray(argv.use)) {
   argv.use = [argv.use];
+}
+
+var inputFiles = argv._;
+if (!inputFiles.length) {
+  if (argv.input) {
+    inputFiles = Array.isArray(argv.input) ? argv.input : [argv.input];
+  } else { // use stdin if nothing else is specified
+    inputFiles = [undefined];
+  }
+}
+if (inputFiles.length > 1 && !argv.dir) {
+  throw 'Please specify --dir [output directory] for your files';
 }
 
 // load and configure plugin array
@@ -101,19 +113,7 @@ function processCSS(processor, input, output, fn) {
   ], fn);
 }
 
-var inputs = argv._;
-if (!inputs.length) {
-  if(argv.input) {
-    inputs = Array.isArray(argv.input) ? argv.input : [argv.input];
-  } else { // use stdin if nothing else is specified
-    inputs = [undefined];
-  }
-}
-if (inputs.length > 1 && !argv.dir) {
-  throw 'Please specify --dir [output directory] for your files';
-}
-
-async.forEach(inputs, function(input, fn) {
+async.forEach(inputFiles, function(input, fn) {
   var output = argv.output;
   if (argv.dir) {
     output = path.join(argv.dir, path.basename(input));

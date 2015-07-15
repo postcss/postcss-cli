@@ -76,13 +76,15 @@ var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
 
+async.forEach(inputFiles, compile, onError);
 
-function writeFile(name, content, fn) {
-  if (!name) {
-    process.stdout.write(content);
-    return fn();
+
+function compile(input, fn) {
+  var output = argv.output;
+  if (argv.dir) {
+    output = path.join(argv.dir, path.basename(input));
   }
-  fs.writeFile(name, content, fn);
+  processCSS(processor, input, output, fn);
 }
 
 function processCSS(processor, input, output, fn) {
@@ -113,13 +115,7 @@ function processCSS(processor, input, output, fn) {
   ], fn);
 }
 
-async.forEach(inputFiles, function(input, fn) {
-  var output = argv.output;
-  if (argv.dir) {
-    output = path.join(argv.dir, path.basename(input));
-  }
-  processCSS(processor, input, output, fn);
-}, function(err) {
+function onError(err) {
   if (err) {
     if (err.message && typeof err.showSourceCode === 'function') {
       console.error(err.message, err.showSourceCode());
@@ -128,4 +124,12 @@ async.forEach(inputFiles, function(input, fn) {
     }
     process.exit(1);
   }
-});
+}
+
+function writeFile(name, content, fn) {
+  if (!name) {
+    process.stdout.write(content);
+    return fn();
+  }
+  fs.writeFile(name, content, fn);
+}

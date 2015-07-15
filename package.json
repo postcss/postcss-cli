@@ -23,6 +23,9 @@
     "read-file-stdin": "^0.2.0",
     "yargs": "^3.8.0"
   },
+  "optionalDependencies": {
+    "chokidar": "^1.0.3"
+  },
   "devDependencies": {
     "jshint": "^2.6.3",
     "postcss-url": "^2.1.0"

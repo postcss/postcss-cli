@@ -16,6 +16,8 @@ var argv = require("yargs")
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
   .describe('d', 'Output directory')
+  .alias('w', 'watch')
+  .describe('w', 'auto-recompile when detecting source changes')
   .requiresArg(['u', 'c', 'i', 'o', 'd'])
   .boolean('safe')
   .describe('safe', 'Enable postcss safe mode.')
@@ -77,6 +79,14 @@ var postcss = require('postcss');
 var processor = postcss(plugins);
 
 async.forEach(inputFiles, compile, onError);
+if (argv.watch) {
+  require('chokidar').watch(inputFiles) // XXX: does not work for newly added imports
+    .on('change', function(path) { // TODO: support for "add", "unlink" etc.?
+      async.forEach(inputFiles, compile, function(err) {
+        return onError.call(this, err, true);
+      });
+    });
+}
 
 
 function compile(input, fn) {
@@ -115,14 +125,16 @@ function processCSS(processor, input, output, fn) {
   ], fn);
 }
 
-function onError(err) {
+function onError(err, keepAlive) { // XXX: avoid overloaded signature?
   if (err) {
     if (err.message && typeof err.showSourceCode === 'function') {
       console.error(err.message, err.showSourceCode());
     } else {
       console.error(err);
     }
-    process.exit(1);
+    if (!keepAlive) {
+      process.exit(1);
+    }
   }
 }
 

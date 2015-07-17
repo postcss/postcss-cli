@@ -80,20 +80,20 @@ var processor = postcss(plugins);
 
 if (argv.watch) {
   var watcher = require('chokidar').watch(watchedFiles);
-  watcher.on('change', function(path) { // TODO: support for "add", "unlink" etc.?
+  watcher.on('change', function() { // TODO: support for "add", "unlink" etc.?
     async.forEach(inputFiles, compile, function(err) {
       return onError.call(this, err, true);
     });
   });
 
   var watchedFiles = inputFiles;
-  global.watchCSS = function(files) {
+  global.watchCSS = function(files) { // jshint ignore:line
     watcher.unwatch(watchedFiles);
     watcher.add(files);
     watchedFiles = files;
   };
 } else {
-  global.watchCSS = function() {};
+  global.watchCSS = function() {}; // jshint ignore:line
 }
 async.forEach(inputFiles, compile, onError);
 

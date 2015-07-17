@@ -78,15 +78,24 @@ var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
 
-async.forEach(inputFiles, compile, onError);
 if (argv.watch) {
-  require('chokidar').watch(inputFiles) // XXX: does not work for newly added imports
-    .on('change', function(path) { // TODO: support for "add", "unlink" etc.?
-      async.forEach(inputFiles, compile, function(err) {
-        return onError.call(this, err, true);
-      });
+  var watcher = require('chokidar').watch(watchedFiles);
+  watcher.on('change', function(path) { // TODO: support for "add", "unlink" etc.?
+    async.forEach(inputFiles, compile, function(err) {
+      return onError.call(this, err, true);
     });
+  });
+
+  var watchedFiles = inputFiles;
+  global.watchCSS = function(files) {
+    watcher.unwatch(watchedFiles);
+    watcher.add(files);
+    watchedFiles = files;
+  };
+} else {
+  global.watchCSS = function() {};
 }
+async.forEach(inputFiles, compile, onError);
 
 
 function compile(input, fn) {

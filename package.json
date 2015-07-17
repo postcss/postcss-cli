@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "jshint": "^2.6.3",
+    "postcss-import": "^6.1.1",
     "postcss-url": "^2.1.0"
   }
 }

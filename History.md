@@ -1,4 +1,11 @@
 
+1.5.0 / 2015-07-20
+==================
+
+ * add watch mode (-w|--watch) in which postcss-cli observes and recompiles inputs whenever they change
+ * update neo-async dependency to released version
+ * update postcss-url dependency (used in tests only)
+
 1.4.0 / 2015-07-12
 ==================
 

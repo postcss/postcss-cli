@@ -18,6 +18,17 @@ test-multi:
 	./bin/postcss -u postcss-url --dir test/build test/multi*.css
 	$(DIFF) test/build/multi*.css --to-file=test/ref
 
+test-watch: test/import-*.css
+	echo '@import "import-foo.css";' > test/import-index.css
+	./bin/postcss -c test/config-watch.js -w & echo $$! > test/watch.pid
+	sleep 0.2
+	$(DIFF) test/build/watch.css test/ref/watch-1.css
+	echo '@import "import-bar.css";' >> test/import-index.css
+	sleep 0.2
+	$(DIFF) test/build/watch.css test/ref/watch-2.css
+	kill `cat test/watch.pid` # FIXME: never reached on failure
+	rm test/watch.pid
+
 test/build/opts.css: test/in.css
 	./bin/postcss -u postcss-url --postcss-url.url=rebase -o $@ $<
 	$(DIFF) $@ $(subst build,ref,$@)
@@ -59,4 +70,4 @@ test/build:
 clean:
 	rm -rf test/build
 
-.PHONY: all lint clean test test-help test-version test-multi
+.PHONY: all lint clean test test-help test-version test-multi test-watch

@@ -16,6 +16,8 @@ var argv = require("yargs")
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
   .describe('d', 'Output directory')
+  .alias('w', 'watch')
+  .describe('w', 'auto-recompile when detecting source changes')
   .requiresArg(['u', 'c', 'i', 'o', 'd'])
   .boolean('safe')
   .describe('safe', 'Enable postcss safe mode.')
@@ -29,6 +31,9 @@ var argv = require("yargs")
   .help('h')
   .alias('h', 'help')
   .check(function(argv) {
+    if (!argv.use) {
+      throw 'Please specify at least one plugin name.';
+    }
     if (argv._.length && argv.input) {
       throw 'Both positional arguments and --input option used for `input file`: please only use one of them.';
     }
@@ -39,11 +44,20 @@ var argv = require("yargs")
   })
   .argv;
 
-if (!argv.use) {
-  throw 'Please specify at least one plugin name.';
-}
 if (!Array.isArray(argv.use)) {
   argv.use = [argv.use];
+}
+
+var inputFiles = argv._;
+if (!inputFiles.length) {
+  if (argv.input) {
+    inputFiles = Array.isArray(argv.input) ? argv.input : [argv.input];
+  } else { // use stdin if nothing else is specified
+    inputFiles = [undefined];
+  }
+}
+if (inputFiles.length > 1 && !argv.dir) {
+  throw 'Please specify --dir [output directory] for your files';
 }
 
 // load and configure plugin array
@@ -64,13 +78,32 @@ var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
 
+if (argv.watch) {
+  var watchedFiles = inputFiles;
+  var watcher = require('chokidar').watch(watchedFiles);
+  watcher.on('change', function() { // TODO: support for "add", "unlink" etc.?
+    async.forEach(inputFiles, compile, function(err) {
+      return onError.call(this, err, true);
+    });
+  });
 
-function writeFile(name, content, fn) {
-  if (!name) {
-    process.stdout.write(content);
-    return fn();
+  global.watchCSS = function(files) { // jshint ignore:line
+    watcher.unwatch(watchedFiles);
+    watcher.add(files);
+    watchedFiles = files;
+  };
+} else {
+  global.watchCSS = function() {}; // jshint ignore:line
+}
+async.forEach(inputFiles, compile, onError);
+
+
+function compile(input, fn) {
+  var output = argv.output;
+  if (argv.dir) {
+    output = path.join(argv.dir, path.basename(input));
   }
-  fs.writeFile(name, content, fn);
+  processCSS(processor, input, output, fn);
 }
 
 function processCSS(processor, input, output, fn) {
@@ -101,31 +134,23 @@ function processCSS(processor, input, output, fn) {
   ], fn);
 }
 
-var inputs = argv._;
-if (!inputs.length) {
-  if(argv.input) {
-    inputs = Array.isArray(argv.input) ? argv.input : [argv.input];
-  } else { // use stdin if nothing else is specified
-    inputs = [undefined];
-  }
-}
-if (inputs.length > 1 && !argv.dir) {
-  throw 'Please specify --dir [output directory] for your files';
-}
-
-async.forEach(inputs, function(input, fn) {
-  var output = argv.output;
-  if (argv.dir) {
-    output = path.join(argv.dir, path.basename(input));
-  }
-  processCSS(processor, input, output, fn);
-}, function(err) {
+function onError(err, keepAlive) { // XXX: avoid overloaded signature?
   if (err) {
     if (err.message && typeof err.showSourceCode === 'function') {
       console.error(err.message, err.showSourceCode());
     } else {
       console.error(err);
     }
-    process.exit(1);
+    if (!keepAlive) {
+      process.exit(1);
+    }
   }
-});
+}
+
+function writeFile(name, content, fn) {
+  if (!name) {
+    process.stdout.write(content);
+    return fn();
+  }
+  fs.writeFile(name, content, fn);
+}

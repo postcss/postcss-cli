@@ -1,0 +1,5 @@
+@import "import-baz.css";
+
+.bar {
+  color: #0F0;
+}

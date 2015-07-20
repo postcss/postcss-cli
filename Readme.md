@@ -32,6 +32,24 @@ Output files location. Either `--output` or `--dir` option, but not both of them
 Plugin to be used. Multiple plugins can be specified. At least one is required unless specified
 within config file.
 
+#### `--watch|-w`
+
+Observe file system changes and recompile as source files change.
+
+When inlining CSS imports (e.g. with [postcss-import](https://github.com/postcss/postcss-import)),
+add an update handler to your JavaScript configuration file to ensure referenced modules are taken
+into account:
+
+```js
+{
+  "postcss-import": {
+    onImport: function(sources) {
+      global.watchCSS(sources);
+    }
+  }
+}
+```
+
 #### `--config|-c`
 
 JSON file with plugin configuration. Plugin names should be the keys.
@@ -47,7 +65,7 @@ JSON file with plugin configuration. Plugin names should be the keys.
 }
 ````
 
-JS configuration can be used if functions are allowed as plugins parameters:
+JavaScript configuration can be used if functions are allowed as plugins parameters:
 
 ````js
 module.exports = {

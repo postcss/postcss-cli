@@ -73,7 +73,7 @@ module.exports = {
     url: function(url) { return "http://example.com/" + url; }
   },
   autoprefixer: {
-        browsers: "> 5%"
+    browsers: "> 5%"
   }
 };
 ````

@@ -79,6 +79,7 @@ var postcss = require('postcss');
 var processor = postcss(plugins);
 
 if (argv.watch) {
+  var watchedFiles = inputFiles;
   var watcher = require('chokidar').watch(watchedFiles);
   watcher.on('change', function() { // TODO: support for "add", "unlink" etc.?
     async.forEach(inputFiles, compile, function(err) {
@@ -86,7 +87,6 @@ if (argv.watch) {
     });
   });
 
-  var watchedFiles = inputFiles;
   global.watchCSS = function(files) { // jshint ignore:line
     watcher.unwatch(watchedFiles);
     watcher.add(files);

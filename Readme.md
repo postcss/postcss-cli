@@ -95,10 +95,6 @@ Note that command-line options can also be specified in the config file:
 }
 ````
 
-### `--safe`
-
-Enable Safe Mode, in which PostCSS will try to fix CSS syntax errors.
-
 #### `-h, --help`
 
 Show help

@@ -3,7 +3,7 @@ module.exports = function(opts) {
 
   return function (css) {
     // throw something so that we can test error messages
-    if (!css.source.input.safe) {
+    if (css.nodes[0].selector === 'a') {
       throw css.nodes[0].error('Dummy error');
     }
   };

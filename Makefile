@@ -3,7 +3,7 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts stdout stdin safe config config-all js-config js-config-all invalid
+TESTS = opts stdout stdin config config-all js-config js-config-all invalid
 DIFF = diff -q
 
 test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi
@@ -34,19 +34,15 @@ test/build/opts.css: test/in.css
 	$(DIFF) $@ $(subst build,ref,$@)
 
 test/build/stdout.css: test/in.css
-	./bin/postcss --use ./test/dummy-plugin --safe $< > $@
+	./bin/postcss --use ./test/dummy-plugin $< > $@
 	$(DIFF) $@ $(subst build,ref,$@)
 
 test/build/stdin.css: test/in.css
-	./bin/postcss --use ./test/dummy-plugin --safe --output $@ < $<
+	./bin/postcss --use ./test/dummy-plugin --output $@ < $<
 	$(DIFF) $@ $(subst build,ref,$@)
 
-test/build/safe.css: test/invalid.css
-	./bin/postcss --use ./test/dummy-plugin --safe -o $@ $<
-	$(DIFF) --side-by-side $@ $(subst build,ref,$@)
-
-test/build/invalid.css: test/in.css
-	./bin/postcss --use ./test/dummy-plugin -o $@ $< || echo Error is OK here....
+test/build/invalid.css: test/in-force-error.css
+	./bin/postcss --use ./test/dummy-plugin --dummy-plugin.fail=true -o $@ $< || echo Error is OK here....
 
 test/build/config.css: test/in.css
 	./bin/postcss -u postcss-url -c test/config.json -o $@ $<

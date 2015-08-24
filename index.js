@@ -19,8 +19,6 @@ var argv = require("yargs")
   .alias('w', 'watch')
   .describe('w', 'auto-recompile when detecting source changes')
   .requiresArg(['u', 'c', 'i', 'o', 'd'])
-  .boolean('safe')
-  .describe('safe', 'Enable postcss safe mode.')
   .version(function() {
     return [
       'postcss version',
@@ -116,7 +114,6 @@ function processCSS(processor, input, output, fn) {
     }
 
     var result = processor.process(css, {
-      safe: argv.safe,
       from: input,
       to: output
     });

@@ -10,6 +10,11 @@ Traditional CLI for [postcss]
 
 npm install postcss-cli
 
+| postcss-cli version | postcss version |
+| ---- | ---- |
+| 1.x | 4.x |
+| 2.x | 5.x |
+
 ## Usage
 
     postcss [options] [-o output-file|-d output-directory] [input-file]
@@ -36,8 +41,8 @@ within config file.
 
 Observe file system changes and recompile as source files change.
 
-When inlining CSS imports (e.g. with [postcss-import](https://github.com/postcss/postcss-import)),
-add an update handler to your JavaScript configuration file to ensure referenced modules are taken
+When inlining CSS imports (e.g. with [postcss-import]), add an update handler
+to your JavaScript configuration file to ensure referenced modules are taken
 into account:
 
 ```js
@@ -49,6 +54,8 @@ into account:
   }
 }
 ```
+
+[postcss-import] does not have 5.x compatible version as of now. See workaround [here](https://github.com/code42day/postcss-cli/issues/24).
 
 #### `--config|-c`
 
@@ -95,10 +102,6 @@ Note that command-line options can also be specified in the config file:
 }
 ````
 
-### `--safe`
-
-Enable Safe Mode, in which PostCSS will try to fix CSS syntax errors.
-
 #### `-h, --help`
 
 Show help
@@ -124,3 +127,4 @@ Use multiple plugins and multiple input files
 MIT
 
 [postcss]: https://github.com/postcss/postcss
+[postcss-import]: https://github.com/postcss/postcss-import

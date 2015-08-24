@@ -1,4 +1,10 @@
 
+2.0.0 / 2015-08-24
+==================
+
+ * remove support for --safe option
+ * switch to using postcss 5.x
+
 1.5.0 / 2015-07-20
 ==================
 

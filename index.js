@@ -1,5 +1,5 @@
 var argv = require("yargs")
-  .usage('Usage: $0 -use|-p plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
+  .usage('Usage: $0 -use plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
   .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
     'Use autoprefixer as a postcss plugin')
   .example('postcss --use autoprefixer --autoprefixer.browsers "> 5%" -o screen.css screen.css',
@@ -16,9 +16,15 @@ var argv = require("yargs")
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
   .describe('d', 'Output directory')
+  .alias('s', 'syntax')
+  .describe('s', 'Custom syntax')
+  .alias('p', 'parser')
+  .describe('p', 'Custom syntax parser')
+  .alias('t', 'stringifier')
+  .describe('t', 'Custom syntax stringifier')
   .alias('w', 'watch')
   .describe('w', 'auto-recompile when detecting source changes')
-  .requiresArg(['u', 'c', 'i', 'o', 'd'])
+  .requiresArg(['u', 'c', 'i', 'o', 'd', 's', 'p', 't'])
   .version(function() {
     return [
       'postcss version',
@@ -75,6 +81,9 @@ var readFile = require('read-file-stdin');
 var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
+var syntax = argv.syntax ? require(argv.syntax) : null;
+var parser = argv.parser ? require(argv.parser) : null;
+var stringifier = argv.stringifier ? require(argv.stringifier) : null;
 
 if (argv.watch) {
   var watchedFiles = inputFiles;
@@ -113,10 +122,24 @@ function processCSS(processor, input, output, fn) {
       fn(null, result.css);
     }
 
-    var result = processor.process(css, {
+    var opts = {
       from: input,
       to: output
-    });
+    };
+
+    if (syntax) {
+      opts.syntax = syntax;
+    }
+
+    if (parser) {
+      opts.parser = parser;
+    }
+
+    if (stringifier) {
+      opts.stringifier = stringifier;
+    }
+
+    var result = processor.process(css, opts);
     if (typeof result.then === 'function') {
       result.then(onResult).catch(fn);
     } else{

@@ -102,6 +102,18 @@ Note that command-line options can also be specified in the config file:
 }
 ````
 
+#### `-s, --syntax`
+
+Optional module to use as a [custom PostCSS syntax](https://github.com/postcss/postcss#custom-syntaxes).
+
+#### `-p, --parser`
+
+Optional module to use as a [custom PostCSS input parser](https://github.com/postcss/postcss#custom-syntaxes).
+
+#### `-t, --stringifier`
+
+Optional module to use as a [custom PostCSS output stringifier](https://github.com/postcss/postcss#custom-syntaxes).
+
 #### `-h, --help`
 
 Show help

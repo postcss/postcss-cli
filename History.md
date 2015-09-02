@@ -1,4 +1,9 @@
 
+2.1.0 / 2015-09-01
+==================
+
+ * add support for PostCSS 5.0 custom syntax options
+
 2.0.0 / 2015-08-24
 ==================
 

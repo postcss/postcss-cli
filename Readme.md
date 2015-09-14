@@ -55,8 +55,6 @@ into account:
 }
 ```
 
-[postcss-import] does not have 5.x compatible version as of now. See workaround [here](https://github.com/code42day/postcss-cli/issues/24).
-
 #### `--config|-c`
 
 JSON file with plugin configuration. Plugin names should be the keys.

@@ -1,3 +1,4 @@
+var globby = require("globby");
 var argv = require("yargs")
   .usage('Usage: $0 -use plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
   .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
@@ -52,7 +53,7 @@ if (!Array.isArray(argv.use)) {
   argv.use = [argv.use];
 }
 
-var inputFiles = argv._;
+var inputFiles = globby.sync(argv._);
 if (!inputFiles.length) {
   if (argv.input) {
     inputFiles = Array.isArray(argv.input) ? argv.input : [argv.input];

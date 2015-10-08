@@ -1,4 +1,10 @@
 
+2.1.1 / 2015-10-08
+==================
+
+ * add globby to support wildcards in Windows
+ * remove obsolete note on postcss-import compatibility
+
 2.1.0 / 2015-09-01
 ==================
 

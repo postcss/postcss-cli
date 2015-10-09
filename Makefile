@@ -6,7 +6,7 @@ lint:
 TESTS = opts stdout stdin config config-all js-config js-config-all invalid
 DIFF = diff -q
 
-test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi
+test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi test-replace
 
 test-help:
 	./bin/postcss --help
@@ -17,6 +17,11 @@ test-version:
 test-multi:
 	./bin/postcss -u postcss-url --dir test/build test/multi*.css
 	$(DIFF) test/build/multi*.css --to-file=test/ref
+
+test-replace:
+	 cp test/replace.css test/build/replace.css
+	./bin/postcss -u postcss-url --postcss-url.url "inline" --replace test/build/replace.css
+	$(DIFF) test/build/replace.css test/ref/replace.css
 
 test-watch: test/import-*.css
 	echo '@import "import-foo.css";' > test/import-index.css
@@ -66,4 +71,4 @@ test/build:
 clean:
 	rm -rf test/build
 
-.PHONY: all lint clean test test-help test-version test-multi test-watch
+.PHONY: all lint clean test test-help test-version test-multi test-watch test-replace

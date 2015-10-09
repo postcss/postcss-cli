@@ -17,7 +17,7 @@ npm install postcss-cli
 
 ## Usage
 
-    postcss [options] [-o output-file|-d output-directory] [input-file]
+    postcss [options] [-o output-file|-d output-directory|-r] [input-file]
 
 #### `--output|-o`
 
@@ -29,8 +29,13 @@ Plugins that rely on input file location will not work properly.
 
 #### `--dir|-d`
 
-Output files location. Either `--output` or `--dir` option, but not both of them, need to be specified.
-`--dir` needs to be used if multiple input file is provided.
+Output files location. Either `--output`, `--dir` or `--replace` option, but not all of them, need to be specified.
+`--dir` or `--replace` needs to be used if multiple input file is provided.
+
+#### `--replace|-r`
+
+Replace input file(s) with generated output. Either `--output`, `--dir` or `--replace` option, but not all of them, need to be specified.
+`--replace` or `--dir` needs to be used if multiple input file is provided.
 
 #### `--use|-u`
 

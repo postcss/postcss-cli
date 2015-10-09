@@ -1,4 +1,10 @@
 
+2.2.0 / 2015-10-09
+==================
+
+ * add support for --replace|-r - if used input files are replaced with generated output
+ * refactor support for custom syntax options
+
 2.1.1 / 2015-10-08
 ==================
 

@@ -17,6 +17,9 @@ var argv = require("yargs")
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
   .describe('d', 'Output directory')
+  .boolean('r')
+  .alias('r', 'replace')
+  .describe('r', 'Replace input file(s) with generated output')
   .alias('s', 'syntax')
   .describe('s', 'Custom syntax')
   .alias('p', 'parser')
@@ -42,8 +45,17 @@ var argv = require("yargs")
     if (argv._.length && argv.input) {
       throw 'Both positional arguments and --input option used for `input file`: please only use one of them.';
     }
+    if (argv.output && argv.dir && argv.replace) {
+      throw '`output file`, `output directory` and `replace` provided: please use either --output, --dir or --replace option only.';
+    }
     if (argv.output && argv.dir) {
       throw 'Both `output file` and `output directory` provided: please use either --output or --dir option.';
+    }
+    if (argv.output && argv.replace) {
+      throw 'Both `output file` and `replace` provided: please use either --output or --replace option.';
+    }
+    if (argv.dir && argv.replace) {
+      throw 'Both `output directory` and `replace` provided: please use either --dir or --replace option.';
     }
     return true;
   })
@@ -61,8 +73,8 @@ if (!inputFiles.length) {
     inputFiles = [undefined];
   }
 }
-if (inputFiles.length > 1 && !argv.dir) {
-  throw 'Please specify --dir [output directory] for your files';
+if (inputFiles.length > 1 && !argv.dir && !argv.replace) {
+  throw 'Please specify either --replace or --dir [output directory] for your files';
 }
 
 // load and configure plugin array
@@ -110,6 +122,8 @@ function compile(input, fn) {
   var output = argv.output;
   if (argv.dir) {
     output = path.join(argv.dir, path.basename(input));
+  } else if (argv.replace) {
+    output = input;
   }
   processCSS(processor, input, output, fn);
 }

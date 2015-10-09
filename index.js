@@ -21,11 +21,11 @@ var argv = require("yargs")
   .alias('r', 'replace')
   .describe('r', 'Replace input file(s) with generated output')
   .alias('s', 'syntax')
-  .describe('s', 'Custom syntax')
+  .describe('s', 'Alternative input syntax parser')
   .alias('p', 'parser')
-  .describe('p', 'Custom syntax parser')
+  .describe('p', 'Alternative CSS parser')
   .alias('t', 'stringifier')
-  .describe('t', 'Custom syntax stringifier')
+  .describe('t', 'Alternative output stringifier')
   .alias('w', 'watch')
   .describe('w', 'auto-recompile when detecting source changes')
   .requiresArg(['u', 'c', 'i', 'o', 'd', 's', 'p', 't'])
@@ -88,15 +88,20 @@ var plugins = argv.use.map(function(name) {
   return plugin;
 });
 
+var customSyntaxOptions = ['syntax', 'parser', 'stringifier']
+  .reduce(function(cso, opt) {
+    if (argv[opt]) {
+      cso[opt] = require(argv[opt]);
+    }
+    return cso;
+  }, Object.create(null));
+
 var async = require('neo-async');
 var fs = require('fs');
 var readFile = require('read-file-stdin');
 var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
-var syntax = argv.syntax ? require(argv.syntax) : null;
-var parser = argv.parser ? require(argv.parser) : null;
-var stringifier = argv.stringifier ? require(argv.stringifier) : null;
 
 if (argv.watch) {
   var watchedFiles = inputFiles;
@@ -137,24 +142,16 @@ function processCSS(processor, input, output, fn) {
       fn(null, result.css);
     }
 
-    var opts = {
+    var options = {
       from: input,
       to: output
     };
 
-    if (syntax) {
-      opts.syntax = syntax;
-    }
+    Object.keys(customSyntaxOptions).forEach(function(opt) {
+      options[opt] = customSyntaxOptions[opt];
+    });
 
-    if (parser) {
-      opts.parser = parser;
-    }
-
-    if (stringifier) {
-      opts.stringifier = stringifier;
-    }
-
-    var result = processor.process(css, opts);
+    var result = processor.process(css, options);
     if (typeof result.then === 'function') {
       result.then(onResult).catch(fn);
     } else{

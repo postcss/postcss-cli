@@ -1,4 +1,5 @@
 var globby = require("globby");
+var resolve = require("resolve");
 var argv = require("yargs")
   .usage('Usage: $0 -use plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
   .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
@@ -79,7 +80,13 @@ if (inputFiles.length > 1 && !argv.dir && !argv.replace) {
 
 // load and configure plugin array
 var plugins = argv.use.map(function(name) {
-  var plugin = require(name);
+  var plugin;
+  try {
+    var resolved = resolve.sync(name, {basedir: process.cwd()});
+    plugin = require(resolved);
+  } catch (e) {
+    plugin = require(name);
+  }
   if (name in argv) {
     plugin = plugin(argv[name]);
   } else {

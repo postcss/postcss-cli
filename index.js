@@ -13,6 +13,9 @@ var argv = require("yargs")
   .describe('c', 'JSON file with plugin configuration')
   .alias('u', 'use')
   .describe('u', 'postcss plugin name (can be used multiple times)')
+  .option('local-plugins', {
+    describe: 'lookup plugins in current node_modules directory'
+  })
   .alias('i', 'input')
   .alias('o', 'output')
   .describe('o', 'Output file (stdout if not provided)')
@@ -80,11 +83,12 @@ if (inputFiles.length > 1 && !argv.dir && !argv.replace) {
 
 // load and configure plugin array
 var plugins = argv.use.map(function(name) {
+  var local = argv['local-plugins'];
   var plugin;
-  try {
+  if (local) {
     var resolved = resolve.sync(name, {basedir: process.cwd()});
     plugin = require(resolved);
-  } catch (e) {
+  } else {
     plugin = require(name);
   }
   if (name in argv) {

@@ -42,6 +42,11 @@ Replace input file(s) with generated output. Either `--output`, `--dir` or `--re
 Plugin to be used. Multiple plugins can be specified. At least one is required unless specified
 within config file.
 
+#### `--local-plugins`
+
+Lookup plugins in the current `node_modules` directory. 
+Without this option, postcss-cli Will lookup plugins in the global `node_modules` directory.
+
 #### `--watch|-w`
 
 Observe file system changes and recompile as source files change.

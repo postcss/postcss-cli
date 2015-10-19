@@ -6,7 +6,7 @@ lint:
 TESTS = opts stdout stdin config config-all js-config js-config-all invalid
 DIFF = diff -q
 
-test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi test-replace
+test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi test-replace test-local-plugins
 
 test-help:
 	./bin/postcss --help
@@ -33,6 +33,9 @@ test-watch: test/import-*.css
 	$(DIFF) test/build/watch.css test/ref/watch-2.css
 	kill `cat test/watch.pid` # FIXME: never reached on failure
 	rm test/watch.pid
+
+test-local-plugins:
+	cd test; ../bin/postcss --use a-dummy-plugin --local-plugins -o build/local-plugins in.css
 
 test/build/opts.css: test/in.css
 	./bin/postcss -u postcss-url --postcss-url.url=rebase -o $@ $<

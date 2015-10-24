@@ -1,4 +1,9 @@
 
+2.3.0 / 2015-10-24
+==================
+
+ * add --local-plugins option that lets postcss-cli to look for plugins in current directory
+
 2.2.0 / 2015-10-09
 ==================
 

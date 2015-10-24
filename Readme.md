@@ -29,23 +29,26 @@ Plugins that rely on input file location will not work properly.
 
 #### `--dir|-d`
 
-Output files location. Either `--output`, `--dir` or `--replace` option, but not all of them, need to be specified.
-`--dir` or `--replace` needs to be used if multiple input file is provided.
+Output files location. Either `--output`, `--dir` or `--replace` option, but
+not all of them, need to be specified. `--dir` or `--replace` needs to be used
+if multiple input file is provided.
 
 #### `--replace|-r`
 
-Replace input file(s) with generated output. Either `--output`, `--dir` or `--replace` option, but not all of them, need to be specified.
-`--replace` or `--dir` needs to be used if multiple input file is provided.
+Replace input file(s) with generated output. Either `--output`, `--dir` or
+`--replace` option, but not all of them, need to be specified. `--replace` or
+`--dir` needs to be used if multiple input file is provided.
 
 #### `--use|-u`
 
-Plugin to be used. Multiple plugins can be specified. At least one is required unless specified
-within config file.
+Plugin to be used. Multiple plugins can be specified. At least one plugin needs to be specified either with `--use` option or in the config file.
 
 #### `--local-plugins`
 
-Lookup plugins in the current `node_modules` directory. 
-Without this option, postcss-cli Will lookup plugins in the global `node_modules` directory.
+Look up plugins starting from `node_modules` located in the current working
+directory. Without this option, postcss-cli will look for the plugins in the
+`node_modules` in which it is installed - specifically if it is installed
+globally it will only look for plugins that are globally installed.
 
 #### `--watch|-w`
 
@@ -110,19 +113,19 @@ Note that command-line options can also be specified in the config file:
 }
 ````
 
-#### `-s, --syntax`
+#### `--syntax|-s`
 
 Optional module to use as a [custom PostCSS syntax](https://github.com/postcss/postcss#custom-syntaxes).
 
-#### `-p, --parser`
+#### `--parser|-p`
 
 Optional module to use as a [custom PostCSS input parser](https://github.com/postcss/postcss#custom-syntaxes).
 
-#### `-t, --stringifier`
+#### `--stringifier|-t`
 
 Optional module to use as a [custom PostCSS output stringifier](https://github.com/postcss/postcss#custom-syntaxes).
 
-#### `-h, --help`
+#### `--help|-h`
 
 Show help
 
@@ -142,7 +145,7 @@ Use multiple plugins and multiple input files
 
     postcss -u postcss-cachify -u autoprefixer -d build *.css
 
-## Licence
+## License
 
 MIT
 

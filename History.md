@@ -1,4 +1,10 @@
 
+2.3.1 / 2015-10-25
+==================
+
+ * update Travis config
+ * upgrade postcss-import dependency - fix deprecation warnings during make test-watch
+
 2.3.0 / 2015-10-24
 ==================
 

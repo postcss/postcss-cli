@@ -114,6 +114,8 @@ var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
 
+// hook for dynamically updating the list of watched files
+global.watchCSS = function() {}; // jshint ignore:line
 if (argv.watch) {
   var watchedFiles = inputFiles;
   var watcher = require('chokidar').watch(watchedFiles);
@@ -128,11 +130,8 @@ if (argv.watch) {
     watcher.add(files);
     watchedFiles = files;
   };
-} else {
-  global.watchCSS = function() {}; // jshint ignore:line
 }
 async.forEach(inputFiles, compile, onError);
-
 
 function compile(input, fn) {
   var output = argv.output;

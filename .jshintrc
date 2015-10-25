@@ -1,15 +1,8 @@
 {
+  "node": true,
   "undef": true,
   "unused": true,
   "laxbreak": true,
   "laxcomma": true,
-  "proto": true,
-  "globals": {
-    "console": false,
-    "exports": true,
-    "process": false,
-    "require": false,
-    "module": false,
-    "__dirname": false
-  }
+  "proto": true
 }

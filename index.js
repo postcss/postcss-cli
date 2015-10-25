@@ -1,3 +1,4 @@
+/* jshint node: true */
 var globby = require("globby");
 var resolve = require("resolve");
 var argv = require("yargs")
@@ -115,7 +116,7 @@ var postcss = require('postcss');
 var processor = postcss(plugins);
 
 // hook for dynamically updating the list of watched files
-global.watchCSS = function() {}; // jshint ignore:line
+global.watchCSS = function() {};
 if (argv.watch) {
   var watchedFiles = inputFiles;
   var watcher = require('chokidar').watch(watchedFiles);
@@ -125,7 +126,7 @@ if (argv.watch) {
     });
   });
 
-  global.watchCSS = function(files) { // jshint ignore:line
+  global.watchCSS = function(files) {
     watcher.unwatch(watchedFiles);
     watcher.add(files);
     watchedFiles = files;

@@ -62,7 +62,7 @@ into account:
 {
   "postcss-import": {
     onImport: function(sources) {
-      global.watchCSS(sources);
+      global.watchCSS(sources, this.from);
     }
   }
 }

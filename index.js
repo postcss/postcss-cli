@@ -69,6 +69,18 @@ if (!Array.isArray(argv.use)) {
   argv.use = [argv.use];
 }
 
+// support for postcss-import
+if (argv.use.indexOf("postcss-import") !== -1) {
+  var importConfig = argv["postcss-import"] || {};
+  argv["postcss-import"] = importConfig;
+  // auto-configure watch update hook
+  if(!importConfig.onImport) {
+    importConfig.onImport = function(sources) {
+      global.watchCSS(sources, this.from);
+    };
+  }
+}
+
 var inputFiles = globby.sync(argv._);
 if (!inputFiles.length) {
   if (argv.input) {

@@ -54,19 +54,20 @@ globally it will only look for plugins that are globally installed.
 
 Observe file system changes and recompile as source files change.
 
-When inlining CSS imports (e.g. with [postcss-import]), add an update handler
-to your JavaScript configuration file to ensure referenced modules are taken
-into account:
+When inlining CSS imports, add an update handler to your JavaScript
+configuration file to ensure referenced modules are taken into account:
 
 ```js
 {
   "postcss-import": {
     onImport: function(sources) {
-      global.watchCSS(sources);
+      global.watchCSS(sources, this.from);
     }
   }
 }
 ```
+
+For [postcss-import], this handler is added automatically.
 
 #### `--config|-c`
 

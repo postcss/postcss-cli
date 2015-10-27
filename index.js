@@ -69,6 +69,18 @@ if (!Array.isArray(argv.use)) {
   argv.use = [argv.use];
 }
 
+// support for postcss-import
+if (argv.use.indexOf("postcss-import") !== -1) {
+  var importConfig = argv["postcss-import"] || {};
+  argv["postcss-import"] = importConfig;
+  // auto-configure watch update hook
+  if(!importConfig.onImport) {
+    importConfig.onImport = function(sources) {
+      global.watchCSS(sources, this.from);
+    };
+  }
+}
+
 var inputFiles = globby.sync(argv._);
 if (!inputFiles.length) {
   if (argv.input) {
@@ -117,21 +129,39 @@ var processor = postcss(plugins);
 // hook for dynamically updating the list of watched files
 global.watchCSS = function() {};
 if (argv.watch) {
-  var watchedFiles = inputFiles;
+  global.watchCSS = fsWatcher(inputFiles);
+}
+
+async.forEach(inputFiles, compile, onError);
+
+function fsWatcher(entryPoints) {
+  var watchedFiles = entryPoints;
+  var index = {}; // source files by entry point
+
   var watcher = require('chokidar').watch(watchedFiles);
-  watcher.on('change', function() { // TODO: support for "add", "unlink" etc.?
-    async.forEach(inputFiles, compile, function(err) {
+  // recompile if any watched file is modified
+  // TODO: only recompile relevant entry point
+  watcher.on('change', function() {
+    async.forEach(entryPoints, compile, function(err) {
       return onError.call(this, err, true);
     });
   });
 
-  global.watchCSS = function(files) {
+  return function updateWatchedFiles(files, entryPoint) {
+    // update source files for current entry point
+    entryPoint = entryPoint || null;
+    index[entryPoint] = files;
+    // aggregate source files across entry points
+    var entryPoints = Object.keys(index);
+    var sources = entryPoints.reduce(function(files, entryPoint) {
+      return files.concat(index[entryPoint]);
+    }, []);
+    // update watch list
     watcher.unwatch(watchedFiles);
-    watcher.add(files);
-    watchedFiles = files;
+    watcher.add(sources);
+    watchedFiles = sources;
   };
 }
-async.forEach(inputFiles, compile, onError);
 
 function compile(input, fn) {
   var output = argv.output;

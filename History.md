@@ -1,4 +1,10 @@
 
+2.3.2 / 2015-10-27
+==================
+
+ * auto-configure postcss-import support
+ * add support for watching multiple entry points
+
 2.3.1 / 2015-10-25
 ==================
 

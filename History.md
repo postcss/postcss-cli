@@ -1,4 +1,9 @@
 
+2.3.3 / 2015-12-28
+==================
+
+ * add usage example for `local-plugins` option in config file
+
 2.3.2 / 2015-10-27
 ==================
 

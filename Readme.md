@@ -105,6 +105,7 @@ Note that command-line options can also be specified in the config file:
     "use": ["autoprefixer", "postcss-cachify"],
     "input": "screen.css",
     "output": "bundle.css",
+    "local-plugins": true,
     "autoprefixer": {
         "browsers": "> 5%"
     },

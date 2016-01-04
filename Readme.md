@@ -43,6 +43,10 @@ Replace input file(s) with generated output. Either `--output`, `--dir` or
 
 Plugin to be used. Multiple plugins can be specified. At least one plugin needs to be specified either with `--use` option or in the config file.
 
+#### `--map|-m`
+
+Generate source-map.
+
 #### `--local-plugins`
 
 Look up plugins starting from `node_modules` located in the current working

@@ -21,6 +21,8 @@ var argv = require("yargs")
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
   .describe('d', 'Output directory')
+  .alias('m', 'map')
+  .describe('m', 'Source map')
   .boolean('r')
   .alias('r', 'replace')
   .describe('r', 'Replace input file(s) with generated output')
@@ -170,10 +172,13 @@ function compile(input, fn) {
   } else if (argv.replace) {
     output = input;
   }
-  processCSS(processor, input, output, fn);
+  if (argv.map) {
+    map = true;
+  }
+  processCSS(processor, input, output, map, fn);
 }
 
-function processCSS(processor, input, output, fn) {
+function processCSS(processor, input, output, map, fn) {
   function doProcess(css, fn) {
     function onResult(result) {
       if (typeof result.warnings === 'function') {
@@ -184,7 +189,8 @@ function processCSS(processor, input, output, fn) {
 
     var options = {
       from: input,
-      to: output
+      to: output,
+      map: map !== 'undefined' ? map : false
     };
 
     Object.keys(customSyntaxOptions).forEach(function(opt) {

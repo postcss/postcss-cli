@@ -172,9 +172,9 @@ function compile(input, fn) {
   } else if (argv.replace) {
     output = input;
   }
-  if (argv.map) {
-    map = true;
-  }
+
+  map = typeof argv.map !== 'undefined' ? argv.map : false;
+
   processCSS(processor, input, output, map, fn);
 }
 
@@ -184,13 +184,13 @@ function processCSS(processor, input, output, map, fn) {
       if (typeof result.warnings === 'function') {
         result.warnings().forEach(console.error);
       }
-      fn(null, result.css);
+      fn(null, result);
     }
 
     var options = {
       from: input,
       to: output,
-      map: map !== 'undefined' ? map : false
+      map: map
     };
 
     Object.keys(customSyntaxOptions).forEach(function(opt) {
@@ -198,9 +198,10 @@ function processCSS(processor, input, output, map, fn) {
     });
 
     var result = processor.process(css, options);
+
     if (typeof result.then === 'function') {
       result.then(onResult).catch(fn);
-    } else{
+    } else {
       process.nextTick(onResult.bind(null, result));
     }
   }
@@ -208,7 +209,7 @@ function processCSS(processor, input, output, map, fn) {
   async.waterfall([
     async.apply(readFile, input),
     doProcess,
-    async.apply(writeFile, output)
+    async.apply(writeResult, output)
   ], fn);
 }
 
@@ -223,6 +224,16 @@ function onError(err, keepAlive) { // XXX: avoid overloaded signature?
       process.exit(1);
     }
   }
+}
+
+function writeResult (output, content, fn) {
+  var funcs = [
+    async.apply(writeFile, output, content.css)
+  ];
+  if (content.map) {
+    funcs.push(async.apply(writeFile, output + '.map', content.map.toString()));
+  }
+  async.parallel(funcs, fn);
 }
 
 function writeFile(name, content, fn) {

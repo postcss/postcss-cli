@@ -173,7 +173,7 @@ function compile(input, fn) {
     output = input;
   }
 
-  map = typeof argv.map !== 'undefined' ? argv.map : false;
+  var map = typeof argv.map !== 'undefined' ? argv.map : false;
   if (map === 'file') {
     map = { inline:false };
   }

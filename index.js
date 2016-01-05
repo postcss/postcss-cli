@@ -174,6 +174,9 @@ function compile(input, fn) {
   }
 
   map = typeof argv.map !== 'undefined' ? argv.map : false;
+  if (map === 'file') {
+    map = { inline:false };
+  }
 
   processCSS(processor, input, output, map, fn);
 }

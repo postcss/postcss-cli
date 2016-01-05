@@ -45,7 +45,7 @@ Plugin to be used. Multiple plugins can be specified. At least one plugin needs 
 
 #### `--map|-m`
 
-Generate source-map.
+Activate source-map. If you're using `--map|-m file` a seperate `.map` file is generated.
 
 #### `--local-plugins`
 

@@ -234,12 +234,12 @@ function onError(err, keepAlive) { // XXX: avoid overloaded signature?
   }
 }
 
-function writeResult (output, content, fn) {
+function writeResult (name, content, fn) {
   var funcs = [
-    async.apply(writeFile, output, content.css)
+    async.apply(writeFile, name, content.css)
   ];
-  if (content.map) {
-    funcs.push(async.apply(writeFile, output + '.map', content.map.toString()));
+  if (content.map && name) {
+    funcs.push(async.apply(writeFile, name + '.map', content.map.toString()));
   }
   async.parallel(funcs, fn);
 }

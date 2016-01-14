@@ -3,10 +3,18 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts stdout stdin config config-all js-config js-config-all invalid
+TESTS = opts source-maps source-maps-file stdout stdin config config-all js-config js-config-all invalid
+
+
 DIFF = diff -q
 
-test: test/build test-help test-version $(patsubst %,test/build/%.css,$(TESTS)) test-multi test-replace test-local-plugins
+test: test/build \
+	test-help \
+	test-version \
+	$(patsubst %,test/build/%.css,$(TESTS)) \
+	test-multi \
+	test-replace \
+	test-local-plugins
 
 test-help:
 	./bin/postcss --help
@@ -40,6 +48,15 @@ test-local-plugins:
 test/build/opts.css: test/in.css
 	./bin/postcss -u postcss-url --postcss-url.url=rebase -o $@ $<
 	$(DIFF) $@ $(subst build,ref,$@)
+
+test/build/source-maps.css: test/in.css
+	./bin/postcss -u postcss-url --postcss-url.url=rebase --map -o $@ $<
+	$(DIFF) $@ $(subst build,ref,$@)
+
+test/build/source-maps-file.css: test/in.css
+	./bin/postcss -u postcss-url --postcss-url.url=rebase --map file -o $@ $<
+	$(DIFF) $@ $(subst build,ref,$@)
+	$(DIFF) ${@}.map $(subst build,ref,${@}.map)
 
 test/build/stdout.css: test/in.css
 	./bin/postcss --use ./test/dummy-plugin $< > $@

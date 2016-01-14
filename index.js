@@ -121,6 +121,13 @@ var customSyntaxOptions = ['syntax', 'parser', 'stringifier']
     return cso;
   }, Object.create(null));
 
+
+var mapOptions = argv.map;
+// treat `--map file` as `--no-map.inline`
+if (mapOptions === 'file') {
+  mapOptions = { inline: false };
+}
+
 var async = require('neo-async');
 var fs = require('fs');
 var readFile = require('read-file-stdin');
@@ -173,15 +180,10 @@ function compile(input, fn) {
     output = input;
   }
 
-  var map = typeof argv.map !== 'undefined' ? argv.map : false;
-  if (map === 'file') {
-    map = { inline:false };
-  }
-
-  processCSS(processor, input, output, map, fn);
+  processCSS(processor, input, output, fn);
 }
 
-function processCSS(processor, input, output, map, fn) {
+function processCSS(processor, input, output, fn) {
   function doProcess(css, fn) {
     function onResult(result) {
       if (typeof result.warnings === 'function') {
@@ -192,13 +194,16 @@ function processCSS(processor, input, output, map, fn) {
 
     var options = {
       from: input,
-      to: output,
-      map: map
+      to: output
     };
 
     Object.keys(customSyntaxOptions).forEach(function(opt) {
       options[opt] = customSyntaxOptions[opt];
     });
+
+    if (typeof mapOptions !== 'undefined') {
+      options.map = mapOptions;
+    }
 
     var result = processor.process(css, options);
 

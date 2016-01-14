@@ -45,7 +45,15 @@ Plugin to be used. Multiple plugins can be specified. At least one plugin needs 
 
 #### `--map|-m`
 
-Activate source-map. If you're using `--map|-m file` a seperate `.map` file is generated.
+Activate source map generation. By default inline maps are generated. To generate source maps
+in a separate _.map_ file use `--map file` or `--no-map.inline`.
+
+You can use [advances source map options][source-map-options] - some examples:
+
+- `--no-map` - do not generated source maps - even if previous maps exist
+- `--map.annotation <path>` - specify alternaive path to be used in source map annotation appended to CSS
+- `--no-map.annotation` - supress adding annotation to CSS
+- `--no-map.sourcesContent` - remove origin CSS from maps
 
 #### `--local-plugins`
 
@@ -157,3 +165,4 @@ MIT
 
 [postcss]: https://github.com/postcss/postcss
 [postcss-import]: https://github.com/postcss/postcss-import
+[source-map-options]: https://github.com/postcss/postcss/blob/master/docs/source-maps.md

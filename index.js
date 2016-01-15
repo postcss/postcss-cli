@@ -21,6 +21,8 @@ var argv = require("yargs")
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
   .describe('d', 'Output directory')
+  .alias('m', 'map')
+  .describe('m', 'Source map')
   .boolean('r')
   .alias('r', 'replace')
   .describe('r', 'Replace input file(s) with generated output')
@@ -119,6 +121,13 @@ var customSyntaxOptions = ['syntax', 'parser', 'stringifier']
     return cso;
   }, Object.create(null));
 
+
+var mapOptions = argv.map;
+// treat `--map file` as `--no-map.inline`
+if (mapOptions === 'file') {
+  mapOptions = { inline: false };
+}
+
 var async = require('neo-async');
 var fs = require('fs');
 var readFile = require('read-file-stdin');
@@ -170,6 +179,7 @@ function compile(input, fn) {
   } else if (argv.replace) {
     output = input;
   }
+
   processCSS(processor, input, output, fn);
 }
 
@@ -179,7 +189,7 @@ function processCSS(processor, input, output, fn) {
       if (typeof result.warnings === 'function') {
         result.warnings().forEach(console.error);
       }
-      fn(null, result.css);
+      fn(null, result);
     }
 
     var options = {
@@ -191,10 +201,15 @@ function processCSS(processor, input, output, fn) {
       options[opt] = customSyntaxOptions[opt];
     });
 
+    if (typeof mapOptions !== 'undefined') {
+      options.map = mapOptions;
+    }
+
     var result = processor.process(css, options);
+
     if (typeof result.then === 'function') {
       result.then(onResult).catch(fn);
-    } else{
+    } else {
       process.nextTick(onResult.bind(null, result));
     }
   }
@@ -202,7 +217,7 @@ function processCSS(processor, input, output, fn) {
   async.waterfall([
     async.apply(readFile, input),
     doProcess,
-    async.apply(writeFile, output)
+    async.apply(writeResult, output)
   ], fn);
 }
 
@@ -217,6 +232,16 @@ function onError(err, keepAlive) { // XXX: avoid overloaded signature?
       process.exit(1);
     }
   }
+}
+
+function writeResult (name, content, fn) {
+  var funcs = [
+    async.apply(writeFile, name, content.css)
+  ];
+  if (content.map && name) {
+    funcs.push(async.apply(writeFile, name + '.map', content.map.toString()));
+  }
+  async.parallel(funcs, fn);
 }
 
 function writeFile(name, content, fn) {

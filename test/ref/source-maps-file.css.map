@@ -1,0 +1,1 @@
+{"version":3,"sources":["../in.css"],"names":[],"mappings":"AAAA;EACE,8BAA2B;EAC3B,cAAc;CACf","file":"source-maps-file.css","sourcesContent":["body {\n  background: url(image.png);\n  display: flex;\n}\n"]}

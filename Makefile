@@ -3,7 +3,7 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts source-maps source-maps-file stdout stdin config config-all js-config js-config-all invalid
+TESTS = opts source-maps source-maps-file stdout stdin config config-all js-config js-config-all invalid warning
 
 
 DIFF = diff -q
@@ -68,6 +68,9 @@ test/build/stdin.css: test/in.css
 
 test/build/invalid.css: test/in-force-error.css
 	./bin/postcss --use ./test/dummy-plugin --dummy-plugin.fail=true -o $@ $< || echo Error is OK here....
+
+test/build/warning.css: test/in-warning.css
+	./bin/postcss --use ./test/dummy-plugin -o $@ $< && echo Warning is OK here....
 
 test/build/config.css: test/in.css
 	./bin/postcss -u postcss-url -c test/config.json -o $@ $<

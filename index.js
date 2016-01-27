@@ -187,7 +187,7 @@ function processCSS(processor, input, output, fn) {
   function doProcess(css, fn) {
     function onResult(result) {
       if (typeof result.warnings === 'function') {
-        result.warnings().forEach(console.error);
+        result.warnings().forEach(function(w) { console.warn(w.toString()); });
       }
       fn(null, result);
     }

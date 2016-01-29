@@ -8,7 +8,7 @@ Traditional CLI for [postcss]
 
 ## Installation
 
-npm install postcss-cli
+`npm install postcss-cli`
 
 | postcss-cli version | postcss version |
 | ---- | ---- |

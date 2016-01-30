@@ -1,4 +1,10 @@
 
+2.5.0 / 2016-01-30
+==================
+
+ * move to postcss/postcss-cli repository
+ * Update Readme.md
+
 2.4.1 / 2016-01-27
 ==================
 

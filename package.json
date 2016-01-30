@@ -9,7 +9,7 @@
   "scripts": {
     "test": "make"
   },
-  "repository": "https://github.com/code42day/postcss-cli.git",
+  "repository": "https://github.com/postcss/postcss-cli.git",
   "keywords": [
     "postcss",
     "postcss-runner",

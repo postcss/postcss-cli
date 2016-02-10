@@ -86,7 +86,7 @@ if (argv.use.indexOf("postcss-import") !== -1) {
 var inputFiles = globby.sync(argv._);
 if (!inputFiles.length) {
   if (argv.input) {
-    inputFiles = Array.isArray(argv.input) ? argv.input : [argv.input];
+    inputFiles = Array.isArray(argv.input) ? argv.input : globby.sync(argv.input);
   } else { // use stdin if nothing else is specified
     inputFiles = [undefined];
   }

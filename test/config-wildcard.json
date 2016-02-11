@@ -1,0 +1,8 @@
+{
+  "use": "postcss-url",
+  "input": "test/i?.css",
+  "output": "test/build/config-wildcard.css",
+  "postcss-url": {
+    "url": "inline"
+  }
+}

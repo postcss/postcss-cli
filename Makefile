@@ -3,7 +3,7 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts source-maps source-maps-file stdout stdin config config-all js-config js-config-all invalid warning
+TESTS = opts source-maps source-maps-file stdout stdin config config-all config-wildcard js-config js-config-all invalid warning
 
 
 DIFF = diff -q
@@ -78,6 +78,10 @@ test/build/config.css: test/in.css
 
 test/build/config-all.css: test/in.css
 	./bin/postcss -c test/config-all.json
+	$(DIFF) $@ $(subst build,ref,$@)
+
+test/build/config-wildcard.css: test/in.css
+	./bin/postcss -c test/config-wildcard.json
 	$(DIFF) $@ $(subst build,ref,$@)
 
 test/build/js-config.css: test/in.css

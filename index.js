@@ -83,13 +83,11 @@ if (argv.use.indexOf("postcss-import") !== -1) {
   }
 }
 
-var inputFiles = globby.sync(argv._);
+var inputFiles = argv._.length ? argv._ : argv.input;
+inputFiles = globby.sync(inputFiles);
 if (!inputFiles.length) {
-  if (argv.input) {
-    inputFiles = Array.isArray(argv.input) ? argv.input : [argv.input];
-  } else { // use stdin if nothing else is specified
-    inputFiles = [undefined];
-  }
+  // use stdin if nothing else is specified
+  inputFiles = [undefined];
 }
 if (inputFiles.length > 1 && !argv.dir && !argv.replace) {
   throw 'Please specify either --replace or --dir [output directory] for your files';

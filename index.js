@@ -104,7 +104,7 @@ var plugins = argv.use.map(function(name) {
     plugin = require(name);
   }
   if (name in argv) {
-    plugin = plugin(argv[name]);
+    plugin = typeof plugin === 'function' ? plugin(argv[name]) : plugin.default(argv[name]);
   } else {
     plugin = plugin.postcss || plugin();
   }

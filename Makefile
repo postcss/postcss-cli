@@ -92,6 +92,10 @@ test/build/js-config-all.css: test/in.css
 	./bin/postcss -c test/config-all.js
 	$(DIFF) $@ $(subst build,ref,$@)
 
+test/build/mkdirp/in.css: test/in.css
+	./bin/postcss -u postcss-url -o  $@ $<
+	$(DIFF) $@ $(subst build,ref,$@)
+
 test/build:
 	mkdir -p $@
 

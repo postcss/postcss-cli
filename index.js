@@ -128,10 +128,12 @@ if (mapOptions === 'file') {
 
 var async = require('neo-async');
 var fs = require('fs');
+var path = require('path');
 var readFile = require('read-file-stdin');
 var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
+var mkdirp = require('mkdirp');
 
 // hook for dynamically updating the list of watched files
 global.watchCSS = function() {};
@@ -247,5 +249,12 @@ function writeFile(name, content, fn) {
     process.stdout.write(content);
     return fn();
   }
-  fs.writeFile(name, content, fn);
+
+  mkdirp(path.dirname(name), function (err) {
+    if (err) {
+      fn(err);
+    } else {
+      fs.writeFile(name, content, fn);
+    }
+  });
 }

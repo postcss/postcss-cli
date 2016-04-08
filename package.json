@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "globby": "^3.0.1",
+    "mkdirp": "^0.5.1",
     "neo-async": "^1.0.0",
     "postcss": "^5.0.0",
     "read-file-stdin": "^0.2.0",

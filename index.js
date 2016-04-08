@@ -1,7 +1,7 @@
 var globby = require("globby");
 var resolve = require("resolve");
 var argv = require("yargs")
-  .usage('Usage: $0 -use plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
+  .usage('Usage: $0 [--use|-u] plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
   .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
     'Use autoprefixer as a postcss plugin')
   .example('postcss --use autoprefixer --autoprefixer.browsers "> 5%" -o screen.css screen.css',

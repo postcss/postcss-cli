@@ -1,3 +1,10 @@
+2.5.2 / 2016-04-18
+==================
+
+  * Fix typo in help message: -use => [--use|-u]
+  * npm install --save mkdirp
+  * Support mkdirp to create dest path if it doesn't exists
+  * Fix booleans in config file
 
 2.5.1 / 2016-02-11
 ==================
@@ -113,7 +120,7 @@
 0.3.0 / 2015-03-19
 ==================
 
- * support JS format as plugins config 
+ * support JS format as plugins config
 
 0.2.0 / 2015-03-13
 ==================

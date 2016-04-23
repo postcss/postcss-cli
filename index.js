@@ -1,7 +1,7 @@
 var globby = require("globby");
 var resolve = require("resolve");
 var argv = require("yargs")
-  .usage('Usage: $0 -use plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
+  .usage('Usage: $0 [--use|-u] plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
   .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
     'Use autoprefixer as a postcss plugin')
   .example('postcss --use autoprefixer --autoprefixer.browsers "> 5%" -o screen.css screen.css',
@@ -128,10 +128,12 @@ if (mapOptions === 'file') {
 
 var async = require('neo-async');
 var fs = require('fs');
+var path = require('path');
 var readFile = require('read-file-stdin');
 var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
+var mkdirp = require('mkdirp');
 
 // hook for dynamically updating the list of watched files
 global.watchCSS = function() {};
@@ -247,5 +249,12 @@ function writeFile(name, content, fn) {
     process.stdout.write(content);
     return fn();
   }
-  fs.writeFile(name, content, fn);
+
+  mkdirp(path.dirname(name), function (err) {
+    if (err) {
+      fn(err);
+    } else {
+      fs.writeFile(name, content, fn);
+    }
+  });
 }

@@ -36,6 +36,8 @@ var argv = require("yargs")
   })
   .alias('t', 'stringifier')
   .describe('t', 'Alternative output stringifier')
+  .alias('l', 'log')
+  .describe('l', 'Log when file is written')
   .alias('w', 'watch')
   .describe('w', 'auto-recompile when detecting source changes')
   .requiresArg(['u', 'c', 'i', 'o', 'd', 's', 'p', 't'])
@@ -269,6 +271,10 @@ function writeFile(name, content, fn) {
       fn(err);
     } else {
       fs.writeFile(name, content, fn);
+
+      if (argv.log) {
+        console.log('Generated file: ' + name);
+      }
     }
   });
 }

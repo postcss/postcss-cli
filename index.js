@@ -257,11 +257,10 @@ function writeFile(name, content, fn) {
       fn(err);
     } else {
       fs.writeFile(name, content, fn);
+
+      if (argv.log) {
+        console.log('Generated file: ' + name);
+      }
     }
   });
-  if (argv.log) {
-    console.log('Generated file: ' + name);
-  }
-
-  fs.writeFile(name, content, fn);
 }

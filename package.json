@@ -27,7 +27,7 @@
     "yargs": "^4.7.1"
   },
   "optionalDependencies": {
-    "chokidar": "^1.0.3"
+    "chokidar": "^1.5.1"
   },
   "devDependencies": {
     "jshint": "^2.6.3",

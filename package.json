@@ -30,7 +30,7 @@
     "chokidar": "^1.5.1"
   },
   "devDependencies": {
-    "jshint": "^2.6.3",
+    "jshint": "^2.9.2",
     "postcss-import": "^7.1.0",
     "postcss-url": "^4.0.0"
   }

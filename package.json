@@ -18,7 +18,7 @@
   "author": "Damian Krzeminski <pirxpilot@code42day.com>",
   "license": "MIT",
   "dependencies": {
-    "globby": "^3.0.1",
+    "globby": "^4.1.0",
     "mkdirp": "^0.5.1",
     "neo-async": "^1.0.0",
     "postcss": "^5.0.0",

@@ -32,6 +32,6 @@
   "devDependencies": {
     "jshint": "^2.9.2",
     "postcss-import": "^7.1.0",
-    "postcss-url": "^4.0.0"
+    "postcss-url": "^5.1.2"
   }
 }

@@ -24,7 +24,7 @@
     "postcss": "^5.0.0",
     "read-file-stdin": "^0.2.0",
     "resolve": "^1.1.6",
-    "yargs": "^3.32.0"
+    "yargs": "^4.7.1"
   },
   "optionalDependencies": {
     "chokidar": "^1.0.3"

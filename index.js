@@ -44,7 +44,7 @@ var argv = require("yargs")
       'postcss version',
       require('./node_modules/postcss/package.json').version
     ].join(' ');
-  }, 'v')
+  })
   .alias('v', 'version')
   .help('h')
   .alias('h', 'help')

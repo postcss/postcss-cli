@@ -49,9 +49,6 @@ var argv = require("yargs")
   .help('h')
   .alias('h', 'help')
   .check(function(argv) {
-    if (!argv.use) {
-      throw 'Please specify at least one plugin name.';
-    }
     if (argv._.length && argv.input) {
       throw 'Both positional arguments and --input option used for `input file`: please only use one of them.';
     }
@@ -104,8 +101,10 @@ var plugins = argv.use.map(function(name) {
   if (local) {
     var resolved = resolve.sync(name, {basedir: process.cwd()});
     plugin = require(resolved);
-  } else {
+  } else if (name) {
     plugin = require(name);
+  } else {
+    return null;
   }
   if (name in argv) {
     plugin = plugin(argv[name]);
@@ -136,7 +135,7 @@ var path = require('path');
 var readFile = require('read-file-stdin');
 var path = require('path');
 var postcss = require('postcss');
-var processor = postcss(plugins);
+var processor = plugins[0] ? postcss(plugins) : postcss();
 var mkdirp = require('mkdirp');
 
 // hook for dynamically updating the list of watched files

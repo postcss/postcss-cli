@@ -3,7 +3,7 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts source-maps source-maps-file stdout stdin config config-all config-wildcard js-config js-config-all invalid warning
+TESTS = opts source-maps source-maps-file stdout stdin config config-all config-wildcard js-config js-config-all invalid warning no-plugin
 
 
 DIFF = diff -q
@@ -82,6 +82,9 @@ test/build/invalid.css: test/in-force-error.css
 
 test/build/warning.css: test/in-warning.css
 	./bin/postcss --use ./test/dummy-plugin -o $@ $< && echo Warning is OK here....
+
+test/build/no-plugin.css: test/no-plugin.css
+	./bin/postcss ./test/no-plugin.css -o $@ && echo It works without plugins
 
 test/build/config.css: test/in.css
 	./bin/postcss -u postcss-url -c test/config.json -o $@ $<

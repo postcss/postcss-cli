@@ -104,7 +104,7 @@ var plugins = argv.use.map(function(name) {
     plugin = require(name);
   }
   if (plugin.default && typeof plugin.default === 'function') {
-    plugin = plugin.default
+    plugin = plugin.default;
   }
   if (name in argv) {
     plugin = plugin(argv[name]);

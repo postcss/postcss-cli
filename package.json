@@ -1,6 +1,6 @@
 {
-  "name": "postcss-cli",
-  "version": "2.5.2",
+  "name": "zoro-postcss-cli",
+  "version": "0.0.1",
   "description": "CLI for postcss",
   "main": "index.js",
   "bin": {

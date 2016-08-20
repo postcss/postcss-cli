@@ -30,6 +30,10 @@ var argv = require("yargs")
   .describe('s', 'Alternative input syntax parser')
   .alias('p', 'parser')
   .describe('p', 'Alternative CSS parser')
+  .option('poll', {
+    describe: 'Use polling to monitor for changes.',
+    default: false,
+  })
   .alias('t', 'stringifier')
   .describe('t', 'Alternative output stringifier')
   .alias('w', 'watch')
@@ -146,8 +150,16 @@ async.forEach(inputFiles, compile, onError);
 function fsWatcher(entryPoints) {
   var watchedFiles = entryPoints;
   var index = {}; // source files by entry point
+  var opts = {};
 
-  var watcher = require('chokidar').watch(watchedFiles);
+  if (argv.poll) {
+    opts.usePolling = true;
+  }
+  if (typeof argv.poll === 'number') {
+    opts.interval = argv.poll;
+  }
+
+  var watcher = require('chokidar').watch(watchedFiles, opts);
   // recompile if any watched file is modified
   // TODO: only recompile relevant entry point
   watcher.on('change', function() {

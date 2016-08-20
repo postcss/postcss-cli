@@ -34,10 +34,10 @@ test-replace:
 test-watch: test/import-*.css
 	echo '@import "import-foo.css";' > test/import-index.css
 	./bin/postcss -c test/config-watch.js -w & echo $$! > test/watch.pid
-	sleep 0.2
+	sleep 1
 	$(DIFF) test/build/watch.css test/ref/watch-1.css
 	echo '@import "import-bar.css";' >> test/import-index.css
-	sleep 0.2
+	sleep 1
 	$(DIFF) test/build/watch.css test/ref/watch-2.css
 	kill `cat test/watch.pid` # FIXME: never reached on failure
 	rm test/watch.pid

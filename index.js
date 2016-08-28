@@ -1,5 +1,6 @@
 var globby = require("globby");
 var resolve = require("resolve");
+var path = require('path');
 var argv = require("yargs")
   .usage('Usage: $0 [--use|-u] plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
   .example('postcss --use autoprefixer -c options.json -o screen.css screen.css',
@@ -17,6 +18,8 @@ var argv = require("yargs")
     describe: 'lookup plugins in current node_modules directory'
   })
   .alias('i', 'input')
+  .alias('x', 'inputContext')
+  .describe('x', 'Directory context for input files when outputting to nested directories')
   .alias('o', 'output')
   .describe('o', 'Output file (stdout if not provided)')
   .alias('d', 'dir')
@@ -84,7 +87,9 @@ if (argv.use.indexOf("postcss-import") !== -1) {
 }
 
 var inputFiles = argv._.length ? argv._ : argv.input;
-inputFiles = globby.sync(inputFiles);
+var inputPath = argv.inputContext ? path.join( argv.inputContext, inputFiles ) : inputFiles;
+inputFiles = globby.sync(inputPath);
+
 if (!inputFiles.length) {
   // use stdin if nothing else is specified
   inputFiles = [undefined];
@@ -128,9 +133,7 @@ if (mapOptions === 'file') {
 
 var async = require('neo-async');
 var fs = require('fs');
-var path = require('path');
 var readFile = require('read-file-stdin');
-var path = require('path');
 var postcss = require('postcss');
 var processor = postcss(plugins);
 var mkdirp = require('mkdirp');
@@ -173,9 +176,16 @@ function fsWatcher(entryPoints) {
 }
 
 function compile(input, fn) {
+  var inputPath;
   var output = argv.output;
   if (argv.dir) {
-    output = path.join(argv.dir, path.basename(input));
+    if (argv.inputContext) {  
+      inputPath = input.replace( argv.inputContext, '' );
+    }
+    else {
+      inputPath = path.basename(input);
+    }
+    output = path.join( argv.dir, inputPath );
   } else if (argv.replace) {
     output = input;
   }

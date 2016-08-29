@@ -18,20 +18,20 @@
   "author": "Damian Krzeminski <pirxpilot@code42day.com>",
   "license": "MIT",
   "dependencies": {
-    "globby": "^3.0.1",
+    "globby": "^4.1.0",
     "mkdirp": "^0.5.1",
     "neo-async": "^1.0.0",
     "postcss": "^5.0.0",
     "read-file-stdin": "^0.2.0",
     "resolve": "^1.1.6",
-    "yargs": "^3.32.0"
+    "yargs": "^4.7.1"
   },
   "optionalDependencies": {
-    "chokidar": "^1.0.3"
+    "chokidar": "^1.5.1"
   },
   "devDependencies": {
-    "jshint": "^2.6.3",
-    "postcss-import": "^7.1.0",
-    "postcss-url": "^4.0.0"
+    "jshint": "^2.9.2",
+    "postcss-import": "^8.1.2",
+    "postcss-url": "^5.1.2"
   }
 }

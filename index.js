@@ -30,8 +30,14 @@ var argv = require("yargs")
   .describe('s', 'Alternative input syntax parser')
   .alias('p', 'parser')
   .describe('p', 'Alternative CSS parser')
+  .option('poll', {
+    describe: 'Use polling to monitor for changes.',
+    default: false,
+  })
   .alias('t', 'stringifier')
   .describe('t', 'Alternative output stringifier')
+  .alias('l', 'log')
+  .describe('l', 'Log when file is written')
   .alias('w', 'watch')
   .describe('w', 'auto-recompile when detecting source changes')
   .requiresArg(['u', 'c', 'i', 'o', 'd', 's', 'p', 't'])
@@ -40,14 +46,11 @@ var argv = require("yargs")
       'postcss version',
       require('./node_modules/postcss/package.json').version
     ].join(' ');
-  }, 'v')
+  })
   .alias('v', 'version')
   .help('h')
   .alias('h', 'help')
   .check(function(argv) {
-    if (!argv.use) {
-      throw 'Please specify at least one plugin name.';
-    }
     if (argv._.length && argv.input) {
       throw 'Both positional arguments and --input option used for `input file`: please only use one of them.';
     }
@@ -100,8 +103,13 @@ var plugins = argv.use.map(function(name) {
   if (local) {
     var resolved = resolve.sync(name, {basedir: process.cwd()});
     plugin = require(resolved);
-  } else {
+  } else if (name) {
     plugin = require(name);
+  } else {
+    return null;
+  }
+  if (plugin.default && typeof plugin.default === 'function') {
+    plugin = plugin.default;
   }
   if (name in argv) {
     plugin = plugin(argv[name]);
@@ -132,7 +140,7 @@ var path = require('path');
 var readFile = require('read-file-stdin');
 var path = require('path');
 var postcss = require('postcss');
-var processor = postcss(plugins);
+var processor = plugins[0] ? postcss(plugins) : postcss();
 var mkdirp = require('mkdirp');
 
 // hook for dynamically updating the list of watched files
@@ -146,8 +154,16 @@ async.forEach(inputFiles, compile, onError);
 function fsWatcher(entryPoints) {
   var watchedFiles = entryPoints;
   var index = {}; // source files by entry point
+  var opts = {};
 
-  var watcher = require('chokidar').watch(watchedFiles);
+  if (argv.poll) {
+    opts.usePolling = true;
+  }
+  if (typeof argv.poll === 'number') {
+    opts.interval = argv.poll;
+  }
+
+  var watcher = require('chokidar').watch(watchedFiles, opts);
   // recompile if any watched file is modified
   // TODO: only recompile relevant entry point
   watcher.on('change', function() {
@@ -255,6 +271,10 @@ function writeFile(name, content, fn) {
       fn(err);
     } else {
       fs.writeFile(name, content, fn);
+
+      if (argv.log) {
+        console.log('Generated file: ' + name);
+      }
     }
   });
 }

@@ -3,7 +3,7 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts source-maps source-maps-file stdout stdin config config-all config-wildcard js-config js-config-all invalid warning
+TESTS = opts source-maps source-maps-file stdout stdin config config-all config-wildcard js-config js-config-all invalid warning no-plugin
 
 
 DIFF = diff -q
@@ -42,6 +42,17 @@ test-watch: test/import-*.css
 	kill `cat test/watch.pid` # FIXME: never reached on failure
 	rm test/watch.pid
 
+test-watch-poll: test/import-*.css
+	echo '@import "import-foo.css";' > test/import-index.css
+	./bin/postcss -c test/config-watch.js -w --poll & echo $$! > test/watch.pid
+	sleep 1
+	$(DIFF) test/build/watch.css test/ref/watch-1.css
+	echo '@import "import-bar.css";' >> test/import-index.css
+	sleep 1
+	$(DIFF) test/build/watch.css test/ref/watch-2.css
+	kill `cat test/watch.pid` # FIXME: never reached on failure
+	rm test/watch.pid
+
 test-local-plugins:
 	cd test; ../bin/postcss --use a-dummy-plugin --local-plugins -o build/local-plugins in.css
 
@@ -71,6 +82,9 @@ test/build/invalid.css: test/in-force-error.css
 
 test/build/warning.css: test/in-warning.css
 	./bin/postcss --use ./test/dummy-plugin -o $@ $< && echo Warning is OK here....
+
+test/build/no-plugin.css: test/no-plugin.css
+	./bin/postcss ./test/no-plugin.css -o $@ && echo It works without plugins
 
 test/build/config.css: test/in.css
 	./bin/postcss -u postcss-url -c test/config.json -o $@ $<

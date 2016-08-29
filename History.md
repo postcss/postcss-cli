@@ -1,3 +1,18 @@
+2.6.0 / 2016-08-30
+==================
+
+  * Add log option
+  * Update postcss-import to v8.1.2 from v7.1.0
+  * Update globby to v4.1.0 from v3.0.1
+  * Update postcss-url to v5.1.2 from v4.0.0
+  * Update jshint to v2.9.2 from v2.6.3
+  * Update chokidar to v1.5.1 from v1.0.3
+  * Update yargs to v4.7.1 from v3.32.0
+  * Support es6 export
+  * Allow running without plugins
+  * Add test for --poll
+  * Add --poll flag
+
 2.5.2 / 2016-04-18
 ==================
 

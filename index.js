@@ -182,9 +182,14 @@ function fsWatcher(entryPoints) {
       return files.concat(index[entryPoint]);
     }, []);
     // update watch list
-    watcher.unwatch(watchedFiles);
+    var newSources = [];
+    sources.forEach(function (src) {
+      if (watchedFiles.indexOf(src) === -1) {
+        newSources.push(src);
+      }
+    });
     watcher.add(sources);
-    watchedFiles = sources;
+    watchedFiles = watchedFiles.concat(newSources);
   };
 }
 

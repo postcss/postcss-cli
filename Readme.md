@@ -33,6 +33,10 @@ Output files location. Either `--output`, `--dir` or `--replace` option, but
 not all of them, need to be specified. `--dir` or `--replace` needs to be used
 if multiple input file is provided.
 
+#### `--inputContext|-x`
+
+Optional declaration of parent folder for input when `--dir` is used and an input glob may return nested directories. When applied, `--input` glob will be relative to `--inputContext` and folder structure inside `--inputContext` will be mimicked in `--dir`
+
 #### `--replace|-r`
 
 Replace input file(s) with generated output. Either `--output`, `--dir` or

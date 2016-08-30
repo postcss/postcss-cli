@@ -13,6 +13,7 @@ test: test/build \
 	test-version \
 	$(patsubst %,test/build/%.css,$(TESTS)) \
 	test-multi \
+	test-context \
 	test-replace \
 	test-local-plugins
 
@@ -25,6 +26,10 @@ test-version:
 test-multi:
 	./bin/postcss -u postcss-url --dir test/build test/multi*.css
 	$(DIFF) test/build/multi*.css --to-file=test/ref
+
+test-context:
+	./bin/postcss -c test/config-context.js
+	$(DIFF) test/build/test-context/in.css test/ref/test-context/in.css
 
 test-replace:
 	 cp test/replace.css test/build/replace.css

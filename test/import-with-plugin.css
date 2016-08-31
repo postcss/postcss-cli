@@ -1,0 +1,5 @@
+@import "import-with-plugin-source-maps.css";
+
+.bar {
+  color: #0F0;
+}

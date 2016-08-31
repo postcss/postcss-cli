@@ -1,0 +1,10 @@
+body {
+  background: url(image.png);
+  display: flex;
+}
+
+.bar {
+  color: #0F0;
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL2ltcG9ydC13aXRoLXBsdWdpbi1zb3VyY2UtbWFwcy5jc3MiLCIuLi9pbXBvcnQtd2l0aC1wbHVnaW4uY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsMkJBQTJCO0VBQzNCLGNBQWM7Q0FDZjs7QUNERDtFQUNFLFlBQVk7Q0FDYiIsImZpbGUiOiJpbXBvcnQtd2l0aC1wbHVnaW4uY3NzIiwic291cmNlc0NvbnRlbnQiOlsiYm9keSB7XG4gIGJhY2tncm91bmQ6IHVybChpbWFnZS5wbmcpO1xuICBkaXNwbGF5OiBmbGV4O1xufVxuIiwiQGltcG9ydCBcImltcG9ydC13aXRoLXBsdWdpbi1zb3VyY2UtbWFwcy5jc3NcIjtcblxuLmJhciB7XG4gIGNvbG9yOiAjMEYwO1xufVxuIl19 */

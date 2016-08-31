@@ -3,7 +3,7 @@ all: clean lint test
 lint:
 	./node_modules/.bin/jshint *.js
 
-TESTS = opts source-maps source-maps-file stdout stdin config config-all config-wildcard js-config js-config-all invalid warning no-plugin
+TESTS = opts source-maps source-maps-file import-with-plugin stdout stdin config config-all config-wildcard js-config js-config-all invalid warning no-plugin
 
 
 DIFF = diff -q
@@ -68,6 +68,10 @@ test/build/source-maps-file.css: test/in.css
 	./bin/postcss -u postcss-url --postcss-url.url=rebase --map file -o $@ $<
 	$(DIFF) $@ $(subst build,ref,$@)
 	$(DIFF) ${@}.map $(subst build,ref,${@}.map)
+
+test/build/import-with-plugin.css: test/import-with-plugin.css
+	./bin/postcss -u postcss-import --map -o $@ $<
+	$(DIFF) $@ $(subst build,ref,$@)
 
 test/build/stdout.css: test/in.css
 	./bin/postcss --use ./test/dummy-plugin $< > $@

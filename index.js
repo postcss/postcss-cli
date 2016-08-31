@@ -129,9 +129,12 @@ var customSyntaxOptions = ['syntax', 'parser', 'stringifier']
 
 
 var mapOptions = argv.map;
-// treat `--map file` as `--no-map.inline`
 if (mapOptions === 'file') {
+  // treat `--map file` as `--no-map.inline`
   mapOptions = { inline: false };
+} else if (mapOptions === true) {
+  // treat `--map` as `--map.inline`
+  mapOptions = { inline: true };
 }
 
 var async = require('neo-async');

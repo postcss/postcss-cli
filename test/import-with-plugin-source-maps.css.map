@@ -1,0 +1,1 @@
+{"version":3,"sources":["../import-with-plugin-source-maps.css"],"names":[],"mappings":"AAAA;EACE,2BAA2B;EAC3B,cAAc;CACf","file":"import-with-plugin-source-maps.css","sourcesContent":["body {\n  background: url(image.png);\n  display: flex;\n}\n"]}

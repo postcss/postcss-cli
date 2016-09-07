@@ -92,9 +92,6 @@ if (!inputFiles.length) {
   // use stdin if nothing else is specified
   inputFiles = [undefined];
 }
-if (inputFiles.length > 1 && !argv.dir && !argv.replace) {
-  throw 'Please specify either --replace or --dir [output directory] for your files';
-}
 
 // load and configure plugin array
 var plugins = argv.use.map(function(name) {

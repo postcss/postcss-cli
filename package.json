@@ -2,7 +2,7 @@
   "name": "postcss-cli",
   "version": "2.6.0",
   "description": "CLI for postcss",
-  "main": "index.js",
+  "main": "lib/index.js",
   "bin": {
     "postcss": "./bin/postcss"
   },

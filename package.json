@@ -2,11 +2,12 @@
   "name": "postcss-cli",
   "version": "2.6.0",
   "description": "CLI for postcss",
-  "main": "index.js",
+  "main": "lib/index.js",
   "bin": {
     "postcss": "./bin/postcss"
   },
   "scripts": {
+    "pretest": "standard lib/*.js bin/*.js",
     "test": "make"
   },
   "repository": "https://github.com/postcss/postcss-cli.git",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "jshint": "^2.9.2",
     "postcss-import": "^8.1.2",
-    "postcss-url": "^5.1.2"
+    "postcss-url": "^5.1.2",
+    "standard": "^8.5.0"
   }
 }

@@ -1,3 +1,90 @@
 #!/usr/bin/env node
+var cli = require('yargs')
 
-require('../');
+cli.usage('Usage: $0 [--use|-u] plugin [--config|-c config.json] [--output|-o output.css] [input.css]')
+
+cli.example('postcss --use autoprefixer -c options.json -o screen.css screen.css', 'Use autoprefixer as a postcss plugin')
+cli.example('postcss --use autoprefixer --autoprefixer.browsers "> 5%" -o screen.css screen.css', 'Pass plugin parameters in plugin.option notation')
+cli.example('postcss -u postcss-cachify -u autoprefixer -d build *.css', 'Use multiple plugins and multiple input files')
+
+cli.config('c')
+cli.alias('c', 'config')
+cli.describe('c', 'JSON file with plugin configuration')
+
+cli.alias('u', 'use')
+cli.describe('u', 'postcss plugin name (can be used multiple times)')
+
+cli.option('local-plugins', {
+  describe: 'lookup plugins in current node_modules directory'
+})
+
+cli.alias('i', 'input')
+
+cli.alias('o', 'output')
+cli.describe('o', 'Output file (stdout if not provided)')
+
+cli.alias('d', 'dir')
+cli.describe('d', 'Output directory')
+
+cli.alias('m', 'map')
+cli.describe('m', 'Source map')
+
+cli.boolean('r')
+cli.alias('r', 'replace')
+cli.describe('r', 'Replace input file(s) with generated output')
+
+cli.alias('s', 'syntax')
+cli.describe('s', 'Alternative input syntax parser')
+
+cli.alias('p', 'parser')
+cli.describe('p', 'Alternative CSS parser')
+
+cli.option('poll', {
+  describe: 'Use polling to monitor for changes.',
+  default: false,
+})
+
+cli.alias('t', 'stringifier')
+cli.describe('t', 'Alternative output stringifier')
+
+cli.alias('l', 'log')
+cli.describe('l', 'Log when file is written')
+
+cli.alias('w', 'watch')
+cli.describe('w', 'auto-recompile when detecting source changes')
+
+cli.requiresArg(['u', 'c', 'i', 'o', 'd', 's', 'p', 't'])
+
+cli.version(function() {
+  return [
+    'postcss version',
+    require('../node_modules/postcss/package.json').version
+  ].join(' ')
+})
+cli.alias('v', 'version')
+
+cli.help('h')
+cli.alias('h', 'help')
+
+cli.check(function(argv) {
+  if (argv._.length && argv.input) {
+    throw 'Both positional arguments and --input option used for `input file`: please only use one of them.'
+  }
+  if (argv.output && argv.dir && argv.replace) {
+    throw '`output file`, `output directory` and `replace` provided: please use either --output, --dir or --replace option only.'
+  }
+  if (argv.output && argv.dir) {
+    throw 'Both `output file` and `output directory` provided: please use either --output or --dir option.'
+  }
+  if (argv.output && argv.replace) {
+    throw 'Both `output file` and `replace` provided: please use either --output or --replace option.'
+  }
+  if (argv.dir && argv.replace) {
+    throw 'Both `output directory` and `replace` provided: please use either --dir or --replace option.'
+  }
+  return true
+})
+
+var postcssCLI = require('../lib/')
+var argv = cli.argv
+postcssCLI(argv)

@@ -1,7 +1,4 @@
-all: clean lint test
-
-lint:
-	./node_modules/.bin/jshint *.js
+all: clean test
 
 TESTS = opts source-maps source-maps-file stdout stdin config config-all config-wildcard js-config js-config-all invalid warning no-plugin
 
@@ -116,4 +113,4 @@ test/build:
 clean:
 	rm -rf test/build
 
-.PHONY: all lint clean test test-help test-version test-multi test-watch test-replace
+.PHONY: all clean test test-help test-version test-multi test-watch test-replace

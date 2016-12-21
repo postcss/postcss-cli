@@ -152,6 +152,11 @@ if (argv.watch) {
 async.forEach(inputFiles, compile, onError);
 
 function fsWatcher(entryPoints) {
+  if (entryPoints[0] === undefined) {
+    // globby expanded to nothing
+    onError.call(this, new Error('Input files not found, unable to use stdin in --watch mode'), false);
+  }
+
   var watchedFiles = entryPoints;
   var index = {}; // source files by entry point
   var opts = {};

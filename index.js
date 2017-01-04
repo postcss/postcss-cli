@@ -64,18 +64,22 @@ if (argv.replace) {
   output = input
 }
 
+if (!output && !dir) {
+  throw new Error('Must pass --output, --dir, or --replace option')
+}
+
 console.log(chalk.bold.red(logo))
 
+spinner.text = `Loading Files`
+spinner.start()
 globber(input).then((files) => {
-  spinner.text = `Loading Files`
+
+  if (files && files.length) spinner.succeed()
+  else throw new Error('You must pass a list of files to parse')
+
+  spinner.text = `Loading Config`
   spinner.start()
-
-  files ? spinner.succeed() : spinner.fail()
-
-  postcssrc().then((config) => {
-    spinner.text = `Loading Config`
-    spinner.start()
-
+  return postcssrc().then((config) => {
     files.forEach((file) => {
       fs.readFile(file, (err, css) => {
         if (err) throw err
@@ -113,12 +117,14 @@ globber(input).then((files) => {
              }
            })
 
-           result.messages ? spinner.succeed() : spinner.failed()
+           result.messages ? spinner.succeed() : spinner.fail()
          })
+         .catch(errorHandler)
       })
     })
   })
 })
+.catch(errorHandler)
 
 if (argv.watch) {
   spinner.text = 'Waiting for file changes...'
@@ -144,10 +150,21 @@ if (argv.watch) {
          result.messages.length === 0 ? spinner.succeed() : spinner.fail()
        })
     })
+    .catch(errorHandler)
 
     setTimeout(() => {
       spinner.text = 'Waiting for file changes...'
       spinner.start()
     }, 10000)
   })
+}
+
+function errorHandler(err) {
+  try {
+    spinner.fail()
+  } catch (e) {
+    // Don't worry about this
+  }
+  console.error(err)
+  process.exit(1)
 }

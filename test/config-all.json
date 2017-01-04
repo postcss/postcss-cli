@@ -1,8 +1,0 @@
-{
-  "use": "postcss-url",
-  "input": "test/in.css",
-  "output": "test/build/config-all.css",
-  "postcss-url": {
-    "url": "inline"
-  }
-}

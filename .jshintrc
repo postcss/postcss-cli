@@ -1,8 +1,0 @@
-{
-  "node": true,
-  "undef": true,
-  "unused": true,
-  "laxbreak": true,
-  "laxcomma": true,
-  "proto": true
-}

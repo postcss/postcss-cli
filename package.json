@@ -7,7 +7,8 @@
     "postcss": "./bin/postcss"
   },
   "scripts": {
-    "test": "make"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "standard"
   },
   "repository": "https://github.com/postcss/postcss-cli.git",
   "keywords": [
@@ -15,23 +16,20 @@
     "postcss-runner",
     "cli"
   ],
-  "author": "Damian Krzeminski <pirxpilot@code42day.com>",
+  "author": {
+    "name": "Michael Ciniawky",
+    "email": "michael.ciniawsky@gmail.com"
+  },
   "license": "MIT",
   "dependencies": {
-    "globby": "^4.1.0",
-    "mkdirp": "^0.5.1",
-    "neo-async": "^1.0.0",
-    "postcss": "^5.0.0",
-    "read-file-stdin": "^0.2.0",
-    "resolve": "^1.1.6",
-    "yargs": "^4.7.1"
-  },
-  "optionalDependencies": {
-    "chokidar": "^1.5.1"
+    "chokidar": "^1.6.1",
+    "globby": "^6.0.0",
+    "ora": "^0.4.0",
+    "postcss": "^5.2.4",
+    "postcss-load-config": "^1.0.0-rc",
+    "yargs": "^6.0.0"
   },
   "devDependencies": {
-    "jshint": "^2.9.2",
-    "postcss-import": "^8.1.2",
-    "postcss-url": "^5.1.2"
+    "standard": "^8.4.0"
   }
 }

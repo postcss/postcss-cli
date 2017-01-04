@@ -24,7 +24,7 @@ npm i -D postcss-cli
 ## Usage
 
 ```bash
-postcss [options] [input] [-o output|-d output-dir] [--watch]
+postcss [options] [input] [-o output|-d output-dir|-r] [--watch]
 ```
 
 ## Options
@@ -37,11 +37,15 @@ Input file
 
 Output file
 
+**Note:** You must use `--dir` or `--replace` when multiple input files are provided.
+
 #### `--dir|-d`
 
 Output directory
 
-Use `--dir` when multiple input file are provided.
+#### `--replace|-r`
+
+Replace the input files with the output.
 
 #### `--parser|-p`
 

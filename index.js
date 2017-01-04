@@ -35,6 +35,7 @@ const argv = require('yargs')
   .alias('i', 'input').describe('i', 'Input')
   .alias('o', 'output').describe('o', 'Output')
   .alias('d', 'dir').describe('d', 'Output Directory')
+  .alias('r', 'replace').describe('r', 'Replace the input file')
   .alias('m', 'map').describe('m', 'Sourcemaps')
   .alias('p', 'parser').describe('p', 'Parser')
   .alias('s', 'syntax').describe('s', 'Syntax')
@@ -73,7 +74,6 @@ console.log(chalk.bold.red(logo))
 spinner.text = `Loading Files`
 spinner.start()
 globber(input).then((files) => {
-
   if (files && files.length) spinner.succeed()
   else throw new Error('You must pass a list of files to parse')
 
@@ -159,7 +159,7 @@ if (argv.watch) {
   })
 }
 
-function errorHandler(err) {
+function errorHandler (err) {
   try {
     spinner.fail()
   } catch (e) {

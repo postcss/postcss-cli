@@ -1,5 +1,5 @@
 'use strict'
-const fs = require('fs')
+const fs = require('fs-promise')
 const path = require('path')
 
 const chalk = require('chalk')
@@ -81,48 +81,35 @@ globber(input).then((files) => {
   spinner.text = `Loading Config`
   spinner.start()
   return postcssrc().then((config) => {
-    files.forEach((file) => {
-      fs.readFile(file, (err, css) => {
-        if (err) throw err
+    return Promise.all(files.map(file => {
+      return fs.readFile(file)
+        .then(css => {
+          config !== undefined ? spinner.succeed() : spinner.fail()
 
-        config !== undefined ? spinner.succeed() : spinner.fail()
+          spinner.text = `Processing ${file}`
+          spinner.start()
 
-        spinner.text = `Processing ${file}`
-        spinner.start()
+          options = Object.assign(
+            options,
+            { from: file, to: output || path.join(dir, path.basename(file)) }
+          )
 
-        options = Object.assign(
-          options,
-          { from: file, to: output || path.join(dir, path.basename(file)) }
-        )
-
-        postcss(config.plugins)
+          return postcss(config.plugins)
          .process(css, Object.assign(options, config.options))
-         .then((result) => {
-           if (path.extname(options.to) !== '.css') {
-             options.to = options.to.replace(/.\w+$/, '.css')
-           }
+        })
+       .then((result) => {
+         if (path.extname(options.to) !== '.css') {
+           options.to = options.to.replace(/.\w+$/, '.css')
+         }
 
-           fs.stat(path.dirname(options.to), (err) => {
-             if (err) {
-               fs.mkdir(path.dirname(options.to), (err) => {
-                 if (err) throw err
+         if (result.messages.some(i => i.type === 'warning')) spinner.fail()
 
-                 fs.writeFile(options.to, result.css, (err) => {
-                   if (err) throw err
-                 })
-               })
-             } else {
-               fs.writeFile(options.to, result.css, (err) => {
-                 if (err) throw err
-               })
-             }
-           })
-
-           result.messages ? spinner.succeed() : spinner.fail()
-         })
-         .catch(errorHandler)
-      })
-    })
+         return fs.outputFile(options.to, result.css)
+       })
+       .then(() => {
+         spinner.succeed()
+       })
+    }))
   })
 })
 .catch(errorHandler)
@@ -137,19 +124,20 @@ if (argv.watch) {
     spinner.text = `Processing ${chalk.green(`${file}`)}`
 
     postcssrc().then((config) => {
-      postcss(config.plugins)
-       .process(fs.readFileSync(file), config.options)
-       .then((result) => {
-         result.messages
-          .filter((msg) => msg.type === 'dependency' ? msg : '')
-          .forEach((dep) => watcher.add(dep))
+      return postcss(config.plugins)
+      .process(fs.readFileSync(file), config.options)
+    })
+    .then((result) => {
+      result.messages
+       .filter((msg) => msg.type === 'dependency' ? msg : '')
+       .forEach((dep) => watcher.add(dep))
 
-         fs.writeFile(options.to, result.css, (err) => {
-           if (err) throw err
-         })
+      if (result.messages.some(i => i.type === 'warning')) spinner.fail()
 
-         result.messages.length === 0 ? spinner.succeed() : spinner.fail()
-       })
+      return fs.outputFile(options.to, result.css)
+    })
+    .then(() => {
+      spinner.succeed()
     })
     .catch(errorHandler)
 

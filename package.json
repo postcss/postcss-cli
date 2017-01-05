@@ -7,7 +7,7 @@
     "postcss": "./bin/postcss"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ava",
     "lint": "standard"
   },
   "repository": "https://github.com/postcss/postcss-cli.git",
@@ -32,6 +32,8 @@
     "yargs": "^6.0.0"
   },
   "devDependencies": {
-    "standard": "^8.4.0"
+    "ava": "^0.17.0",
+    "standard": "^8.4.0",
+    "tempfile": "^1.1.1"
   }
 }

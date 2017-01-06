@@ -51,100 +51,93 @@ let dir = argv.dir
 let input = argv._ || argv.input
 let output = argv.output
 
-let options = {
-  parser: argv.parser || false,
-  syntax: argv.syntax || false,
-  strigifier: argv.strigifier || false,
-  map: argv.map || false
+const defaultOptions = {
+  parser: argv.parser,
+  syntax: argv.syntax,
+  strigifier: argv.strigifier,
+  map: argv.map
 }
 
-if (argv.env) {
-  process.env.NODE_ENV = argv.env
-}
+if (argv.env) process.env.NODE_ENV = argv.env
 
-if (argv.replace) {
-  output = input
-}
+if (argv.replace) output = input
 
-if (!output && !dir) {
-  throw new Error('Must pass --output, --dir, or --replace option')
-}
+if (!output && !dir) throw new Error('Must pass --output, --dir, or --replace option')
 
-console.log(chalk.bold.red(logo))
+console.warn(chalk.bold.red(logo)) // Use warn to avoid writing to stdout
 
-spinner.text = `Loading Files`
+spinner.text = `Loading Config`
 spinner.start()
-globber(input).then((files) => {
-  if (files && files.length) spinner.succeed()
-  else throw new Error('You must pass a list of files to parse')
+Promise.all([globber(input), postcssrc()]).then((arr) => {
+  // Until parameter destructuring is supported:
+  let files = arr[0]
+  let config = arr[1]
 
-  spinner.text = `Loading Config`
-  spinner.start()
-  return postcssrc().then((config) => {
-    return Promise.all(files.map(file => {
-      return fs.readFile(file)
-        .then(css => {
-          config !== undefined ? spinner.succeed() : spinner.fail()
+  if (!files || !files.length) throw new Error('You must pass a list of files to parse')
 
-          spinner.text = `Processing ${file}`
-          spinner.start()
+  spinner.succeed()
 
-          options = Object.assign(
-            options,
-            { from: file, to: output || path.join(dir, path.basename(file)) }
-          )
+  return Promise.all(files.map(file => process(file, config)))
+})
+.then(function () {
+  if (argv.watch) {
+    spinner.text = 'Waiting for file changes...'
 
-          return postcss(config.plugins)
-         .process(css, Object.assign(options, config.options))
-        })
-       .then((result) => {
-         if (path.extname(options.to) !== '.css') {
-           options.to = options.to.replace(/.\w+$/, '.css')
-         }
+    watcher
+    .watch(input)
+    .on('ready', (file) => spinner.start())
+    .on('change', (file) => {
+      spinner.text = `Processing ${chalk.green(`${file}`)}`
 
-         if (result.messages.some(i => i.type === 'warning')) spinner.fail()
-
-         return fs.outputFile(options.to, result.css)
-       })
-       .then(() => {
-         spinner.succeed()
-       })
-    }))
-  })
+      postcssrc().then((config) => {
+        return process(file, config, watcher)
+      })
+      .then(() => {
+        spinner.text = 'Waiting for file changes...'
+        spinner.start()
+      })
+      .catch(errorHandler)
+    })
+  }
 })
 .catch(errorHandler)
 
-if (argv.watch) {
-  spinner.text = 'Waiting for file changes...'
+function process (file, config, watcher) {
+  spinner.text = `Processing ${file}`
+  spinner.start()
 
-  watcher
-  .watch(input)
-  .on('ready', (file) => spinner.start())
-  .on('change', (file) => {
-    spinner.text = `Processing ${chalk.green(`${file}`)}`
+  let options = Object.assign(
+    {},
+    defaultOptions,
+    config.options,
+    {
+      from: file,
+      to: output || path.join(dir, path.basename(file))
+    }
+  )
 
-    postcssrc().then((config) => {
-      return postcss(config.plugins)
-      .process(fs.readFileSync(file), config.options)
-    })
-    .then((result) => {
+  options.to = path.resolve(options.to)
+
+  return fs.readFile(file)
+  .then(css => postcss(config.plugins).process(css, options))
+  .then((result) => {
+    if (path.extname(options.to) !== '.css') {
+      options.to = options.to.replace(/.\w+$/, '.css')
+    }
+
+    if (watcher) {
       result.messages
-       .filter((msg) => msg.type === 'dependency' ? msg : '')
-       .forEach((dep) => watcher.add(dep))
+      .filter((msg) => msg.type === 'dependency' ? msg : '')
+      .forEach((dep) => watcher.add(dep))
+    }
 
-      if (result.messages.some(i => i.type === 'warning')) spinner.fail()
+    if (result.messages.some(i => i.type === 'warning')) spinner.fail()
 
-      return fs.outputFile(options.to, result.css)
-    })
+    return fs.outputFile(options.to, result.css)
     .then(() => {
       spinner.succeed()
+      return result
     })
-    .catch(errorHandler)
-
-    setTimeout(() => {
-      spinner.text = 'Waiting for file changes...'
-      spinner.start()
-    }, 10000)
   })
 }
 

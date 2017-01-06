@@ -1,12 +1,8 @@
 import test from 'ava'
 import run from './helpers/run-cli.js'
-import fs from 'fs-promise'
+import read from './helpers/readFile.js'
 import path from 'path'
-import tmp from 'tempfile'
-
-function read (path) {
-  return fs.readFile(path, 'utf8')
-}
+import tmp from './helpers/get-tmp.js'
 
 test('works without plugins or config', async function (t) {
   var out = tmp('.css')

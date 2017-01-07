@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "ava": "^0.17.0",
+    "postcss-import": "^9.0.0",
     "standard": "^8.4.0",
     "uuid": "^3.0.1"
   }

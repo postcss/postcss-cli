@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "ava",
+    "posttest": "node .cleanup.js",
     "lint": "standard"
   },
   "repository": "https://github.com/postcss/postcss-cli.git",

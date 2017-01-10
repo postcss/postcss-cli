@@ -7,9 +7,12 @@
     "postcss": "./bin/postcss"
   },
   "scripts": {
-    "test": "ava",
+    "test": "nyc ava",
     "posttest": "node .cleanup.js",
-    "lint": "standard"
+    "precoverage": "npm test",
+    "coverage": "nyc report --reporter=lcov",
+    "lint": "standard",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": "https://github.com/postcss/postcss-cli.git",
   "keywords": [
@@ -34,6 +37,8 @@
   },
   "devDependencies": {
     "ava": "^0.17.0",
+    "coveralls": "^2.11.15",
+    "nyc": "^10.0.0",
     "postcss-import": "^9.0.0",
     "standard": "^8.4.0",
     "uuid": "^3.0.1"

@@ -77,7 +77,7 @@ Promise.all([globber(input), postcssrc()]).then((arr) => {
 
   spinner.succeed()
 
-  return Promise.all(files.map(file => process(file, config)))
+  return Promise.all(files.map(file => processFile(file, config)))
 })
 .then(function () {
   if (argv.watch) {
@@ -90,7 +90,7 @@ Promise.all([globber(input), postcssrc()]).then((arr) => {
       spinner.text = `Processing ${chalk.green(`${file}`)}`
 
       postcssrc().then((config) => {
-        return process(file, config, watcher)
+        return processFile(file, config, watcher)
       })
       .then(() => {
         spinner.text = 'Waiting for file changes...'
@@ -102,7 +102,7 @@ Promise.all([globber(input), postcssrc()]).then((arr) => {
 })
 .catch(errorHandler)
 
-function process (file, config, watcher) {
+function processFile (file, config, watcher) {
   spinner.text = `Processing ${file}`
   spinner.start()
 

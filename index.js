@@ -52,9 +52,9 @@ let input = argv._ || argv.input
 let output = argv.output
 
 const defaultOptions = {
-  parser: argv.parser,
-  syntax: argv.syntax,
-  strigifier: argv.strigifier,
+  parser: argv.parser ? require(argv.parser) : undefined,
+  syntax: argv.syntax ? require(argv.syntax) : undefined,
+  stringifier: argv.stringifier ? require(argv.stringifier) : undefined,
   map: argv.map
 }
 

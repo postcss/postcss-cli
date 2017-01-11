@@ -1,4 +1,5 @@
 'use strict'
+
 const fs = require('fs-promise')
 const path = require('path')
 
@@ -64,10 +65,12 @@ if (argv.replace) output = input
 
 if (!output && !dir) throw new Error('Must pass --output, --dir, or --replace option')
 
-console.warn(chalk.bold.red(logo)) // Use warn to avoid writing to stdout
+// Use warn to avoid writing to stdout
+console.warn(chalk.bold.red(logo))
 
 spinner.text = `Loading Config`
 spinner.start()
+
 Promise.all([globber(input), postcssrc()]).then((arr) => {
   // Until parameter destructuring is supported:
   let files = arr[0]
@@ -90,6 +93,7 @@ Promise.all([globber(input), postcssrc()]).then((arr) => {
       spinner.text = `Processing ${chalk.green(`${file}`)}`
 
       postcssrc().then((config) => {
+        watcher.add(config.file)
         return processFile(file, config, watcher)
       })
       .then(() => {

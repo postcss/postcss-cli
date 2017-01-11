@@ -8,7 +8,16 @@ const globber = require('globby')
 const watcher = require('chokidar')
 
 const postcss = require('postcss')
-const postcssrc = require('postcss-load-config')
+const postcssLoadConfig = require('postcss-load-config')
+
+const postcssrc = () => {
+  return postcssLoadConfig()
+  .catch(e => {
+    // Ignore PostCSS config not found error:
+    if (e.message.indexOf('No PostCSS Config found') === -1) throw e
+    else return {plugins: [], options: {}}
+  })
+}
 
 const logo = `
                                /|\\

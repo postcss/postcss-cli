@@ -27,7 +27,7 @@ test('--parser works', async function (t) {
 })
 
 test('--stringifier works', async function (t) {
-  var out = tmp('.css')
+  var out = tmp('.sss')
   var { error } = await run(['test/fixtures/sugar-white.css', '--stringifier', 'sugarss', '-o', out])
   t.ifError(error)
   t.is(await read(out), await read('test/fixtures/sugar-white.sss'))

@@ -130,10 +130,6 @@ function processFile (file, config, watcher) {
   return fs.readFile(file)
   .then(css => postcss(config.plugins).process(css, options))
   .then((result) => {
-    if (path.extname(options.to) !== '.css') {
-      options.to = options.to.replace(/.\w+$/, '.css')
-    }
-
     if (watcher) {
       result.messages
       .filter((msg) => msg.type === 'dependency' ? msg : '')

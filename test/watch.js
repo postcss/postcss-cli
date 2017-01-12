@@ -48,6 +48,7 @@ test.cb('--watch mode works', function (t) {
         {cwd: dir}
       )
       cp.on('error', t.end)
+      cp.on('exit', code => { if (code) t.end(code) })
     })
 
     // Helper functions:

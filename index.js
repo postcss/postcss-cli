@@ -42,7 +42,6 @@ const argv = require('yargs')
   .config('c')
   .alias('e', 'env').describe('e', 'Environment')
   .alias('c', 'config').describe('c', 'Config')
-  .alias('i', 'input').describe('i', 'Input')
   .alias('o', 'output').describe('o', 'Output')
   .alias('d', 'dir').describe('d', 'Output Directory')
   .alias('r', 'replace').describe('r', 'Replace the input file')
@@ -57,7 +56,7 @@ const argv = require('yargs')
   .argv
 
 let dir = argv.dir
-let input = argv._ || argv.input
+let input = argv._
 let output = argv.output
 
 const defaultOptions = {

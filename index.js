@@ -8,16 +8,7 @@ const globber = require('globby')
 const watcher = require('chokidar')
 
 const postcss = require('postcss')
-const postcssLoadConfig = require('postcss-load-config')
-
-const postcssrc = () => {
-  return postcssLoadConfig()
-  .catch(e => {
-    // Ignore PostCSS config not found error:
-    if (e.message.indexOf('No PostCSS Config found') === -1) throw e
-    else return {plugins: [], options: {}}
-  })
-}
+const postcssrc = require('postcss-load-config')
 
 const logo = `
                                /|\\
@@ -46,6 +37,7 @@ const argv = require('yargs')
   .alias('d', 'dir').describe('d', 'Output Directory')
   .alias('r', 'replace').describe('r', 'Replace the input file')
   .alias('m', 'map').describe('m', 'Sourcemaps')
+  .alias('u', 'use').describe('u', 'List of plugins to apply').array('u')
   .alias('p', 'parser').describe('p', 'Parser')
   .alias('s', 'syntax').describe('s', 'Syntax')
   .alias('t', 'stringifier').describe('t', 'Stringifier')
@@ -59,13 +51,6 @@ let dir = argv.dir
 let input = argv._
 let output = argv.output
 
-const defaultOptions = {
-  parser: argv.parser ? require(argv.parser) : undefined,
-  syntax: argv.syntax ? require(argv.syntax) : undefined,
-  stringifier: argv.stringifier ? require(argv.stringifier) : undefined,
-  map: argv.map
-}
-
 if (argv.env) process.env.NODE_ENV = argv.env
 
 if (argv.replace) output = input
@@ -76,7 +61,7 @@ console.warn(chalk.bold.red(logo)) // Use warn to avoid writing to stdout
 
 spinner.text = `Loading Config`
 spinner.start()
-Promise.all([globber(input), postcssrc()]).then((arr) => {
+Promise.all([globber(input), config()]).then((arr) => {
   // Until parameter destructuring is supported:
   let files = arr[0]
   let config = arr[1]
@@ -97,7 +82,7 @@ Promise.all([globber(input), postcssrc()]).then((arr) => {
     .on('change', (file) => {
       spinner.text = `Processing ${chalk.green(`${file}`)}`
 
-      postcssrc().then((config) => {
+      config().then((config) => {
         return processFile(file, config, watcher)
       })
       .then(() => {
@@ -115,13 +100,11 @@ function processFile (file, config, watcher) {
   spinner.start()
 
   let options = Object.assign(
-    {},
-    defaultOptions,
-    config.options,
     {
       from: file,
       to: output || path.join(dir, path.basename(file))
-    }
+    },
+    config.options
   )
 
   options.to = path.resolve(options.to)
@@ -143,6 +126,26 @@ function processFile (file, config, watcher) {
       return result
     })
   })
+}
+
+function config () {
+  if (argv.use || argv.parser || argv.stringifier || argv.syntax) {
+    return {
+      plugins: argv.use ? argv.use.map(plugin => require(plugin)) : [],
+      options: {
+        parser: argv.parser ? require(argv.parser) : undefined,
+        syntax: argv.syntax ? require(argv.syntax) : undefined,
+        stringifier: argv.stringifier ? require(argv.stringifier) : undefined,
+        map: argv.map
+      }
+    }
+  } else {
+    return postcssrc()
+    .catch(err => {
+      if (err.message.indexOf('No PostCSS Config found') === -1) throw err
+      else return {plugins: [], options: {}}
+    })
+  }
 }
 
 function errorHandler (err) {

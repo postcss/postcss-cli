@@ -158,7 +158,19 @@ function error (err) {
     // Don't worry about this
   }
 
-  console.log(chalk.red(`${err.message}`))
+  // PostCSS Error
+  if (err.name === 'CssSyntaxError') {
+    err.message = err.message
+      .replace(`${err.file}:`, '[')
+      .replace(/:\s/, '] ')
+
+    console.log(chalk.bold.red('\n', err.message))
+    console.log('\n', err.showSourceCode(), '\n')
+
+    return
+  }
+  // PostCSS Config Error
+  console.log(chalk.bold.red(err.message))
 
   process.exit(1)
 }

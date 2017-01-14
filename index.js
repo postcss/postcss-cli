@@ -1,4 +1,5 @@
 'use strict'
+
 const fs = require('fs-promise')
 const path = require('path')
 
@@ -55,47 +56,49 @@ if (argv.env) process.env.NODE_ENV = argv.env
 
 if (argv.replace) output = input
 
-if (!output && !dir) throw new Error('Must pass --output, --dir, or --replace option')
+if (!output && !dir) throw new Error(`No Output specified, either --output, --dir, or --replace option must be passed`)
 
-console.warn(chalk.bold.red(logo)) // Use warn to avoid writing to stdout
+// Use warn to avoid writing to stdout
+console.warn(chalk.bold.red(logo))
 
 spinner.text = `Loading Config`
 spinner.start()
-Promise.all([globber(input), config()]).then((arr) => {
-  // Until parameter destructuring is supported:
-  let files = arr[0]
-  let config = arr[1]
 
-  if (!files || !files.length) throw new Error('You must pass a list of files to parse')
+Promise.all([ globber(input), config() ])
+  .then((arr) => {
+    // Until parameter destructuring is supported
+    let files = arr[0]
+    let config = arr[1]
 
-  spinner.succeed()
+    if (!files || !files.length) throw new Error('You must pass a list of files to parse')
 
-  return Promise.all(files.map(file => processFile(file, config)))
-})
-.then(function () {
-  if (argv.watch) {
-    spinner.text = 'Waiting for file changes...'
+    spinner.succeed()
 
-    watcher
-    .watch(input)
-    .on('ready', (file) => spinner.start())
-    .on('change', (file) => {
-      spinner.text = `Processing ${chalk.green(`${file}`)}`
+    return Promise.all(files.map(file => processCSS(file, config)))
+  })
+  .then(() => {
+    if (argv.watch) {
+      spinner.text = 'Waiting for file changes...'
 
-      config().then((config) => {
-        return processFile(file, config, watcher)
+      watcher
+      .watch(input)
+      .on('ready', (file) => spinner.start())
+      .on('change', (file) => {
+        spinner.text = `Processing ${chalk.green(`${file}`)}`
+
+        config()
+          .then((config) => processCSS(file, config, watcher))
+          .then(() => {
+            spinner.text = 'Waiting for file changes...'
+            spinner.start()
+          })
+          .catch(error)
       })
-      .then(() => {
-        spinner.text = 'Waiting for file changes...'
-        spinner.start()
-      })
-      .catch(errorHandler)
-    })
-  }
-})
-.catch(errorHandler)
+    }
+  })
+  .catch(error)
 
-function processFile (file, config, watcher) {
+function processCSS (file, config, watcher) {
   spinner.text = `Processing ${file}`
   spinner.start()
 
@@ -110,22 +113,22 @@ function processFile (file, config, watcher) {
   options.to = path.resolve(options.to)
 
   return fs.readFile(file)
-  .then(css => postcss(config.plugins).process(css, options))
-  .then((result) => {
-    if (watcher) {
-      result.messages
-      .filter((msg) => msg.type === 'dependency' ? msg : '')
-      .forEach((dep) => watcher.add(dep))
-    }
+    .then(css => postcss(config.plugins).process(css, options))
+    .then((result) => {
+      if (watcher) {
+        result.messages
+         .filter((msg) => msg.type === 'dependency' ? msg : '')
+         .forEach((dep) => watcher.add(dep))
+      }
 
-    if (result.messages.some(i => i.type === 'warning')) spinner.fail()
+      if (result.messages.some(msg => msg.type === 'warning')) spinner.fail()
 
-    return fs.outputFile(options.to, result.css)
-    .then(() => {
-      spinner.succeed()
-      return result
+      return fs.outputFile(options.to, result.css)
+        .then(() => {
+          spinner.succeed()
+          return result
+        })
     })
-  })
 }
 
 function config () {
@@ -139,21 +142,23 @@ function config () {
         map: argv.map
       }
     }
-  } else {
-    return postcssrc()
-    .catch(err => {
-      if (err.message.indexOf('No PostCSS Config found') === -1) throw err
-      else return {plugins: [], options: {}}
-    })
   }
+
+  return postcssrc()
+    .catch((err) => {
+      if (err.message.indexOf('No PostCSS Config found') === -1) throw err
+      return { plugins: [], options: {} }
+    })
 }
 
-function errorHandler (err) {
+function error (err) {
   try {
     spinner.fail()
   } catch (e) {
     // Don't worry about this
   }
-  console.error(err)
+
+  console.log(chalk.red(`${err.message}`))
+
   process.exit(1)
 }

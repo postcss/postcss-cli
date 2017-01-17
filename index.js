@@ -162,12 +162,15 @@ function getConfig (ctx, path) {
         map: argv.map
       }
     }
-  }
-  else return postcssrc(ctx, path)
-    .then(conf => config = conf)
+  } else {
+    return postcssrc(ctx, path)
+    .then(function (conf) {
+      config = conf
+    })
     .catch(err => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
     })
+  }
 }
 
 function error (err) {

@@ -67,7 +67,7 @@ test.cb('--watch mode works', function (t) {
   .catch(t.end)
 
   // Timeout:
-  setTimeout(() => t.end('test timeout'), 10000)
+  setTimeout(() => t.end('test timeout'), 50000)
 })
 
 test.cb('--watch watches postcss.config.js', function (t) {
@@ -138,4 +138,7 @@ test.cb('--watch watches postcss.config.js', function (t) {
     }
   })
   .catch(t.end)
+
+  // Timeout:
+  setTimeout(() => t.end('test timeout'), 50000)
 })

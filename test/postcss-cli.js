@@ -2,6 +2,7 @@ import test from 'ava'
 import run from './helpers/run-cli.js'
 import read from './helpers/readFile.js'
 import path from 'path'
+import fs from 'fs-promise'
 import tmp from './helpers/get-tmp.js'
 
 test('works without plugins or config', async function (t) {
@@ -17,6 +18,18 @@ test('--dir works', async function (t) {
   t.ifError(error)
   t.is(await read(path.join(outDir, 'a-red.css')), await read('test/fixtures/a-red.css'))
   t.is(await read(path.join(outDir, 'a-blue.css')), await read('test/fixtures/a-blue.css'))
+})
+
+test('--replace works', async function (t) {
+  var dir = tmp()
+  var out = path.join(dir, 'out.css')
+  await Promise.all([
+    fs.copy('test/fixtures/imports-a-red.css', out),
+    fs.copy('test/fixtures/a-red.css', path.join(dir, 'a-red.css'))
+  ])
+  var { error } = await run([out, '--replace', '-u', 'postcss-import'])
+  t.ifError(error)
+  t.is(await read(out), await read('test/fixtures/a-red.css'))
 })
 
 test('--use works', async function (t) {

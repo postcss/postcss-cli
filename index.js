@@ -68,9 +68,9 @@ if (argv.env) process.env.NODE_ENV = argv.env
 if (argv.config) argv.config = path.resolve(argv.config)
 else argv.config = process.cwd()
 
-if (argv.replace) output = input
-
-if (!output && !dir) throw new Error(`No Output specified, either --output, --dir, or --replace option must be passed`)
+if (!output && !dir && !argv.replace) {
+  throw new Error(`No Output specified, either --output, --dir, or --replace option must be passed`)
+}
 
 // Use warn to avoid writing to stdout
 console.warn(chalk.bold.red(logo))
@@ -125,7 +125,7 @@ function processCSS (file, watcher) {
   let options = Object.assign(
     {
       from: file,
-      to: output || path.join(dir, path.basename(file))
+      to: output || (argv.replace ? file : path.join(dir, path.basename(file)))
     },
     config.options
   )

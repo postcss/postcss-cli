@@ -6,7 +6,7 @@ const path = require('path')
 const chalk = require('chalk')
 const spinner = require('ora')()
 const globber = require('globby')
-const watcher = require('chokidar')
+const chokidar = require('chokidar')
 
 const postcss = require('postcss')
 const postcssrc = require('postcss-load-config')
@@ -92,10 +92,18 @@ Promise.all([ globber(input), getConfig({}, argv.config) ])
     if (argv.watch) {
       spinner.text = 'Waiting for file changes...'
 
-      watcher
+      let watcher = chokidar
       .watch(input)
+
+      watcher
+      .add(config.file)
       .on('ready', (file) => spinner.start())
       .on('change', (file) => {
+        if (file === config.file) {
+          return Promise.all([globber(input), getConfig()])
+          .then(arr => Promise.all(arr[0].map(file => processCSS(file))))
+          .catch(error)
+        }
         spinner.text = `Processing ${chalk.green(`${file}`)}`
 
         getConfig().then(() => processCSS(file, watcher))

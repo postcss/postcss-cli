@@ -24,14 +24,23 @@ const logo = `
 `
 
 const version = () => {
-  return `${chalk.bold.red(logo)}
-                         PostCSS: v${require('postcss/package.json').version}
-                     Load Config: v${require('postcss-load-config/package.json').version}`
+  const cli = require('./package.json').version
+
+  return chalk.bold.red(`
+                                 /|\\
+                               //   //
+                             //       //
+                           //___*___*___//
+                         //--*---------*--//
+                       /|| *             * ||/
+                     // ||*    v${cli}     *|| //
+                   //   || *             * ||   //
+                 //_____||___*_________*___||_____//
+  `)
 }
 
 const argv = require('yargs')
   .usage(`${chalk.bold.red(logo)}\nUsage: \n\n$0 [--config|-c path/to/postcss.config.js] [input.css] [--output|-o output.css] [-watch|-w]`)
-  .config('c')
   .alias('e', 'env').describe('e', 'Environment')
   .alias('c', 'config').describe('c', 'Config')
   .alias('o', 'output').describe('o', 'Output')
@@ -54,6 +63,9 @@ let output = argv.output
 
 if (argv.env) process.env.NODE_ENV = argv.env
 
+if (argv.config) argv.config = path.resolve(argv.config)
+else argv.config = process.cwd()
+
 if (argv.replace) output = input
 
 if (!output && !dir) throw new Error(`No Output specified, either --output, --dir, or --replace option must be passed`)
@@ -64,7 +76,7 @@ console.warn(chalk.bold.red(logo))
 spinner.text = `Loading Config`
 spinner.start()
 
-Promise.all([ globber(input), config() ])
+Promise.all([ globber(input), config({}, argv.config) ])
   .then((arr) => {
     // Until parameter destructuring is supported
     let files = arr[0]
@@ -131,7 +143,7 @@ function processCSS (file, config, watcher) {
     })
 }
 
-function config () {
+function config (ctx, path) {
   if (argv.use || argv.parser || argv.stringifier || argv.syntax) {
     return {
       plugins: argv.use ? argv.use.map(plugin => require(plugin)) : [],
@@ -144,7 +156,7 @@ function config () {
     }
   }
 
-  return postcssrc()
+  return postcssrc(ctx, path)
     .catch((err) => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
       return { plugins: [], options: {} }
@@ -157,20 +169,17 @@ function error (err) {
   } catch (e) {
     // Don't worry about this
   }
-
-  // PostCSS Error
+  // Syntax Error
   if (err.name === 'CssSyntaxError') {
-    err.message = err.message
-      .replace(`${err.file}:`, '[')
-      .replace(/:\s/, '] ')
+    err.message = err.message.substr(err.file.length + 1).replace(/:\s/, '] ')
 
-    console.log(chalk.bold.red('\n', err.message))
-    console.log('\n', err.showSourceCode(), '\n')
+    console.error(chalk.bold.red('\n', `[${err.message}`))
+    console.error('\n', err.showSourceCode(), '\n')
 
-    return
+    process.exit(1)
   }
-  // PostCSS Config Error
-  console.log(chalk.bold.red(err.message))
+  // Error
+  console.error(chalk.bold.red(err.message))
 
   process.exit(1)
 }

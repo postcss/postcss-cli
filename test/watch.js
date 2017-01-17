@@ -65,4 +65,7 @@ test.cb('--watch mode works', function (t) {
     }
   })
   .catch(t.end)
+
+  // Timeout:
+  setTimeout(() => t.end('test timeout'), 10000)
 })

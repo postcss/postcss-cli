@@ -61,6 +61,8 @@ let dir = argv.dir
 let input = argv._
 let output = argv.output
 
+let config = {plugins: [], options: {}}
+
 if (argv.env) process.env.NODE_ENV = argv.env
 
 if (argv.config) argv.config = path.resolve(argv.config)
@@ -75,20 +77,18 @@ console.warn(chalk.bold.red(logo))
 
 spinner.text = `Loading Config`
 spinner.start()
-
-Promise.all([ globber(input), config({}, argv.config) ])
+Promise.all([ globber(input), getConfig({}, argv.config) ])
   .then((arr) => {
     // Until parameter destructuring is supported
     let files = arr[0]
-    let config = arr[1]
 
     if (!files || !files.length) throw new Error('You must pass a list of files to parse')
 
     spinner.succeed()
 
-    return Promise.all(files.map(file => processCSS(file, config)))
+    return Promise.all(files.map(file => processCSS(file)))
   })
-  .then(() => {
+  .then(function () {
     if (argv.watch) {
       spinner.text = 'Waiting for file changes...'
 
@@ -98,19 +98,18 @@ Promise.all([ globber(input), config({}, argv.config) ])
       .on('change', (file) => {
         spinner.text = `Processing ${chalk.green(`${file}`)}`
 
-        config()
-          .then((config) => processCSS(file, config, watcher))
-          .then(() => {
-            spinner.text = 'Waiting for file changes...'
-            spinner.start()
-          })
-          .catch(error)
+        getConfig().then(() => processCSS(file, watcher))
+        .then(() => {
+          spinner.text = 'Waiting for file changes...'
+          spinner.start()
+        })
+        .catch(error)
       })
     }
   })
   .catch(error)
 
-function processCSS (file, config, watcher) {
+function processCSS (file, watcher) {
   spinner.text = `Processing ${file}`
   spinner.start()
 
@@ -143,9 +142,9 @@ function processCSS (file, config, watcher) {
     })
 }
 
-function config (ctx, path) {
+function getConfig (ctx, path) {
   if (argv.use || argv.parser || argv.stringifier || argv.syntax) {
-    return {
+    config = {
       plugins: argv.use ? argv.use.map(plugin => require(plugin)) : [],
       options: {
         parser: argv.parser ? require(argv.parser) : undefined,
@@ -155,11 +154,10 @@ function config (ctx, path) {
       }
     }
   }
-
-  return postcssrc(ctx, path)
-    .catch((err) => {
+  else return postcssrc(ctx, path)
+    .then(conf => config = conf)
+    .catch(err => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
-      return { plugins: [], options: {} }
     })
 }
 

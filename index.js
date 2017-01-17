@@ -83,6 +83,7 @@ Promise.all([ globber(input), getConfig({}, argv.config) ])
     let files = arr[0]
 
     if (!files || !files.length) throw new Error('You must pass a list of files to parse')
+    if (files.length > 1 && argv.output) throw new Error('Must use --dir or --replace with multiple input files')
 
     spinner.succeed()
 

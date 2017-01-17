@@ -1,8 +1,9 @@
 import test from 'ava'
 
+import tmp from './helpers/get-tmp.js'
 import run from './helpers/run-cli.js'
 
-test('Errors - Output', (t) => {
+test('when no output option', (t) => {
   return run([ 'test/fixtures/a-red.css' ])
     .then(({ error, code }) => {
       t.is(code, 1, 'expected non-zero error code')
@@ -10,11 +11,22 @@ test('Errors - Output', (t) => {
     })
 })
 
-test('Errors - Config', (t) => {
+test('when multiple input files and --output is set', t => {
+  return run([
+    'test/fixtures/*.css',
+    '-o', tmp()
+  ])
+    .then(({ error, code }) => {
+      t.is(code, 1, 'expected non-zero error code')
+      t.regex(error, /Must use --dir or --replace/)
+    })
+})
+
+test('when invalid --config option', (t) => {
   return run([
     'test/fixtures/*.css',
     '--config', 'test/fixtures/postcss.config.js',
-    '-o', 'test/fixtures/.tmp/out.css'
+    '-o', tmp()
   ])
     .then(({ error, code }) => {
       t.is(code, 1, 'expected non-zero error code')
@@ -22,11 +34,11 @@ test('Errors - Config', (t) => {
     })
 })
 
-test('Errors - CssSyntaxError', (t) => {
+test('when CssSyntaxError', (t) => {
   return run([
-    'test/fixtures/*.css',
+    'test/fixtures/a-red.css',
     '-p', 'sugarss',
-    '-o', 'test/fixtures/.tmp/out.css'
+    '-o', tmp()
   ])
     .then(({ error, code }) => {
       t.is(code, 1, 'expected non-zero error code')

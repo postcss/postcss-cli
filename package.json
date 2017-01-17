@@ -7,33 +7,20 @@
     "postcss": "./bin/postcss"
   },
   "scripts": {
-    "test": "nyc ava",
-    "posttest": "node .cleanup.js",
-    "precoverage": "npm test",
-    "coverage": "nyc report --reporter=lcov",
     "lint": "standard",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "pretest": "rm -rf coverage .nyc_output",
+    "test": "nyc ava",
+    "posttest": "node .cleanup.js"
   },
-  "repository": "https://github.com/postcss/postcss-cli.git",
-  "keywords": [
-    "postcss",
-    "postcss-runner",
-    "cli"
-  ],
-  "author": {
-    "name": "Michael Ciniawky",
-    "email": "michael.ciniawsky@gmail.com"
-  },
-  "license": "MIT",
   "dependencies": {
     "chalk": "^1.1.3",
     "chokidar": "^1.6.1",
     "fs-promise": "^1.0.0",
-    "globby": "^6.0.0",
-    "ora": "^0.4.0",
+    "globby": "^6.1.0",
+    "ora": "^1.0.0",
     "postcss": "^5.2.4",
     "postcss-load-config": "^1.1.0",
-    "yargs": "^6.0.0"
+    "yargs": "^6.6.0"
   },
   "devDependencies": {
     "ava": "^0.17.0",
@@ -43,5 +30,29 @@
     "standard": "^8.4.0",
     "sugarss": "^0.2.0",
     "uuid": "^3.0.1"
-  }
+  },
+  "keywords": [
+    "cli",
+    "postcss",
+    "postcss-runner"
+  ],
+  "authors": [
+    {
+      "name": "Michael Ciniawky",
+      "email": "michael.ciniawsky@gmail.com"
+    },
+    {
+      "name": "Ryan Zimmermann",
+      "email": "opensrc@ryanzim.com"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/postcss/postcss-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/postcss/postcss-cli/issues"
+  },
+  "homepage": "https://github.com/postcss/postcss-cli#readme",
+  "license": "MIT"
 }

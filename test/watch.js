@@ -69,3 +69,73 @@ test.cb('--watch mode works', function (t) {
   // Timeout:
   setTimeout(() => t.end('test timeout'), 10000)
 })
+
+test.cb('--watch watches postcss.config.js', function (t) {
+  var cp
+
+  t.plan(2)
+
+  createEnv('module.exports = {}', ['*a-red.css'])
+  .then(dir => {
+    // Init watcher:
+    var watcher = chokidar.watch('.', {
+      cwd: dir,
+      ignoreInitial: true,
+      awaitWriteFinish: true
+    })
+
+    // On the first output:
+    watcher.on('add', p => {
+      // Assert, then change the source file
+      if (p === 'out.css') {
+        read(path.join(dir, p))
+        .then(css => {
+          t.is(css, '@import "./a-red.css";\n')
+          return fs.writeFile(
+            path.join(dir, 'postcss.config.js'),
+            `module.exports = {
+              plugins: [
+                require('postcss-import')()
+              ]
+            }`
+          )
+        })
+        .catch(done)
+      }
+    })
+
+    // When the change is picked up:
+    watcher.on('change', p => {
+      if (p === 'out.css') {
+        isEqual(p, 'test/fixtures/a-red.css')
+        .then(() => done())
+        .catch(done)
+      }
+    })
+
+    // Start postcss-cli:
+    watcher.on('ready', () => {
+      cp = execFile(
+        path.resolve('bin/postcss'),
+        ['imports-a-red.css', '-o', 'out.css', '-w'],
+        {cwd: dir}
+      )
+      cp.on('error', t.end)
+      cp.on('exit', code => { if (code) t.end(code) })
+    })
+
+    // Helper functions:
+    function isEqual (p, expected) {
+      return Promise.all([read(path.join(dir, p)), read(expected)])
+      .then(([a, e]) => t.is(a, e))
+    }
+
+    function done (err) {
+      try {
+        cp.kill()
+      } catch (e) {}
+      t.end(err)
+    }
+  })
+  .catch(t.end)
+})

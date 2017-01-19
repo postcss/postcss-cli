@@ -46,7 +46,8 @@ const argv = require('yargs')
   .alias('o', 'output').describe('o', 'Output')
   .alias('d', 'dir').describe('d', 'Output Directory')
   .alias('r', 'replace').describe('r', 'Replace the input file')
-  .alias('m', 'map').describe('m', 'Sourcemaps')
+  .alias('m', 'map').describe('m', 'Write sourcemap to external file').boolean('map')
+  .describe('no-map', 'Disable sourcemaps').boolean('no-map')
   .alias('u', 'use').describe('u', 'List of plugins to apply').array('u')
   .alias('p', 'parser').describe('p', 'Parser')
   .alias('s', 'syntax').describe('s', 'Syntax')
@@ -143,7 +144,11 @@ function processCSS (file, watcher) {
 
       if (result.messages.some(msg => msg.type === 'warning')) spinner.fail()
 
-      return fs.outputFile(options.to, result.css)
+      var tasks = [fs.outputFile(options.to, result.css)]
+      if (result.map) {
+        tasks.push(fs.outputFile(options.to.replace('.css', '.css.map'), result.map))
+      }
+      return Promise.all(tasks)
         .then(() => {
           spinner.succeed()
           return result
@@ -158,8 +163,7 @@ function getConfig (ctx, path) {
       options: {
         parser: argv.parser ? require(argv.parser) : undefined,
         syntax: argv.syntax ? require(argv.syntax) : undefined,
-        stringifier: argv.stringifier ? require(argv.stringifier) : undefined,
-        map: argv.map
+        stringifier: argv.stringifier ? require(argv.stringifier) : undefined
       }
     }
   } else {
@@ -171,6 +175,8 @@ function getConfig (ctx, path) {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
     })
   }
+  if (argv.noMap) config.options.map = false
+  if (argv.map) config.options.map = {inline: false}
 }
 
 function error (err) {

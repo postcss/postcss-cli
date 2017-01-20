@@ -3,6 +3,7 @@ import run from './helpers/run-cli.js'
 import read from './helpers/readFile.js'
 import path from 'path'
 import fs from 'fs-promise'
+import { execFile } from 'child_process'
 import tmp from './helpers/get-tmp.js'
 
 test('works without plugins or config', async function (t) {
@@ -10,6 +11,22 @@ test('works without plugins or config', async function (t) {
   var { error, stderr } = await run(['test/fixtures/a-red.css', '-o', out])
   t.ifError(error, stderr)
   t.is(await read(out), await read('test/fixtures/a-red.css'))
+})
+
+test.cb('reads from stdin if no files are passed', t => {
+  var out = tmp('.css')
+  var cp = execFile(path.resolve('bin/postcss'), ['-o', out], (error, stdout, stderr) => {
+    if (error) t.end(error, stderr)
+    else {
+      Promise.all([read(out), read('test/fixtures/a-red.css')])
+        .then(([a, e]) => {
+          t.is(a, e)
+          t.end()
+        })
+        .catch(t.end)
+    }
+  })
+  fs.createReadStream('test/fixtures/a-red.css').pipe(cp.stdin)
 })
 
 test('--dir works', async function (t) {

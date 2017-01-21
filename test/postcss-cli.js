@@ -27,35 +27,55 @@ test('--replace works', async function (t) {
     fs.copy('test/fixtures/imports-a-red.css', out),
     fs.copy('test/fixtures/a-red.css', path.join(dir, 'a-red.css'))
   ])
-  var { error, stderr } = await run([out, '--replace', '-u', 'postcss-import'])
+  var { error, stderr } = await run([out, '--replace', '-u', 'postcss-import', '--no-map'])
   t.ifError(error, stderr)
   t.is(await read(out), await read('test/fixtures/a-red.css'))
 })
 
 test('--use works', async function (t) {
   var out = tmp('.css')
-  var { error, stderr } = await run(['test/fixtures/imports-a-red.css', '--use', 'postcss-import', '-o', out])
+  var { error, stderr } = await run([
+    'test/fixtures/imports-a-red.css',
+    '--use', 'postcss-import',
+    '-o', out,
+    '--no-map'
+  ])
   t.ifError(error, stderr)
   t.is(await read(out), await read('test/fixtures/a-red.css'))
 })
 
 test('--parser works', async function (t) {
   var out = tmp('.css')
-  var { error, stderr } = await run(['test/fixtures/sugar-white.sss', '--parser', 'sugarss', '-o', out])
+  var { error, stderr } = await run([
+    'test/fixtures/sugar-white.sss',
+    '--parser', 'sugarss',
+    '-o', out,
+    '--no-map'
+  ])
   t.ifError(error, stderr)
   t.is(await read(out), await read('test/fixtures/sugar-white.css'))
 })
 
 test('--stringifier works', async function (t) {
   var out = tmp('.sss')
-  var { error, stderr } = await run(['test/fixtures/sugar-white.css', '--stringifier', 'sugarss', '-o', out])
+  var { error, stderr } = await run([
+    'test/fixtures/sugar-white.css',
+    '--stringifier', 'sugarss',
+    '-o', out,
+    '--no-map'
+  ])
   t.ifError(error, stderr)
   t.is(await read(out), await read('test/fixtures/sugar-white.sss'))
 })
 
 test('--syntax works', async function (t) {
   var out = tmp('.css')
-  var { error, stderr } = await run(['test/fixtures/sugar-white.sss', '--syntax', 'sugarss', '-o', out])
+  var { error, stderr } = await run([
+    'test/fixtures/sugar-white.sss',
+    '--syntax', 'sugarss',
+    '-o', out,
+    '--no-map'
+  ])
   t.ifError(error, stderr)
   t.is(await read(out), await read('test/fixtures/sugar-white.sss'))
 })

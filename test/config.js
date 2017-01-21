@@ -11,7 +11,7 @@ test('supports common config', async function (t) {
     ]
   }`
   var dir = await createEnv(env, ['*a-red.css'])
-  var { error, stderr } = await run(['imports-a-red.css', '-o', 'out.css'], dir)
+  var { error, stderr } = await run(['imports-a-red.css', '-o', 'out.css', '--no-map'], dir)
   t.ifError(error, stderr)
   t.is(await read(path.join(dir, 'out.css')), await read('test/fixtures/a-red.css'))
 })
@@ -19,7 +19,7 @@ test('supports common config', async function (t) {
 test("doesn't error on empty config", async function (t) {
   var env = `module.exports = {}`
   var dir = await createEnv(env, ['a-red.css'])
-  var { error, stderr } = await run(['a-red.css', '-o', 'out.css'], dir)
+  var { error, stderr } = await run(['a-red.css', '-o', 'out.css', '--no-map'], dir)
   t.ifError(error, stderr)
   t.is(await read(path.join(dir, 'out.css')), await read('test/fixtures/a-red.css'))
 })

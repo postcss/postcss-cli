@@ -46,8 +46,8 @@ const argv = require('yargs')
   .alias('o', 'output').describe('o', 'Output')
   .alias('d', 'dir').describe('d', 'Output Directory')
   .alias('r', 'replace').describe('r', 'Replace the input file')
-  .alias('m', 'map').describe('m', 'Write sourcemap to external file').boolean('map')
-  .describe('no-map', 'Disable sourcemaps').boolean('no-map')
+  .alias('m', 'map').describe('m', 'Write sourcemap to external file')
+  .describe('no-map', 'Disable sourcemaps')
   .alias('u', 'use').describe('u', 'List of plugins to apply').array('u')
   .alias('p', 'parser').describe('p', 'Parser')
   .alias('s', 'syntax').describe('s', 'Syntax')
@@ -166,17 +166,27 @@ function getConfig (ctx, path) {
         stringifier: argv.stringifier ? require(argv.stringifier) : undefined
       }
     }
+    setMap()
+    return Promise.resolve()
   } else {
     return postcssrc(ctx, path)
-    .then(function (conf) {
+    .then(conf => {
       config = conf
+      setMap()
     })
     .catch(err => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
     })
   }
-  if (argv.noMap) config.options.map = false
-  if (argv.map) config.options.map = {inline: false}
+}
+
+function setMap () {
+  // Yargs interprets --no-map as argv.map: false:
+  if (argv.map === false) config.options.map = false
+  // If --map is passed:
+  else if (argv.map) config.options.map = {inline: false}
+  // If neither --map or --no-map is passed:
+  else config.options.map = true
 }
 
 function error (err) {

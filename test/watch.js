@@ -117,7 +117,12 @@ test.cb('--watch watches postcss.config.js', function (t) {
     watcher.on('ready', () => {
       cp = execFile(
         path.resolve('bin/postcss'),
-        ['imports-a-red.css', '-o', 'out.css', '-w'],
+        [
+          'imports-a-red.css',
+          '-o', 'out.css',
+          '-w',
+          '--no-map'
+        ],
         {cwd: dir}
       )
       cp.on('error', t.end)

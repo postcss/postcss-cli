@@ -8,9 +8,8 @@
   },
   "scripts": {
     "lint": "standard",
-    "pretest": "rm -rf coverage .nyc_output",
-    "test": "nyc ava",
-    "posttest": "node .cleanup.js"
+    "pretest": "node .cleanup.js",
+    "test": "nyc --reporter=lcov ava"
   },
   "dependencies": {
     "chalk": "^1.1.3",

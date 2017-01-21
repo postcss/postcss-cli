@@ -4,7 +4,8 @@ const fs = require('fs-promise')
 const path = require('path')
 
 const chalk = require('chalk')
-const spinner = require('ora')()
+const ora = require('ora')
+const spinner = ora()
 const globber = require('globby')
 const chokidar = require('chokidar')
 const getStdin = require('get-stdin')
@@ -77,7 +78,7 @@ if (!output && !dir && !argv.replace) {
 // Use warn to avoid writing to stdout
 console.warn(chalk.bold.red(logo))
 
-spinner.text = `Loading Config`
+spinner.text = 'Loading Config'
 spinner.start()
 getConfig({}, argv.config)
   .then(() => {
@@ -126,6 +127,9 @@ getConfig({}, argv.config)
   .catch(error)
 
 function processCSS (css, filename, watcher) {
+  var spinner = ora(`Processing ${filename || 'your CSS'}`)
+  spinner.start()
+
   let options = Object.assign(
     {
       from: filename,
@@ -136,7 +140,7 @@ function processCSS (css, filename, watcher) {
   options.to = path.resolve(options.to)
 
   return postcss(config.plugins).process(css, options)
-    .then((result) => {
+    .then(result => {
       if (watcher) {
         result.messages
          .filter((msg) => msg.type === 'dependency' ? msg : '')
@@ -151,6 +155,7 @@ function processCSS (css, filename, watcher) {
       }
       return Promise.all(tasks)
         .then(() => {
+          spinner.succeed()
           return result
         })
     })

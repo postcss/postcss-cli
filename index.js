@@ -223,7 +223,7 @@ function error (err) {
     process.exit(1)
   }
   // Error
-  console.error(chalk.bold.red(err.message))
+  console.error(err)
 
   process.exit(1)
 }

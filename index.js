@@ -13,6 +13,8 @@ const getStdin = require('get-stdin')
 const postcss = require('postcss')
 const postcssrc = require('postcss-load-config')
 
+const getDependencyMessages = require('./lib/get-dependency-messages.js')
+
 const logo = `
                                /|\\
                              //   //
@@ -91,32 +93,36 @@ getConfig({}, argv.config)
     console.warn('No files passed, reading from stdin')
     return ['-']
   })
-  .then(files => {
-    if (!files || !files.length) throw new Error('You must pass a valid list of files to parse')
-    if (files.length > 1 && argv.output) throw new Error('Must use --dir or --replace with multiple input files')
+  .then(expandedInput => {
+    input = expandedInput
+    if (!input || !input.length) throw new Error('You must pass a valid list of files to parse')
+    if (input.length > 1 && argv.output) throw new Error('Must use --dir or --replace with multiple input files')
 
-    return processFiles(files)
+    return processFiles(input)
   })
-  .then(function () {
+  .then(function (results) {
     if (argv.watch) {
       spinner.text = 'Waiting for file changes...'
 
       let watcher = chokidar
-      .watch(input)
+      .watch(input.concat(getDependencyMessages(results)))
 
       watcher
       .add(config.file)
       .on('ready', (file) => spinner.start())
       .on('change', (file) => {
-        if (file === config.file) {
-          return Promise.all([globber(input), getConfig()])
-          .then(arr => processFiles(arr[0]))
+        // If this is not a direct input file, process all:
+        if (input.indexOf(file) === -1) {
+          return getConfig()
+          .then(() => processFiles(input))
+          .then(results => watcher.add(getDependencyMessages(results)))
           .catch(error)
         }
-        spinner.text = `Processing ${chalk.green(`${file}`)}`
 
-        getConfig().then(() => processFiles(file, watcher))
-        .then(() => {
+        getConfig()
+        .then(() => processFiles(file))
+        .then(result => {
+          watcher.add(getDependencyMessages(result))
           spinner.text = 'Waiting for file changes...'
           spinner.start()
         })
@@ -126,7 +132,7 @@ getConfig({}, argv.config)
   })
   .catch(error)
 
-function processCSS (css, filename, watcher) {
+function processCSS (css, filename) {
   var spinner = ora(`Processing ${filename || 'your CSS'}`)
   spinner.start()
 
@@ -141,12 +147,6 @@ function processCSS (css, filename, watcher) {
 
   return postcss(config.plugins).process(css, options)
     .then(result => {
-      if (watcher) {
-        result.messages
-         .filter((msg) => msg.type === 'dependency' ? msg : '')
-         .forEach((dep) => watcher.add(dep))
-      }
-
       if (result.messages.some(msg => msg.type === 'warning')) spinner.fail()
 
       var tasks = [fs.outputFile(options.to, result.css)]
@@ -161,16 +161,16 @@ function processCSS (css, filename, watcher) {
     })
 }
 
-function processFiles (files, watcher) {
+function processFiles (files) {
   if (typeof files === 'string') files = [files]
   return Promise.all(files.map(file => {
     // Read from stdin
     if (file === '-') {
       return getStdin()
-      .then(css => processCSS(css, undefined, watcher))
+      .then(css => processCSS(css))
     }
     return fs.readFile(file)
-    .then(css => processCSS(css, file, watcher))
+    .then(css => processCSS(css, file))
   }))
 }
 

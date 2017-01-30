@@ -5,7 +5,6 @@ const path = require('path')
 
 const chalk = require('chalk')
 const ora = require('ora')
-const spinner = ora()
 const globber = require('globby')
 const chokidar = require('chokidar')
 const getStdin = require('get-stdin')
@@ -80,8 +79,7 @@ if (!output && !dir && !argv.replace) {
 // Use warn to avoid writing to stdout
 console.warn(chalk.bold.red(logo))
 
-spinner.text = 'Loading Config'
-spinner.start()
+let spinner = ora('Loading Config').start()
 getConfig({}, argv.config)
   .then(() => {
     spinner.succeed()
@@ -102,14 +100,12 @@ getConfig({}, argv.config)
   })
   .then(function (results) {
     if (argv.watch) {
-      spinner.text = 'Waiting for file changes...'
-
       let watcher = chokidar
       .watch(input.concat(getDependencyMessages(results)))
 
       watcher
       .add(config.file)
-      .on('ready', (file) => spinner.start())
+      .on('ready', (file) => console.warn('Waiting for file changes...'))
       .on('change', (file) => {
         // If this is not a direct input file, process all:
         if (input.indexOf(file) === -1) {
@@ -123,8 +119,7 @@ getConfig({}, argv.config)
         .then(() => processFiles(file))
         .then(result => {
           watcher.add(getDependencyMessages(result))
-          spinner.text = 'Waiting for file changes...'
-          spinner.start()
+          console.warn('Waiting for file changes...')
         })
         .catch(error)
       })
@@ -208,11 +203,6 @@ function setMap () {
 }
 
 function error (err) {
-  try {
-    spinner.fail()
-  } catch (e) {
-    // Don't worry about this
-  }
   // Syntax Error
   if (err.name === 'CssSyntaxError') {
     err.message = err.message.substr(err.file.length + 1).replace(/:\s/, '] ')

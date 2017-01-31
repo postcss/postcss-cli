@@ -63,10 +63,8 @@ const argv = require('yargs')
   .requiresArg(['i', 'o'])
   .argv
 
-console.log(argv)
-
 let dir = argv.dir
-let ext = argv.ext
+
 let input = argv._
 let output = argv.output
 
@@ -80,13 +78,7 @@ let config = {
 }
 
 if (argv.env) process.env.NODE_ENV = argv.env
-
 if (argv.config) argv.config = path.resolve(argv.config)
-else argv.config = process.cwd()
-
-// if (!output && !dir && !argv.replace) {
-//   throw new Error(`No Output specified, either --output, --dir, or --replace option must be passed`)
-// }
 
 console.warn(chalk.bold.red(logo))
 
@@ -130,8 +122,6 @@ Promise.resolve()
   })
   .then((results) => {
     if (argv.watch) {
-      // console.warn('Waiting for file changes...')
-
       let watcher = chokidar
         .watch(input.concat(dependencies(results)))
 
@@ -162,7 +152,7 @@ function rc (ctx, path) {
 
   return postcssrc(ctx, path)
     .then((rc) => {
-      config = rc
+      config = Object.assign(config, rc)
       map()
       return config
     })
@@ -193,11 +183,6 @@ function files (files) {
 }
 
 function css (css, file) {
-  const time = process.hrtime()
-  const spinner = ora(`Processing ${file}`)
-
-  spinner.start()
-
   const ctx = { options: argv.ctx ? argv.ctx : {} }
 
   if (file !== 'stdin') {
@@ -206,8 +191,16 @@ function css (css, file) {
       extname: path.extname(file),
       basename: path.basename(file)
     }
-    if (argv.config === process.cwd()) argv.config = ctx.file.dirname
+
+    if (!argv.config) argv.config = ctx.file.dirname
   }
+
+  if (!argv.config) argv.config = process.cwd()
+
+  const time = process.hrtime()
+  const spinner = ora(`Processing ${file}`)
+
+  spinner.start()
 
   rc(ctx, argv.config)
     .then((config) => {
@@ -224,11 +217,12 @@ function css (css, file) {
           config.options
         )
 
-        config.options.to = path.resolve(config.options.to)
-
-        if (ext) {
-          config.options.to = config.options.to.replace(path.extname(file), ext)
+        if (argv.ext) {
+          config.options.to = config.options.to
+            .replace(path.extname(config.options.to), argv.ext)
         }
+
+        config.options.to = path.resolve(config.options.to)
       }
 
       return postcss(config.plugins)
@@ -240,7 +234,7 @@ function css (css, file) {
               .forEach((msg) => chalk.bold.yellow(msg.message))
           }
 
-          if (output || dir) {
+          if (file !== 'stdin' || output) {
             const results = [ fs.outputFile(config.options.to, result.css) ]
 
             if (result.map) {
@@ -253,11 +247,11 @@ function css (css, file) {
 
             return Promise.all(results)
               .then(() => {
-                console.log(results)
                 spinner.text = chalk.bold.green(
                   `Finished ${file} (${process.hrtime(time)}s)`
                 )
                 spinner.succeed()
+
                 return result
               })
           }
@@ -266,10 +260,11 @@ function css (css, file) {
             write: (chunk, enc, cb) => cb(chunk)
           })
 
-          $.write(result.css)
+          result.map ? $.write(result.css, result.map) : $.write(result.map)
 
-          if (result.map) $.write(result.map)
-
+          spinner.text = chalk.bold.green(
+            `Finished ${file} (${process.hrtime(time)}s)`
+          )
           spinner.succeed()
 
           return $.pipe(process.stdout)

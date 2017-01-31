@@ -1,15 +1,17 @@
 {
   "name": "postcss-cli",
   "version": "2.6.0",
-  "description": "CLI for postcss",
+  "description": "CLI for PostCSS",
   "main": "index.js",
   "bin": {
     "postcss": "./bin/postcss"
   },
   "scripts": {
+    "clean": "rm -rf coverage .nyc_output test/fixtures/.tmp",
     "lint": "standard",
-    "pretest": "node .cleanup.js",
-    "test": "nyc --reporter=lcov ava"
+    "pretest": "npm run clean && npm run lint",
+    "test": "nyc --reporter=lcov ava -v",
+    "release": "standard-version"
   },
   "dependencies": {
     "chalk": "^1.1.3",
@@ -17,17 +19,18 @@
     "fs-promise": "^1.0.0",
     "get-stdin": "^5.0.1",
     "globby": "^6.1.0",
-    "ora": "^1.0.0",
-    "postcss": "^5.2.4",
+    "ora": "^1.1.0",
+    "postcss": "^5.2.11",
     "postcss-load-config": "^1.1.0",
     "yargs": "^6.6.0"
   },
   "devDependencies": {
     "ava": "^0.17.0",
     "coveralls": "^2.11.15",
-    "nyc": "^10.0.0",
-    "postcss-import": "^9.0.0",
-    "standard": "^8.4.0",
+    "nyc": "^10.1.2",
+    "postcss-import": "^9.1.0",
+    "standard": "^8.6.0",
+    "standard-version": "^4.0.0",
     "sugarss": "^0.2.0",
     "uuid": "^3.0.1"
   },

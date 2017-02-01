@@ -168,16 +168,16 @@ function files (files) {
 }
 
 function css (css, file) {
-  const ctx = { options: argv.ctx ? argv.ctx : {} }
+  const ctx = { options: {} }
 
   if (file !== 'stdin') {
     ctx.file = {
       dirname: path.dirname(file),
-      extname: path.extname(file),
-      basename: path.basename(file)
+      basename: path.basename(file),
+      extname: path.extname(file)
     }
 
-    if (!argv.config) argv.config = ctx.file.dirname
+    if (!argv.config) argv.config = path.dirname(file)
   }
 
   if (!argv.config) argv.config = process.cwd()
@@ -189,8 +189,10 @@ function css (css, file) {
 
   rc(ctx, argv.config)
     .then(() => {
+      let options
+
       if (file !== 'stdin') {
-        config.options = Object.assign(
+        options = Object.assign(
           {
             from: file,
             to: output || (
@@ -203,15 +205,15 @@ function css (css, file) {
         )
 
         if (argv.ext) {
-          config.options.to = config.options.to
-            .replace(path.extname(config.options.to), argv.ext)
+          options.to = options.to
+            .replace(path.extname(options.to), argv.ext)
         }
 
-        config.options.to = path.resolve(config.options.to)
+        options.to = path.resolve(options.to)
       }
 
       return postcss(config.plugins)
-        .process(css, config.options)
+        .process(css, options)
         .then((result) => {
           if (result.messages) {
             result.warnings()
@@ -219,14 +221,15 @@ function css (css, file) {
           }
 
           if (file !== 'stdin' || output) {
-            const results = [ fs.outputFile(config.options.to, result.css) ]
+            const results = [ fs.outputFile(options.to, result.css) ]
 
             if (result.map) {
               results.push(
                 fs.outputFile(
-                  config.options.to
+                  options.to
                     .replace(
-                      path.extname(config.options.to), path.extname(config.options.to) + '.map'
+                      path.extname(options.to),
+                      path.extname(options.to) + '.map'
                     ),
                     result.map
                 )
@@ -236,7 +239,7 @@ function css (css, file) {
             return Promise.all(results)
               .then(() => {
                 spinner.text = chalk.bold.green(
-                  `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1000000)}ms)`
+                  `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
                 )
                 spinner.succeed()
 
@@ -249,16 +252,18 @@ function css (css, file) {
           })
 
           $.write(result.css)
+
           if (result.map) $.write(result.map)
 
           spinner.text = chalk.bold.green(
-            `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1000000)}ms)`
+            `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
           )
           spinner.succeed()
 
           return $.pipe(process.stdout)
-        }).catch(error)
-    }).catch(error)
+        })
+    })
+    .catch(error)
 }
 
 function dependencies (results) {
@@ -278,21 +283,21 @@ function dependencies (results) {
 function error (err) {
   // Syntax Error
   if (err.name === 'CssSyntaxError') {
+    spinner.text = chalk.bold.red(`${err.file}`)
     spinner.fail()
 
     err.message = err.message
       .substr(err.file.length + 1)
       .replace(/:\s/, '] ')
 
-    console.error(chalk.bold.red('\n', `[${err.message}`))
+    console.error('\n', chalk.bold.red(`[${err.message}`))
     console.error('\n', err.showSourceCode(), '\n')
 
     process.exit(1)
   }
   // Error
+  spinner.text = chalk.bold.red(`${err}\n`)
   spinner.fail()
-
-  console.error(chalk.bold.red(`\n${err}\n`))
 
   process.exit(1)
 }

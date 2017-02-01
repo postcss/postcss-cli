@@ -48,11 +48,13 @@ const argv = require('yargs')
   .alias('x', 'ext').describe('x', 'Extension')
   .alias('c', 'config').describe('c', 'Config')
   .alias('o', 'output').describe('o', 'Output')
+    .describe('concat', 'Concat Input')
   .alias('d', 'dir').describe('d', 'Output Directory')
   .alias('r', 'replace').describe('r', 'Replace File')
   .alias('m', 'map')
     .describe('m', 'External Sourcemap')
     .describe('no-map', 'Disable Sourcemaps')
+  .alias('b', 'concat').describe('b', 'Concat Input')
   .alias('u', 'use').describe('u', 'Plugin(s)').array('u')
   .alias('p', 'parser').describe('p', 'Parser')
   .alias('s', 'syntax').describe('s', 'Syntax')
@@ -99,7 +101,7 @@ Promise.resolve()
       throw new Error('You must pass a valid list of files to parse')
     }
 
-    if (i.length > 1 && argv.output) {
+    if (i.length > 1 && argv.output && !argv.concat) {
       throw new Error('Must use --dir or --replace with multiple input files')
     }
 
@@ -154,6 +156,19 @@ function map () {
 
 function files (files) {
   if (typeof files === 'string') files = [ files ]
+
+  if (argv.concat) {
+    const concat = []
+
+    files.forEach((file) => {
+      concat.push(fs.readFile(file).then((content) => content))
+    })
+
+    return Promise.all(concat)
+      .then((content) => {
+        css(content.join('\n'), path.resolve(output))
+      })
+  }
 
   return Promise.all(files.map((file) => {
     // Read from stdin

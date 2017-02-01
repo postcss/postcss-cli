@@ -7,7 +7,7 @@ const stdin = require('get-stdin')
 const stream = require('stream')
 
 const chalk = require('chalk')
-const ora = require('ora')
+const spinner = require('ora')()
 const globber = require('globby')
 const chokidar = require('chokidar')
 
@@ -85,9 +85,8 @@ console.warn(chalk.bold.red(logo))
 Promise.resolve()
   .then(() => {
     if (input && input.length) return globber(input)
-    // Else, read from stdin:
 
-    console.warn(chalk.bold.yellow('\n\nNo files passed, reading from stdin\n'))
+    console.warn(chalk.bold.yellow('\nWarning: No files passed, reading from stdin\n'))
 
     if (argv.watch) {
       throw new Error('Cannot run in watch mode when reading from stdin')
@@ -95,31 +94,18 @@ Promise.resolve()
 
     return ['-']
   })
-  .then((input) => {
-    if (!input || !input.length) {
+  .then((i) => {
+    if (!i || !i.length) {
       throw new Error('You must pass a valid list of files to parse')
     }
 
-    if (input.length > 1 && argv.output) {
+    if (i.length > 1 && argv.output) {
       throw new Error('Must use --dir or --replace with multiple input files')
     }
 
     return input
   })
-  .then((files) => {
-    if (typeof files === 'string') files = [ files ]
-
-    return Promise.all(files.map((file) => {
-      // Read from stdin
-      if (file === '-') {
-        return stdin()
-          .then((content) => css(content, 'stdin'))
-      }
-
-      return fs.readFile(file)
-        .then((content) => css(content, file))
-    }))
-  })
+  .then(files)
   .then((results) => {
     if (argv.watch) {
       let watcher = chokidar
@@ -147,14 +133,13 @@ Promise.resolve()
 function rc (ctx, path) {
   if (argv.use) {
     map()
-    return Promise.resolve(config)
+    return Promise.resolve()
   }
 
   return postcssrc(ctx, path)
     .then((rc) => {
-      config = Object.assign(config, rc)
+      config = rc
       map()
-      return config
     })
     .catch((err) => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
@@ -198,12 +183,12 @@ function css (css, file) {
   if (!argv.config) argv.config = process.cwd()
 
   const time = process.hrtime()
-  const spinner = ora(`Processing ${file}`)
 
+  spinner.text = `Processing ${file}`
   spinner.start()
 
   rc(ctx, argv.config)
-    .then((config) => {
+    .then(() => {
       if (file !== 'stdin') {
         config.options = Object.assign(
           {
@@ -229,9 +214,8 @@ function css (css, file) {
         .process(css, config.options)
         .then((result) => {
           if (result.messages) {
-            result.messages
-              .filter((msg) => msg.type === 'warning' ? msg : '')
-              .forEach((msg) => chalk.bold.yellow(msg.message))
+            result.warnings()
+              .forEach((warning) => chalk.bold.yellow(`${warning}`))
           }
 
           if (file !== 'stdin' || output) {
@@ -240,7 +224,11 @@ function css (css, file) {
             if (result.map) {
               results.push(
                 fs.outputFile(
-                  config.options.to.replace('.css', '.css.map'), result.map
+                  config.options.to
+                    .replace(
+                      path.extname(config.options.to), path.extname(config.options.to) + '.map'
+                    ),
+                    result.map
                 )
               )
             }
@@ -248,7 +236,7 @@ function css (css, file) {
             return Promise.all(results)
               .then(() => {
                 spinner.text = chalk.bold.green(
-                  `Finished ${file} (${process.hrtime(time)}s)`
+                  `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1000000)}ms)`
                 )
                 spinner.succeed()
 
@@ -257,35 +245,32 @@ function css (css, file) {
           }
 
           const $ = new stream.Writable({
-            write: (chunk, enc, cb) => cb(chunk)
+            write: (chunk, enc, cb) => cb(chunk.toString())
           })
 
-          result.map ? $.write(result.css, result.map) : $.write(result.map)
+          $.write(result.css)
+          if (result.map) $.write(result.map)
 
           spinner.text = chalk.bold.green(
-            `Finished ${file} (${process.hrtime(time)}s)`
+            `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1000000)}ms)`
           )
           spinner.succeed()
 
           return $.pipe(process.stdout)
-        })
-    })
-    .catch((err) => {
-      if (err.message.indexOf('No PostCSS Config found') === -1) throw err
-    })
+        }).catch(error)
+    }).catch(error)
 }
 
 function dependencies (results) {
   if (!Array.isArray(results)) results = [ results ]
 
-  const messages = []
+  let messages = []
 
-  results
-    .forEach((result) => {
-      result.messages
-        .filter((msg) => msg.type === 'dependency' ? msg.file : '')
-        .forEach((dependency) => messages.push(dependency))
-    })
+  results.forEach((result) => {
+    return result.messages
+      .filter((msg) => msg.type === 'dependency' ? msg.file : '')
+      .forEach((dependency) => messages.push(dependency))
+  })
 
   return messages
 }
@@ -293,6 +278,8 @@ function dependencies (results) {
 function error (err) {
   // Syntax Error
   if (err.name === 'CssSyntaxError') {
+    spinner.fail()
+
     err.message = err.message
       .substr(err.file.length + 1)
       .replace(/:\s/, '] ')
@@ -303,7 +290,9 @@ function error (err) {
     process.exit(1)
   }
   // Error
-  console.error(err)
+  spinner.fail()
+
+  console.error(chalk.bold.red(`\n${err}\n`))
 
   process.exit(1)
 }

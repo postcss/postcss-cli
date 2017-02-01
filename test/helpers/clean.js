@@ -2,7 +2,7 @@
 
 const fs = require('fs-promise')
 
-fs.emptyDir('../fixtures/.tmp/')
+fs.emptyDir('./test/fixtures/.tmp/')
 
-fs.remove('../../coverage/')
-fs.remove('../../.nyc_output')
+fs.remove('./coverage')
+fs.remove('./.nyc_output')

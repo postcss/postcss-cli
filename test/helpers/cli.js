@@ -1,11 +1,11 @@
 'use strict'
 
 const path = require('path')
-const { execFile } = require('child_process')
+const exec = require('child_process').execFile
 
 module.exports = function (args, cwd) {
   return new Promise((resolve) => {
-    execFile(
+    exec(
       path.resolve('bin/postcss'),
       args, { cwd },
       (err, stdout, stderr) => {

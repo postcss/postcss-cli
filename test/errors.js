@@ -1,20 +1,10 @@
 import test from 'ava'
 
 import tmp from './helpers/tmp.js'
-import run from './helpers/cli.js'
+import cli from './helpers/cli.js'
 
-test('when no output option', (t) => {
-  return run(
-    [ 'test/fixtures/a.css' ]
-  )
-  .then(({ error, code }) => {
-    t.is(code, 1, 'expected non-zero error code')
-    t.regex(error, /No Output specified, either --output, --dir, or --replace option must be passed/)
-  })
-})
-
-test('when multiple input files and --output is set', (t) => {
-  return run(
+test('multiple input files && --output is set', (t) => {
+  return cli(
     [ 'test/fixtures/*.css', '-o', tmp() ]
   )
   .then(({ error, code }) => {
@@ -23,8 +13,8 @@ test('when multiple input files and --output is set', (t) => {
   })
 })
 
-test('when invalid --config option', (t) => {
-  return run(
+test('invalid --config option', (t) => {
+  return cli(
     [ 'test/fixtures/*.css', '-c', 'test/postcss.config.js', '-o', tmp() ]
   )
   .then(({ error, code }) => {
@@ -34,7 +24,7 @@ test('when invalid --config option', (t) => {
 })
 
 test('when CssSyntaxError', (t) => {
-  return run(
+  return cli(
     [ 'test/fixtures/a.css', '-p', 'sugarss', '-o', tmp() ]
   )
   .then(({ error, code }) => {

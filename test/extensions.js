@@ -3,7 +3,7 @@ import fs from 'fs'
 
 import cli from './helpers/cli.js'
 
-test.only('extname is replaced', async function (t) {
+test('extname is replaced', async function (t) {
   const dir = 'test/fixtures/.tmp'
 
   const { error, stderr } = await cli(

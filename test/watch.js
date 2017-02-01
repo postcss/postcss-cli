@@ -8,7 +8,7 @@ import chokidar from 'chokidar'
 import ENV from './helpers/env.js'
 import read from './helpers/read.js'
 
-test.cb('--watch mode works', function (t) {
+test.skip.cb('--watch mode works', function (t) {
   let cp
 
   t.plan(2)
@@ -74,7 +74,7 @@ test.cb('--watch mode works', function (t) {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb('--watch watches postcss.config.js', function (t) {
+test.skip.cb('--watch watches postcss.config.js', function (t) {
   let cp
 
   t.plan(2)
@@ -150,7 +150,7 @@ test.cb('--watch watches postcss.config.js', function (t) {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb('--watch watches dependencies', function (t) {
+test.skip.cb('--watch watches dependencies', function (t) {
   let cp
 
   t.plan(2)

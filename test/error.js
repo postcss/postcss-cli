@@ -3,9 +3,12 @@ import test from 'ava'
 import tmp from './helpers/tmp.js'
 import cli from './helpers/cli.js'
 
-test('multiple input files && --output is set', (t) => {
+test.skip('multiple input files && --output', (t) => {
   return cli(
-    [ 'test/fixtures/*.css', '-o', tmp() ]
+    [
+      'test/fixtures/*.css',
+      '-o', tmp('.')
+    ]
   )
   .then(({ error, code }) => {
     t.is(code, 1, 'expected non-zero error code')
@@ -13,9 +16,13 @@ test('multiple input files && --output is set', (t) => {
   })
 })
 
-test('invalid --config option', (t) => {
+test.skip('invalid --config', (t) => {
   return cli(
-    [ 'test/fixtures/*.css', '-c', 'test/postcss.config.js', '-o', tmp() ]
+    [
+      'test/fixtures/*.css',
+      '-c', 'test/postcss.config.js',
+      '-o', tmp()
+    ]
   )
   .then(({ error, code }) => {
     t.is(code, 1, 'expected non-zero error code')
@@ -23,9 +30,13 @@ test('invalid --config option', (t) => {
   })
 })
 
-test('when CssSyntaxError', (t) => {
+test.skip('CssSyntaxError', (t) => {
   return cli(
-    [ 'test/fixtures/a.css', '-p', 'sugarss', '-o', tmp() ]
+    [
+      'test/fixtures/a.css',
+      '-p', 'sugarss',
+      '-o', tmp()
+    ]
   )
   .then(({ error, code }) => {
     t.is(code, 1, 'expected non-zero error code')

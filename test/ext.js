@@ -3,7 +3,7 @@ import fs from 'fs'
 
 import cli from './helpers/cli.js'
 
-test('extname is replaced', async function (t) {
+test('--ext works', async function (t) {
   const dir = 'test/fixtures/.tmp'
 
   const { error, stderr } = await cli(

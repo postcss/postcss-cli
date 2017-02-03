@@ -1,9 +1,9 @@
 'use strict'
 
-const path = require('path')
-const uuid = require('uuid')
+import path from 'path'
+import uuid from 'uuid'
 
-module.exports = (ext) => {
+export default function (ext) {
   ext = ext || ''
 
   return path.join('test/fixtures/.tmp', uuid(), ext)

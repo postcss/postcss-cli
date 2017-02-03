@@ -8,12 +8,12 @@ import chokidar from 'chokidar'
 import ENV from './helpers/env.js'
 import read from './helpers/read.js'
 
-test.skip.cb('--watch mode works', function (t) {
+test.skip.cb('--watch works', function (t) {
   let cp
 
   t.plan(2)
 
-  ENV('', ['a-red.css'])
+  ENV('', ['a.css'])
     .then((dir) => {
     // Init watcher:
       const watcher = chokidar.watch('.', {
@@ -34,9 +34,9 @@ test.skip.cb('--watch mode works', function (t) {
       })
 
       // When the change is picked up:
-      watcher.on('change', p => {
+      watcher.on('change', (p) => {
         if (p === 'out.css') {
-          isEqual(p, 'test/fixtures/a-blue.css')
+          isEqual(p, 'test/fixtures/b.css')
             .then(() => done())
             .catch(done)
         }
@@ -56,7 +56,10 @@ test.skip.cb('--watch mode works', function (t) {
 
       // Helper functions:
       function isEqual (p, expected) {
-        return Promise.all([ read(path.join(dir, p)), read(expected) ])
+        return Promise.all([
+          read(path.join(dir, p)),
+          read(expected)
+        ])
           .then(([a, e]) => t.is(a, e))
       }
 
@@ -74,12 +77,12 @@ test.skip.cb('--watch mode works', function (t) {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.skip.cb('--watch watches postcss.config.js', function (t) {
+test.skip.cb('--watch postcss.config.js', function (t) {
   let cp
 
   t.plan(2)
 
-  ENV('module.exports = {}', ['*a-red.css'])
+  ENV('module.exports = {}', ['imports.css'])
     .then((dir) => {
       // Init watcher:
       const watcher = chokidar.watch('.', {
@@ -150,12 +153,12 @@ test.skip.cb('--watch watches postcss.config.js', function (t) {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.skip.cb('--watch watches dependencies', function (t) {
+test.skip.cb('--watch dependencies', function (t) {
   let cp
 
   t.plan(2)
 
-  ENV('', ['*a.css'])
+  ENV('', ['a.css'])
     .then((dir) => {
     // Init watcher:
       const watcher = chokidar.watch('.', {

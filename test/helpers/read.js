@@ -1,7 +1,7 @@
 'use strict'
 
-const fs = require('fs-promise')
+import { readFile } from 'fs-promise'
 
-module.exports = function (path) {
-  return fs.readFile(path, 'utf8')
+export default function (path) {
+  return readFile(path, 'utf8')
 }

@@ -1,12 +1,12 @@
 'use strict'
 
-const fs = require('fs-promise')
-const path = require('path')
-const globby = require('globby')
+import fs from 'fs-promise'
+import path from 'path'
+import globby from 'globby'
 
-const tmp = require('./tmp.js')
+import tmp from './tmp.js'
 
-module.exports = function (conf, fixtures) {
+export default function (config, fixtures) {
   fixtures = fixtures || '**/*'
   // fixtures = fixtures.map(p => path.join('test/fixtures', p))
   const dir = tmp()
@@ -18,7 +18,9 @@ module.exports = function (conf, fixtures) {
       })
     })
   // Save promise in a const
-  const config = fs.outputFile(path.join(dir, 'postcss.config.js'), conf)
+  const rc = fs.outputFile(
+    path.join(dir, 'postcss.config.js'), config
+  )
   // Return a promise for dir when both tasks are done:
-  return Promise.all([ fixture, config ]).then(() => dir)
+  return Promise.all([ fixture, rc ]).then(() => dir)
 }

@@ -1,22 +1,22 @@
 import test from 'ava'
 
-import fs from 'fs'
+import fs from 'fs-promise'
 import path from 'path'
 import { execFile } from 'child_process'
 
-// import cli from './helpers/cli.js'
+import tmp from './helpers/tmp.js'
 import read from './helpers/read.js'
 
-test('pipe stdin to stdout', async function (t) {
-  const cp = execFile(
+test.cb('reads from stdin', (t) => {
+  const output = tmp('output.css')
+
+  let cp = execFile(
     path.resolve('bin/postcss'),
-    ['-p', 'sugarss', '-u', 'postcss-import'],
+    ['-o', output, '--no-map'],
     (error, stdout, stderr) => {
       if (error) t.end(error, stderr)
 
-      console.log(stdout)
-
-      Promise.all([ read('test/fixtures/a.css'), stdout ])
+      Promise.all([ read(output), read('test/fixtures/a.css') ])
         .then(([ a, e ]) => {
           t.is(a, e)
           t.end()
@@ -25,5 +25,5 @@ test('pipe stdin to stdout', async function (t) {
     }
   )
 
-  fs.createReadStream('./test/fixtures/a.sss').pipe(cp.stdin)
+  fs.createReadStream('test/fixtures/a.css').pipe(cp.stdin)
 })

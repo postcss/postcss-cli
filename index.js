@@ -4,7 +4,7 @@ const fs = require('fs-promise')
 const path = require('path')
 
 const stdin = require('get-stdin')
-const stream = require('stream')
+const Readable = require('stream').Readable
 
 const chalk = require('chalk')
 const spinner = require('ora')()
@@ -70,8 +70,11 @@ let dir = argv.dir
 let input = argv._
 let output = argv.output
 
+if (argv.map) argv.map = { inline: false }
+
 let config = {
   options: {
+    map: argv.map !== undefined ? argv.map : { inline: true },
     parser: argv.parser ? require(argv.parser) : undefined,
     syntax: argv.syntax ? require(argv.syntax) : undefined,
     stringifier: argv.stringifier ? require(argv.stringifier) : undefined
@@ -94,18 +97,18 @@ Promise.resolve()
       throw new Error('Cannot run in watch mode when reading from stdin')
     }
 
-    return ['-']
+    return ['stdin']
   })
   .then((i) => {
     if (!i || !i.length) {
       throw new Error('You must pass a valid list of files to parse')
     }
 
-    if (i.length > 1 && argv.output && !argv.concat) {
+    if (i.length > 1 && argv.output) {
       throw new Error('Must use --dir or --replace with multiple input files')
     }
 
-    return input
+    return i
   })
   .then(files)
   .then((results) => {
@@ -133,46 +136,20 @@ Promise.resolve()
   .catch(error)
 
 function rc (ctx, path) {
-  if (argv.use) {
-    map()
-    return Promise.resolve()
-  }
+  if (argv.use) return Promise.resolve()
 
   return postcssrc(ctx, path)
-    .then((rc) => {
-      config = rc
-      map()
-    })
+    .then((rc) => { config = rc })
     .catch((err) => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
     })
 }
 
-function map () {
-  if (argv.map === false) config.options.map = false
-  else if (argv.map) config.options.map = { inline: false }
-  else config.options.map = true
-}
-
 function files (files) {
   if (typeof files === 'string') files = [ files ]
 
-  if (argv.concat) {
-    const concat = []
-
-    files.forEach((file) => {
-      concat.push(fs.readFile(file).then((content) => content))
-    })
-
-    return Promise.all(concat)
-      .then((content) => {
-        css(content.join('\n'), path.resolve(output))
-      })
-  }
-
   return Promise.all(files.map((file) => {
-    // Read from stdin
-    if (file === '-') {
+    if (file === 'stdin') {
       return stdin()
         .then((content) => css(content, 'stdin'))
     }
@@ -183,7 +160,7 @@ function files (files) {
 }
 
 function css (css, file) {
-  const ctx = { options: {} }
+  const ctx = { options: config.options }
 
   if (file !== 'stdin') {
     ctx.file = {
@@ -204,7 +181,9 @@ function css (css, file) {
 
   rc(ctx, argv.config)
     .then(() => {
-      let options
+      let options = config.options
+
+      if (file === 'stdin' && output) file = output
 
       if (file !== 'stdin') {
         options = Object.assign(
@@ -235,7 +214,7 @@ function css (css, file) {
               .forEach((warning) => chalk.bold.yellow(`${warning}`))
           }
 
-          if (file !== 'stdin' || output) {
+          if (file !== 'stdin') {
             const results = [ fs.outputFile(options.to, result.css) ]
 
             if (result.map) {
@@ -262,13 +241,16 @@ function css (css, file) {
               })
           }
 
-          const $ = new stream.Writable({
-            write: (chunk, enc, cb) => cb(chunk.toString())
+          const $ = new Readable({ read: (chunk) => chunk })
+
+          result.map
+            ? $.push(result.css, result.map)
+            : $.push(result.css)
+
+          $.on('error', (err) => {
+            spinner.text = chalk.bold.red(`${err}\n`)
+            spinner.fail()
           })
-
-          $.write(result.css)
-
-          if (result.map) $.write(result.map)
 
           spinner.text = chalk.bold.green(
             `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
@@ -284,12 +266,12 @@ function css (css, file) {
 function dependencies (results) {
   if (!Array.isArray(results)) results = [ results ]
 
-  let messages = []
+  const messages = []
 
   results.forEach((result) => {
-    return result.messages
+    result.messages
       .filter((msg) => msg.type === 'dependency' ? msg.file : '')
-      .forEach((dependency) => messages.push(dependency))
+      .forEach((file) => messages.push(file))
   })
 
   return messages

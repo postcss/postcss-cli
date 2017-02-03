@@ -72,6 +72,10 @@ let output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
+console.warn(chalk.bold.red(logo))
+
+spinner.start()
+
 let config = {
   options: {
     map: argv.map !== undefined ? argv.map : { inline: true },
@@ -79,13 +83,23 @@ let config = {
     syntax: argv.syntax ? require(argv.syntax) : undefined,
     stringifier: argv.stringifier ? require(argv.stringifier) : undefined
   },
-  plugins: argv.use ? argv.use.map(plugin => require(plugin)) : []
+  plugins: argv.use
+    ? argv.use.map((plugin) => {
+      if (argv[plugin]) console.log(argv[plugin])
+      try {
+        return argv[plugin]
+          ? require(plugin)(argv[plugin])
+          : require(plugin)
+      } catch (err) {
+        spinner.text = chalk.bold.red(`Plugin${err}`)
+        spinner.fail()
+      }
+    })
+    : []
 }
 
 if (argv.env) process.env.NODE_ENV = argv.env
 if (argv.config) argv.config = path.resolve(argv.config)
-
-console.warn(chalk.bold.red(logo))
 
 Promise.resolve()
   .then(() => {
@@ -104,7 +118,7 @@ Promise.resolve()
       throw new Error('You must pass a valid list of files to parse')
     }
 
-    if (i.length > 1 && argv.output) {
+    if (i.length > 1 && output) {
       throw new Error('Must use --dir or --replace with multiple input files')
     }
 
@@ -120,7 +134,7 @@ Promise.resolve()
         .add(config.file)
         .on('ready', (file) => console.warn('Waiting for file changes...'))
         .on('change', (file) => {
-        // If this is not a direct input file, process all:
+          // If this is not a direct input file, process all:
           if (input.indexOf(file) === -1) {
             return files(input)
               .then((results) => watcher.add(dependencies(results)))
@@ -177,7 +191,6 @@ function css (css, file) {
   const time = process.hrtime()
 
   spinner.text = `Processing ${file}`
-  spinner.start()
 
   rc(ctx, argv.config)
     .then(() => {
@@ -185,7 +198,7 @@ function css (css, file) {
 
       if (file === 'stdin' && output) file = output
 
-      if (file !== 'stdin') {
+      if (file !== 'stdin' && output || output || dir || argv.replace) {
         options = Object.assign(
           {
             from: file,
@@ -214,7 +227,9 @@ function css (css, file) {
               .forEach((warning) => chalk.bold.yellow(`${warning}`))
           }
 
-          if (file !== 'stdin') {
+          console.log(options.to)
+
+          if (file !== 'stdin' && options.to || options.to) {
             const results = [ fs.outputFile(options.to, result.css) ]
 
             if (result.map) {

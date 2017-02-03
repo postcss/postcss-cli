@@ -7,12 +7,12 @@ test.skip('multiple input files && --output', (t) => {
   return cli(
     [
       'test/fixtures/*.css',
-      '-o', tmp('.')
+      '-o', tmp()
     ]
   )
-  .then(({ error, code }) => {
+  .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(error, /Must use --dir or --replace/)
+    t.regex(err, /Must use --dir or --replace/)
   })
 })
 
@@ -21,12 +21,26 @@ test.skip('invalid --config', (t) => {
     [
       'test/fixtures/*.css',
       '-c', 'test/postcss.config.js',
+      '-d', tmp()
+    ]
+  )
+  .then(({ err, code }) => {
+    t.is(code, 1, 'expected non-zero error code')
+    t.regex(err, /ENOENT: no such file or directory/)
+  })
+})
+
+test.skip('PluginError', (t) => {
+  return cli(
+    [
+      'test/fixtures/a.css',
+      '-u', 'postcss-plugin',
       '-o', tmp()
     ]
   )
-  .then(({ error, code }) => {
+  .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(error, /ENOENT: no such file or directory/)
+    t.regex(err, /PluginError: Cannot find module 'postcss-plugin'/)
   })
 })
 
@@ -38,8 +52,8 @@ test.skip('CssSyntaxError', (t) => {
       '-o', tmp()
     ]
   )
-  .then(({ error, code }) => {
+  .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(error, /\[1:3] Unnecessary curly bracket/)
+    t.regex(err, /\[1:4] Unnecessary curly bracket/)
   })
 })

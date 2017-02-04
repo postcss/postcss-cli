@@ -176,9 +176,8 @@ Promise.resolve()
       error('Must use --dir or --replace with multiple input files')
     }
 
-    return i
+    return files(i)
   })
-  .then(files)
   .then((results) => {
     if (argv.watch) {
       const watcher = chokidar.watch(input.concat(dependencies(results)))

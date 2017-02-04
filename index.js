@@ -42,26 +42,81 @@ const version = () => {
 }
 
 const argv = require('yargs')
-  .usage(`${chalk.bold.red(logo)}\nUsage: \n\n$0 [--config|-c path/to/postcss.config.js] [input.css] [--output|-o output.css] [-watch|-w]`)
-  .alias('e', 'env').describe('e', 'Environment')
-  .alias('x', 'ext').describe('x', 'Extension')
-  .alias('c', 'config').describe('c', 'Config')
-  .alias('o', 'output').describe('o', 'Output')
-    .describe('concat', 'Concat Input')
-  .alias('d', 'dir').describe('d', 'Output Directory')
-  .alias('r', 'replace').describe('r', 'Replace File')
+  .usage(
+`${chalk.bold.red(logo)}
+Usage:
+
+  $0 [input.css] [OPTIONS] [--output|-o output.css] [--watch]`
+)
+  .option('o', {
+    alias: 'output',
+    desc: 'Output file',
+    type: 'string'
+  })
+  .option('d', {
+    alias: 'dir',
+    desc: 'Output directory',
+    type: 'string'
+  })
+  .option('r', {
+    alias: 'replace',
+    desc: 'Replace (overwrite) the input file',
+    type: 'boolean'
+  })
+  .option('u', {
+    alias: 'use',
+    desc: 'List of postcss plugins to use',
+    type: 'array'
+  })
+  .option('p', {
+    alias: 'parser',
+    desc: 'Custom postcss parser',
+    type: 'string'
+  })
+  .option('t', {
+    alias: 'stringifier',
+    desc: 'Custom postcss stringifier',
+    type: 'string'
+  })
+  .option('s', {
+    alias: 'syntax',
+    desc: 'Custom postcss syntax',
+    type: 'string'
+  })
+  .option('w', {
+    alias: 'watch',
+    desc: 'Watch files for changes and recompile as needed',
+    type: 'boolean'
+  })
+  .option('x', {
+    alias: 'ext',
+    desc: 'Override the output file extension',
+    type: 'string'
+  })
+  .option('e', {
+    alias: 'env',
+    desc: 'A shortcut for setting NODE_ENV',
+    type: 'string'
+  })
+  .option('c', {
+    alias: 'config',
+    desc: 'Set a custom path to look for a config file',
+    type: 'string'
+  })
   .alias('m', 'map')
-    .describe('m', 'External Sourcemap')
-    .describe('no-map', 'Disable Sourcemaps')
-  .alias('b', 'concat').describe('b', 'Concat Input')
-  .alias('u', 'use').describe('u', 'Plugin(s)').array('u')
-  .alias('p', 'parser').describe('p', 'Parser')
-  .alias('s', 'syntax').describe('s', 'Syntax')
-  .alias('t', 'stringifier').describe('t', 'Stringifier')
-  .alias('w', 'watch').describe('w', 'Watch')
-  .help('h').alias('h', 'help')
+    .describe('m', 'Create an external sourcemap')
+    .describe('no-map', 'Disable the default inline sourcemaps')
   .version(version).alias('v', 'version')
-  .requiresArg(['i', 'o'])
+  .help('h').alias('h', 'help')
+  .example('$0 input.css -o output.css', 'Basic usage')
+  .example('cat input.css | $0 -u autoprefixer > output.css', 'Piping input & output')
+  .epilog(
+`If no input files are passed, it reads from stdin. If neither -o, --dir, or --replace is passed, it writes to stdout.
+
+If there are multiple input files, the --dir or --replace option must be passed.
+
+For more details, please see https://github.com/postcss/postcss-cli`
+  )
   .argv
 
 let dir = argv.dir

@@ -24,7 +24,7 @@
     "yargs": "^6.6.0"
   },
   "devDependencies": {
-    "ava": "^0.18.0",
+    "ava": "^0.18.1",
     "coveralls": "^2.11.15",
     "nyc": "^10.1.2",
     "postcss-import": "^9.1.0",

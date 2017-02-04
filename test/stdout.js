@@ -6,14 +6,18 @@ import { execFile } from 'child_process'
 
 import read from './helpers/read.js'
 
-test('writes to stdout', async function (t) {
+test.cb('writes to stdout', function (t) {
   const cp = execFile(
     path.resolve('bin/postcss'),
-    ['-p', 'sugarss', '-u', 'postcss-import'],
+    [
+      '-p', 'sugarss',
+      '-u', 'postcss-import',
+      '--no-map'
+    ],
     (error, stdout, stderr) => {
       if (error) t.end(error, stderr)
 
-      Promise.all([ read('test/fixtures/a.css'), stdout ])
+      Promise.all([ stdout, read('test/fixtures/s.css') ])
         .then(([ a, e ]) => {
           t.is(a, e)
           t.end()

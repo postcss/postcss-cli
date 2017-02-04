@@ -15,30 +15,30 @@ const postcss = require('postcss')
 const postcssrc = require('postcss-load-config')
 
 const logo = `
-                               /|\\
-                             //   //
-                           //       //
-                         //___*___*___//
-                       //--*---------*--//
-                     /|| *             * ||/
-                   // ||*               *|| //
-                 //   || *             * ||   //
-               //_____||___*_________*___||_____//
+                                      /|\\
+                                    //   //
+                                  //       //
+                                //___*___*___//
+                              //--*---------*--//
+                            /|| *             * ||/
+                          // ||*               *|| //
+                        //   || *             * ||   //
+                      //_____||___*_________*___||_____//
 `
 
 const version = () => {
   const cli = require('./package.json').version
 
   return chalk.bold.red(`
-                                 /|\\
-                               //   //
-                             //       //
-                           //___*___*___//
-                         //--*---------*--//
-                       /|| *             * ||/
-                     // ||*    v${cli}     *|| //
-                   //   || *             * ||   //
-                 //_____||___*_________*___||_____//
+                                      /|\\
+                                    //   //
+                                  //       //
+                                //___*___*___//
+                              //--*---------*--//
+                            /|| *             * ||/
+                          // ||*    v${cli}     *|| //
+                        //   || *             * ||   //
+                      //_____||___*_________*___||_____//
   `)
 }
 
@@ -85,13 +85,10 @@ let config = {
   },
   plugins: argv.use
     ? argv.use.map((plugin) => {
-      if (argv[plugin]) console.log(argv[plugin])
       try {
-        return argv[plugin]
-          ? require(plugin)(argv[plugin])
-          : require(plugin)
+        return require(plugin)()
       } catch (err) {
-        spinner.text = chalk.bold.red(`Plugin${err}`)
+        spinner.text = chalk.bold.red(` Plugin${err}`)
         spinner.fail()
       }
     })
@@ -105,21 +102,21 @@ Promise.resolve()
   .then(() => {
     if (input && input.length) return globber(input)
 
-    console.warn(chalk.bold.yellow('\nWarning: No files passed, reading from stdin\n'))
+    console.warn(chalk.bold.yellow('\n Warning: No files passed, reading from stdin\n'))
 
     if (argv.watch) {
-      throw new Error('Cannot run in watch mode when reading from stdin')
+      throw new Error(' Cannot run in watch mode when reading from stdin')
     }
 
     return ['stdin']
   })
   .then((i) => {
     if (!i || !i.length) {
-      throw new Error('You must pass a valid list of files to parse')
+      throw new Error(' You must pass a valid list of files to parse')
     }
 
     if (i.length > 1 && output) {
-      throw new Error('Must use --dir or --replace with multiple input files')
+      throw new Error(' Must use --dir or --replace with multiple input files')
     }
 
     return i
@@ -127,14 +124,18 @@ Promise.resolve()
   .then(files)
   .then((results) => {
     if (argv.watch) {
-      let watcher = chokidar
-        .watch(input.concat(dependencies(results)))
+      const watcher = chokidar.watch(input.concat(dependencies(results)))
+
+      if (config.file) watcher.add(config.file)
 
       watcher
-        .add(config.file)
-        .on('ready', (file) => console.warn('Waiting for file changes...'))
+        .on('ready', (file) => {
+          setTimeout(() => spinner.stopAndPersist({
+            symbol: '👁',
+            text: chalk.bold.cyan(' Waiting for file changes...')
+          }), 1500)
+        })
         .on('change', (file) => {
-          // If this is not a direct input file, process all:
           if (input.indexOf(file) === -1) {
             return files(input)
               .then((results) => watcher.add(dependencies(results)))
@@ -144,6 +145,13 @@ Promise.resolve()
           files(file)
             .then((result) => watcher.add(dependencies(result)))
             .catch(error)
+
+          spinner.text = chalk.bold.cyan(' Waiting for file changes...')
+
+          setTimeout(() => spinner.stopAndPersist({
+            symbol: '👁',
+            text: chalk.bold.cyan(' Waiting for file changes...')
+          }), 1500)
         })
     }
   })
@@ -192,7 +200,7 @@ function css (css, file) {
 
   spinner.text = `Processing ${file}`
 
-  rc(ctx, argv.config)
+  return rc(ctx, argv.config)
     .then(() => {
       let options = config.options
 
@@ -227,9 +235,7 @@ function css (css, file) {
               .forEach((warning) => chalk.bold.yellow(`${warning}`))
           }
 
-          console.log(options.to)
-
-          if (file !== 'stdin' && options.to || options.to) {
+          if (options.to) {
             const results = [ fs.outputFile(options.to, result.css) ]
 
             if (result.map) {
@@ -284,9 +290,11 @@ function dependencies (results) {
   const messages = []
 
   results.forEach((result) => {
+    if (result.messages <= 0) return
+
     result.messages
-      .filter((msg) => msg.type === 'dependency' ? msg.file : '')
-      .forEach((file) => messages.push(file))
+      .filter((msg) => msg.type === 'dependency' ? msg : '')
+      .forEach((dependency) => messages.push(dependency.file))
   })
 
   return messages
@@ -295,7 +303,7 @@ function dependencies (results) {
 function error (err) {
   // Syntax Error
   if (err.name === 'CssSyntaxError') {
-    spinner.text = chalk.bold.red(`${err.file}`)
+    spinner.text = chalk.bold.red(` ${err.file}`)
     spinner.fail()
 
     err.message = err.message
@@ -308,7 +316,7 @@ function error (err) {
     process.exit(1)
   }
   // Error
-  spinner.text = chalk.bold.red(`${err}\n`)
+  spinner.text = chalk.bold.red(` ${err}\n`)
   spinner.fail()
 
   process.exit(1)

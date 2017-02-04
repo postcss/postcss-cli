@@ -91,7 +91,11 @@ Usage:
   .option('x', {
     alias: 'ext',
     desc: 'Override the output file extension',
-    type: 'string'
+    type: 'string',
+    coerce (ext) {
+      if (ext.indexOf('.') !== 0) return '.' + ext
+      return ext
+    }
   })
   .option('e', {
     alias: 'env',

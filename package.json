@@ -21,6 +21,7 @@
     "ora": "^1.1.0",
     "postcss": "^5.2.11",
     "postcss-load-config": "^1.1.0",
+    "postcss-reporter": "^3.0.0",
     "yargs": "^6.6.0"
   },
   "devDependencies": {

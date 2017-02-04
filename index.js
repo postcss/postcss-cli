@@ -11,6 +11,7 @@ const chokidar = require('chokidar')
 
 const postcss = require('postcss')
 const postcssrc = require('postcss-load-config')
+const reporter = require('postcss-reporter/lib/formatter')()
 
 const logo = `
                                       /|\\
@@ -224,11 +225,6 @@ function css (css, file) {
       return postcss(config.plugins)
         .process(css, options)
         .then((result) => {
-          if (result.messages) {
-            result.warnings()
-              .forEach((warning) => chalk.bold.yellow(`${warning}`))
-          }
-
           const tasks = []
 
           if (options.to) {
@@ -253,7 +249,10 @@ function css (css, file) {
               spinner.text = chalk.bold.green(
                 `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
               )
-              spinner.succeed()
+              if (result.warnings().length) {
+                spinner.fail()
+                console.warn(reporter(result))
+              } else spinner.succeed()
 
               return result
             })

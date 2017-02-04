@@ -100,6 +100,8 @@ Promise.resolve()
 
     console.warn(chalk.bold.yellow('Warning: No files passed, reading from stdin\n'))
 
+    if (argv.replace || argv.dir) error('Cannot use --dir or --replace when reading from stdin')
+
     if (argv.watch) {
       error('Cannot run in watch mode when reading from stdin')
     }

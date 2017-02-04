@@ -160,7 +160,10 @@ function files (files) {
   return Promise.all(files.map((file) => {
     if (file === 'stdin') {
       return stdin()
-        .then((content) => css(content, 'stdin'))
+        .then((content) => {
+          if (!content) return error('Error: Did not receive any stdin')
+          css(content, 'stdin')
+        })
     }
 
     return fs.readFile(file)
@@ -282,7 +285,6 @@ function error (err) {
   if (typeof err === 'string') {
     // Manual error
     console.error(chalk.bold.red(err))
-    process.exit(1)
   } else if (err.name === 'CssSyntaxError') {
     // CSS Syntax Error
     console.error(chalk.bold.red(`${err.file}`))

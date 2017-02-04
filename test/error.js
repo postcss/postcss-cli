@@ -16,6 +16,14 @@ test('multiple input files && --output', (t) => {
   })
 })
 
+test('multiple input files && writing to stdout', (t) => {
+  return cli(['test/fixtures/*.css'])
+  .then(({ err, code }) => {
+    t.is(code, 1, 'expected non-zero error code')
+    t.regex(err, /Must use --dir or --replace/)
+  })
+})
+
 test('invalid --config', (t) => {
   return cli(
     [

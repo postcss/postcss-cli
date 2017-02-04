@@ -112,7 +112,7 @@ Promise.resolve()
       error('You must pass a valid list of files to parse')
     }
 
-    if (i.length > 1 && output) {
+    if (i.length > 1 && !argv.dir && !argv.replace) {
       error('Must use --dir or --replace with multiple input files')
     }
 

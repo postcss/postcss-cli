@@ -4,8 +4,6 @@ const fs = require('fs-promise')
 const path = require('path')
 
 const stdin = require('get-stdin')
-const Readable = require('stream').Readable
-
 const chalk = require('chalk')
 const ora = require('ora')
 const globber = require('globby')
@@ -217,6 +215,12 @@ function css (css, file) {
         options.to = path.resolve(options.to)
       }
 
+      // Can't use external sourcemaps when writing to stdout:
+      if (!options.to && config.options.map && !config.options.map.inline) {
+        spinner.fail()
+        error('Cannot output external sourcemaps when writing to stdout')
+      }
+
       return postcss(config.plugins)
         .process(css, options)
         .then((result) => {
@@ -242,15 +246,7 @@ function css (css, file) {
                 )
               )
             }
-          } else {
-            const $ = new Readable({ read: (chunk) => chunk })
-
-            result.map
-              ? $.push(result.css, result.map)
-              : $.push(result.css)
-
-            $.pipe(process.stdout)
-          }
+          } else process.stdout.write(result.css, 'utf8')
 
           return Promise.all(tasks)
             .then(() => {

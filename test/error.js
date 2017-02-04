@@ -24,6 +24,14 @@ test('multiple input files && writing to stdout', (t) => {
   })
 })
 
+test('--map && writing to stdout', (t) => {
+  return cli(['test/fixtures/a.css', '--map'])
+  .then(({ err, code }) => {
+    t.is(code, 1, 'expected non-zero error code')
+    t.regex(err, /Cannot output external sourcemaps when writing to stdout/)
+  })
+})
+
 test('invalid --config', (t) => {
   return cli(
     [

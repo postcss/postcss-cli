@@ -82,12 +82,12 @@ test.cb('--watch works', function (t) {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.skip.cb('--watch postcss.config.js', function (t) {
+test.cb('--watch postcss.config.js', function (t) {
   let cp
 
   t.plan(2)
 
-  ENV('module.exports = {}', ['import.css'])
+  ENV('module.exports = {}', ['import.css', 'a.css'])
     .then((dir) => {
       // Init watcher:
       const watcher = chokidar.watch('.', {
@@ -163,12 +163,12 @@ test.skip.cb('--watch postcss.config.js', function (t) {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.skip.cb('--watch dependencies', function (t) {
+test.cb('--watch dependencies', function (t) {
   let cp
 
   t.plan(2)
 
-  ENV('', ['import.css'])
+  ENV('', ['import.css', 'a.css'])
     .then((dir) => {
     // Init watcher:
       const watcher = chokidar.watch('.', {

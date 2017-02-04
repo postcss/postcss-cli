@@ -3,227 +3,321 @@
 const fs = require('fs-promise')
 const path = require('path')
 
+const stdin = require('get-stdin')
+const Readable = require('stream').Readable
+
 const chalk = require('chalk')
-const ora = require('ora')
-const spinner = ora()
+const spinner = require('ora')()
 const globber = require('globby')
 const chokidar = require('chokidar')
-const getStdin = require('get-stdin')
 
 const postcss = require('postcss')
 const postcssrc = require('postcss-load-config')
 
-const getDependencyMessages = require('./lib/get-dependency-messages.js')
-
 const logo = `
-                               /|\\
-                             //   //
-                           //       //
-                         //___*___*___//
-                       //--*---------*--//
-                     /|| *             * ||/
-                   // ||*               *|| //
-                 //   || *             * ||   //
-               //_____||___*_________*___||_____//
+                                      /|\\
+                                    //   //
+                                  //       //
+                                //___*___*___//
+                              //--*---------*--//
+                            /|| *             * ||/
+                          // ||*               *|| //
+                        //   || *             * ||   //
+                      //_____||___*_________*___||_____//
 `
 
 const version = () => {
   const cli = require('./package.json').version
 
   return chalk.bold.red(`
-                                 /|\\
-                               //   //
-                             //       //
-                           //___*___*___//
-                         //--*---------*--//
-                       /|| *             * ||/
-                     // ||*    v${cli}     *|| //
-                   //   || *             * ||   //
-                 //_____||___*_________*___||_____//
+                                      /|\\
+                                    //   //
+                                  //       //
+                                //___*___*___//
+                              //--*---------*--//
+                            /|| *             * ||/
+                          // ||*    v${cli}     *|| //
+                        //   || *             * ||   //
+                      //_____||___*_________*___||_____//
   `)
 }
 
 const argv = require('yargs')
   .usage(`${chalk.bold.red(logo)}\nUsage: \n\n$0 [--config|-c path/to/postcss.config.js] [input.css] [--output|-o output.css] [-watch|-w]`)
   .alias('e', 'env').describe('e', 'Environment')
+  .alias('x', 'ext').describe('x', 'Extension')
   .alias('c', 'config').describe('c', 'Config')
   .alias('o', 'output').describe('o', 'Output')
+    .describe('concat', 'Concat Input')
   .alias('d', 'dir').describe('d', 'Output Directory')
-  .alias('r', 'replace').describe('r', 'Replace the input file')
-  .alias('m', 'map').describe('m', 'Write sourcemap to external file')
-  .describe('no-map', 'Disable sourcemaps')
-  .alias('u', 'use').describe('u', 'List of plugins to apply').array('u')
+  .alias('r', 'replace').describe('r', 'Replace File')
+  .alias('m', 'map')
+    .describe('m', 'External Sourcemap')
+    .describe('no-map', 'Disable Sourcemaps')
+  .alias('b', 'concat').describe('b', 'Concat Input')
+  .alias('u', 'use').describe('u', 'Plugin(s)').array('u')
   .alias('p', 'parser').describe('p', 'Parser')
   .alias('s', 'syntax').describe('s', 'Syntax')
   .alias('t', 'stringifier').describe('t', 'Stringifier')
-  .alias('w', 'watch').describe('w', 'Watch files for changes')
+  .alias('w', 'watch').describe('w', 'Watch')
   .help('h').alias('h', 'help')
   .version(version).alias('v', 'version')
   .requiresArg(['i', 'o'])
   .argv
 
 let dir = argv.dir
+
 let input = argv._
 let output = argv.output
 
-let config = {plugins: [], options: {}}
+if (argv.map) argv.map = { inline: false }
 
-if (argv.env) process.env.NODE_ENV = argv.env
-
-if (argv.config) argv.config = path.resolve(argv.config)
-else argv.config = process.cwd()
-
-if (!output && !dir && !argv.replace) {
-  throw new Error(`No Output specified, either --output, --dir, or --replace option must be passed`)
-}
-
-// Use warn to avoid writing to stdout
 console.warn(chalk.bold.red(logo))
 
-spinner.text = 'Loading Config'
 spinner.start()
-getConfig({}, argv.config)
+
+let config = {
+  options: {
+    map: argv.map !== undefined ? argv.map : { inline: true },
+    parser: argv.parser ? require(argv.parser) : undefined,
+    syntax: argv.syntax ? require(argv.syntax) : undefined,
+    stringifier: argv.stringifier ? require(argv.stringifier) : undefined
+  },
+  plugins: argv.use
+    ? argv.use.map((plugin) => {
+      try {
+        return require(plugin)()
+      } catch (err) {
+        spinner.text = chalk.bold.red(` Plugin${err}`)
+        spinner.fail()
+      }
+    })
+    : []
+}
+
+if (argv.env) process.env.NODE_ENV = argv.env
+if (argv.config) argv.config = path.resolve(argv.config)
+
+Promise.resolve()
   .then(() => {
-    spinner.succeed()
-
     if (input && input.length) return globber(input)
-    // Else, read from stdin:
-    if (!argv.output) throw new Error('Must specify --output when reading from stdin')
-    if (argv.watch) throw new Error('Cannot run in watch mode when reading from stdin')
-    console.warn('No files passed, reading from stdin')
-    return ['-']
-  })
-  .then(expandedInput => {
-    input = expandedInput
-    if (!input || !input.length) throw new Error('You must pass a valid list of files to parse')
-    if (input.length > 1 && argv.output) throw new Error('Must use --dir or --replace with multiple input files')
 
-    return processFiles(input)
-  })
-  .then(function (results) {
+    console.warn(chalk.bold.yellow('\n Warning: No files passed, reading from stdin\n'))
+
     if (argv.watch) {
-      spinner.text = 'Waiting for file changes...'
+      throw new Error(' Cannot run in watch mode when reading from stdin')
+    }
 
-      let watcher = chokidar
-      .watch(input.concat(getDependencyMessages(results)))
+    return ['stdin']
+  })
+  .then((i) => {
+    if (!i || !i.length) {
+      throw new Error(' You must pass a valid list of files to parse')
+    }
+
+    if (i.length > 1 && output) {
+      throw new Error(' Must use --dir or --replace with multiple input files')
+    }
+
+    return i
+  })
+  .then(files)
+  .then((results) => {
+    if (argv.watch) {
+      const watcher = chokidar.watch(input.concat(dependencies(results)))
+
+      if (config.file) watcher.add(config.file)
 
       watcher
-      .add(config.file)
-      .on('ready', (file) => spinner.start())
-      .on('change', (file) => {
-        // If this is not a direct input file, process all:
-        if (input.indexOf(file) === -1) {
-          return getConfig()
-          .then(() => processFiles(input))
-          .then(results => watcher.add(getDependencyMessages(results)))
-          .catch(error)
-        }
-
-        getConfig()
-        .then(() => processFiles(file))
-        .then(result => {
-          watcher.add(getDependencyMessages(result))
-          spinner.text = 'Waiting for file changes...'
-          spinner.start()
+        .on('ready', (file) => {
+          setTimeout(() => spinner.stopAndPersist({
+            symbol: '👁',
+            text: chalk.bold.cyan(' Waiting for file changes...')
+          }), 1500)
         })
-        .catch(error)
-      })
+        .on('change', (file) => {
+          if (input.indexOf(file) === -1) {
+            return files(input)
+              .then((results) => watcher.add(dependencies(results)))
+              .catch(error)
+          }
+
+          files(file)
+            .then((result) => watcher.add(dependencies(result)))
+            .catch(error)
+
+          spinner.text = chalk.bold.cyan(' Waiting for file changes...')
+
+          setTimeout(() => spinner.stopAndPersist({
+            symbol: '👁',
+            text: chalk.bold.cyan(' Waiting for file changes...')
+          }), 1500)
+        })
     }
   })
   .catch(error)
 
-function processCSS (css, filename) {
-  var spinner = ora(`Processing ${filename || 'your CSS'}`)
-  spinner.start()
+function rc (ctx, path) {
+  if (argv.use) return Promise.resolve()
 
-  let options = Object.assign(
-    {
-      from: filename,
-      to: output || (argv.replace ? filename : path.join(dir, path.basename(filename)))
-    },
-    config.options
-  )
-  options.to = path.resolve(options.to)
-
-  return postcss(config.plugins).process(css, options)
-    .then(result => {
-      if (result.messages.some(msg => msg.type === 'warning')) spinner.fail()
-
-      var tasks = [fs.outputFile(options.to, result.css)]
-      if (result.map) {
-        tasks.push(fs.outputFile(options.to.replace('.css', '.css.map'), result.map))
-      }
-      return Promise.all(tasks)
-        .then(() => {
-          spinner.succeed()
-          return result
-        })
+  return postcssrc(ctx, path)
+    .then((rc) => { config = rc })
+    .catch((err) => {
+      if (err.message.indexOf('No PostCSS Config found') === -1) throw err
     })
 }
 
-function processFiles (files) {
-  if (typeof files === 'string') files = [files]
-  return Promise.all(files.map(file => {
-    // Read from stdin
-    if (file === '-') {
-      return getStdin()
-      .then(css => processCSS(css))
+function files (files) {
+  if (typeof files === 'string') files = [ files ]
+
+  return Promise.all(files.map((file) => {
+    if (file === 'stdin') {
+      return stdin()
+        .then((content) => css(content, 'stdin'))
     }
+
     return fs.readFile(file)
-    .then(css => processCSS(css, file))
+      .then((content) => css(content, file))
   }))
 }
 
-function getConfig (ctx, path) {
-  if (argv.use || argv.parser || argv.stringifier || argv.syntax) {
-    config = {
-      plugins: argv.use ? argv.use.map(plugin => require(plugin)) : [],
-      options: {
-        parser: argv.parser ? require(argv.parser) : undefined,
-        syntax: argv.syntax ? require(argv.syntax) : undefined,
-        stringifier: argv.stringifier ? require(argv.stringifier) : undefined
-      }
+function css (css, file) {
+  const ctx = { options: config.options }
+
+  if (file !== 'stdin') {
+    ctx.file = {
+      dirname: path.dirname(file),
+      basename: path.basename(file),
+      extname: path.extname(file)
     }
-    setMap()
-    return Promise.resolve()
-  } else {
-    return postcssrc(ctx, path)
-    .then(conf => {
-      config = conf
-      setMap()
-    })
-    .catch(err => {
-      if (err.message.indexOf('No PostCSS Config found') === -1) throw err
-    })
+
+    if (!argv.config) argv.config = path.dirname(file)
   }
+
+  if (!argv.config) argv.config = process.cwd()
+
+  const time = process.hrtime()
+
+  spinner.text = `Processing ${file}`
+
+  return rc(ctx, argv.config)
+    .then(() => {
+      let options = config.options
+
+      if (file === 'stdin' && output) file = output
+
+      if (file !== 'stdin' && output || output || dir || argv.replace) {
+        options = Object.assign(
+          {
+            from: file,
+            to: output || (
+              argv.replace
+                ? file
+                : path.join(dir, path.basename(file))
+            )
+          },
+          config.options
+        )
+
+        if (argv.ext) {
+          options.to = options.to
+            .replace(path.extname(options.to), argv.ext)
+        }
+
+        options.to = path.resolve(options.to)
+      }
+
+      return postcss(config.plugins)
+        .process(css, options)
+        .then((result) => {
+          if (result.messages) {
+            result.warnings()
+              .forEach((warning) => chalk.bold.yellow(`${warning}`))
+          }
+
+          if (options.to) {
+            const results = [ fs.outputFile(options.to, result.css) ]
+
+            if (result.map) {
+              results.push(
+                fs.outputFile(
+                  options.to
+                    .replace(
+                      path.extname(options.to),
+                      path.extname(options.to) + '.map'
+                    ),
+                    result.map
+                )
+              )
+            }
+
+            return Promise.all(results)
+              .then(() => {
+                spinner.text = chalk.bold.green(
+                  `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
+                )
+                spinner.succeed()
+
+                return result
+              })
+          }
+
+          const $ = new Readable({ read: (chunk) => chunk })
+
+          result.map
+            ? $.push(result.css, result.map)
+            : $.push(result.css)
+
+          $.on('error', (err) => {
+            spinner.text = chalk.bold.red(`${err}\n`)
+            spinner.fail()
+          })
+
+          spinner.text = chalk.bold.green(
+            `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
+          )
+          spinner.succeed()
+
+          return $.pipe(process.stdout)
+        })
+    })
+    .catch(error)
 }
 
-function setMap () {
-  // Yargs interprets --no-map as argv.map: false:
-  if (argv.map === false) config.options.map = false
-  // If --map is passed:
-  else if (argv.map) config.options.map = {inline: false}
-  // If neither --map or --no-map is passed:
-  else config.options.map = true
+function dependencies (results) {
+  if (!Array.isArray(results)) results = [ results ]
+
+  const messages = []
+
+  results.forEach((result) => {
+    if (result.messages <= 0) return
+
+    result.messages
+      .filter((msg) => msg.type === 'dependency' ? msg : '')
+      .forEach((dependency) => messages.push(dependency.file))
+  })
+
+  return messages
 }
 
 function error (err) {
-  try {
-    spinner.fail()
-  } catch (e) {
-    // Don't worry about this
-  }
   // Syntax Error
   if (err.name === 'CssSyntaxError') {
-    err.message = err.message.substr(err.file.length + 1).replace(/:\s/, '] ')
+    spinner.text = chalk.bold.red(` ${err.file}`)
+    spinner.fail()
 
-    console.error(chalk.bold.red('\n', `[${err.message}`))
+    err.message = err.message
+      .substr(err.file.length + 1)
+      .replace(/:\s/, '] ')
+
+    console.error('\n', chalk.bold.red(`[${err.message}`))
     console.error('\n', err.showSourceCode(), '\n')
 
     process.exit(1)
   }
   // Error
-  console.error(err)
+  spinner.text = chalk.bold.red(` ${err}\n`)
+  spinner.fail()
 
   process.exit(1)
 }

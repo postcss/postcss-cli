@@ -7,7 +7,7 @@ const stdin = require('get-stdin')
 const Readable = require('stream').Readable
 
 const chalk = require('chalk')
-const spinner = require('ora')()
+const ora = require('ora')
 const globber = require('globby')
 const chokidar = require('chokidar')
 
@@ -74,8 +74,6 @@ if (argv.map) argv.map = { inline: false }
 
 console.warn(chalk.bold.red(logo))
 
-spinner.start()
-
 let config = {
   options: {
     map: argv.map !== undefined ? argv.map : { inline: true },
@@ -87,9 +85,8 @@ let config = {
     ? argv.use.map((plugin) => {
       try {
         return require(plugin)()
-      } catch (err) {
-        spinner.text = chalk.bold.red(` Plugin${err}`)
-        spinner.fail()
+      } catch (e) {
+        error(`PluginError: Cannot find module '${plugin}'`)
       }
     })
     : []
@@ -102,21 +99,21 @@ Promise.resolve()
   .then(() => {
     if (input && input.length) return globber(input)
 
-    console.warn(chalk.bold.yellow('\n Warning: No files passed, reading from stdin\n'))
+    console.warn(chalk.bold.yellow('Warning: No files passed, reading from stdin\n'))
 
     if (argv.watch) {
-      throw new Error(' Cannot run in watch mode when reading from stdin')
+      error('Cannot run in watch mode when reading from stdin')
     }
 
     return ['stdin']
   })
   .then((i) => {
     if (!i || !i.length) {
-      throw new Error(' You must pass a valid list of files to parse')
+      error('You must pass a valid list of files to parse')
     }
 
     if (i.length > 1 && output) {
-      throw new Error(' Must use --dir or --replace with multiple input files')
+      error('Must use --dir or --replace with multiple input files')
     }
 
     return i
@@ -129,29 +126,19 @@ Promise.resolve()
       if (config.file) watcher.add(config.file)
 
       watcher
-        .on('ready', (file) => {
-          setTimeout(() => spinner.stopAndPersist({
-            symbol: '👁',
-            text: chalk.bold.cyan(' Waiting for file changes...')
-          }), 1500)
-        })
+        .on('ready', (file) => console.warn(chalk.bold.cyan('Waiting for file changes...')))
         .on('change', (file) => {
           if (input.indexOf(file) === -1) {
             return files(input)
               .then((results) => watcher.add(dependencies(results)))
+              .then(() => console.warn(chalk.bold.cyan('Waiting for file changes...')))
               .catch(error)
           }
 
           files(file)
             .then((result) => watcher.add(dependencies(result)))
+            .then(() => console.warn(chalk.bold.cyan('Waiting for file changes...')))
             .catch(error)
-
-          spinner.text = chalk.bold.cyan(' Waiting for file changes...')
-
-          setTimeout(() => spinner.stopAndPersist({
-            symbol: '👁',
-            text: chalk.bold.cyan(' Waiting for file changes...')
-          }), 1500)
         })
     }
   })
@@ -198,7 +185,7 @@ function css (css, file) {
 
   const time = process.hrtime()
 
-  spinner.text = `Processing ${file}`
+  const spinner = ora(`Processing ${file}`).start()
 
   return rc(ctx, argv.config)
     .then(() => {
@@ -235,11 +222,13 @@ function css (css, file) {
               .forEach((warning) => chalk.bold.yellow(`${warning}`))
           }
 
+          const tasks = []
+
           if (options.to) {
-            const results = [ fs.outputFile(options.to, result.css) ]
+            tasks.push(fs.outputFile(options.to, result.css))
 
             if (result.map) {
-              results.push(
+              tasks.push(
                 fs.outputFile(
                   options.to
                     .replace(
@@ -250,38 +239,27 @@ function css (css, file) {
                 )
               )
             }
+          } else {
+            const $ = new Readable({ read: (chunk) => chunk })
 
-            return Promise.all(results)
-              .then(() => {
-                spinner.text = chalk.bold.green(
-                  `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
-                )
-                spinner.succeed()
+            result.map
+              ? $.push(result.css, result.map)
+              : $.push(result.css)
 
-                return result
-              })
+            $.pipe(process.stdout)
           }
 
-          const $ = new Readable({ read: (chunk) => chunk })
+          return Promise.all(tasks)
+            .then(() => {
+              spinner.text = chalk.bold.green(
+                `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
+              )
+              spinner.succeed()
 
-          result.map
-            ? $.push(result.css, result.map)
-            : $.push(result.css)
-
-          $.on('error', (err) => {
-            spinner.text = chalk.bold.red(`${err}\n`)
-            spinner.fail()
-          })
-
-          spinner.text = chalk.bold.green(
-            `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
-          )
-          spinner.succeed()
-
-          return $.pipe(process.stdout)
+              return result
+            })
         })
     })
-    .catch(error)
 }
 
 function dependencies (results) {
@@ -301,23 +279,22 @@ function dependencies (results) {
 }
 
 function error (err) {
-  // Syntax Error
-  if (err.name === 'CssSyntaxError') {
-    spinner.text = chalk.bold.red(` ${err.file}`)
-    spinner.fail()
-
+  if (typeof err === 'string') {
+    // Manual error
+    console.error(chalk.bold.red(err))
+    process.exit(1)
+  } else if (err.name === 'CssSyntaxError') {
+    // CSS Syntax Error
+    console.error(chalk.bold.red(`${err.file}`))
     err.message = err.message
       .substr(err.file.length + 1)
       .replace(/:\s/, '] ')
-
     console.error('\n', chalk.bold.red(`[${err.message}`))
     console.error('\n', err.showSourceCode(), '\n')
-
-    process.exit(1)
+  } else {
+    // JS Error
+    // Don't use chalk here; we want a JS stack trace:
+    console.error(err)
   }
-  // Error
-  spinner.text = chalk.bold.red(` ${err}\n`)
-  spinner.fail()
-
   process.exit(1)
 }

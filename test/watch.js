@@ -8,7 +8,7 @@ import chokidar from 'chokidar'
 import ENV from './helpers/env.js'
 import read from './helpers/read.js'
 
-test.skip.cb('--watch works', function (t) {
+test.cb('--watch works', function (t) {
   let cp
 
   t.plan(2)
@@ -25,7 +25,7 @@ test.skip.cb('--watch works', function (t) {
       // On the first output:
       watcher.on('add', (p) => {
         // Assert, then change the source file
-        if (p === 'out.css') {
+        if (p === 'output.css') {
           isEqual(p, 'test/fixtures/a.css')
             .then(() => read('test/fixtures/b.css'))
             .then(css => fs.writeFile(path.join(dir, 'a.css'), css))
@@ -35,7 +35,7 @@ test.skip.cb('--watch works', function (t) {
 
       // When the change is picked up:
       watcher.on('change', (p) => {
-        if (p === 'out.css') {
+        if (p === 'output.css') {
           isEqual(p, 'test/fixtures/b.css')
             .then(() => done())
             .catch(done)
@@ -46,7 +46,12 @@ test.skip.cb('--watch works', function (t) {
       watcher.on('ready', () => {
         cp = execFile(
           path.resolve('bin/postcss'),
-          ['a.css', '-o', 'out.css', '-w'],
+          [
+            'a.css',
+            '-o', 'output.css',
+            '-w',
+            '--no-map'
+          ],
           { cwd: dir }
         )
 
@@ -82,7 +87,7 @@ test.skip.cb('--watch postcss.config.js', function (t) {
 
   t.plan(2)
 
-  ENV('module.exports = {}', ['imports.css'])
+  ENV('module.exports = {}', ['import.css'])
     .then((dir) => {
       // Init watcher:
       const watcher = chokidar.watch('.', {
@@ -94,7 +99,7 @@ test.skip.cb('--watch postcss.config.js', function (t) {
       // On the first output:
       watcher.on('add', (p) => {
         // Assert, then change the source file
-        if (p === 'out.css') {
+        if (p === 'output.css') {
           read(path.join(dir, p))
             .then((css) => {
               t.is(css, '@import "./a.css";\n')
@@ -114,7 +119,7 @@ test.skip.cb('--watch postcss.config.js', function (t) {
 
       // When the change is picked up:
       watcher.on('change', (p) => {
-        if (p === 'out.css') {
+        if (p === 'output.css') {
           isEqual(p, 'test/fixtures/a.css')
             .then(() => done())
             .catch(done)
@@ -125,7 +130,12 @@ test.skip.cb('--watch postcss.config.js', function (t) {
       watcher.on('ready', () => {
         cp = execFile(
           path.resolve('bin/postcss'),
-          [ 'import.css', '-o', 'out.css', '-w', '--no-map' ],
+          [
+            'import.css',
+            '-o', 'output.css',
+            '-w',
+            '--no-map'
+          ],
           { cwd: dir }
         )
 
@@ -158,7 +168,7 @@ test.skip.cb('--watch dependencies', function (t) {
 
   t.plan(2)
 
-  ENV('', ['a.css'])
+  ENV('', ['import.css'])
     .then((dir) => {
     // Init watcher:
       const watcher = chokidar.watch('.', {
@@ -170,7 +180,7 @@ test.skip.cb('--watch dependencies', function (t) {
       // On the first output:
       watcher.on('add', (p) => {
         // Assert, then change the source file
-        if (p === 'out.css') {
+        if (p === 'output.css') {
           isEqual(p, 'test/fixtures/a.css')
             .then(() => read('test/fixtures/b.css'))
             .then(css => fs.writeFile(path.join(dir, 'a.css'), css))
@@ -180,7 +190,7 @@ test.skip.cb('--watch dependencies', function (t) {
 
       // When the change is picked up:
       watcher.on('change', (p) => {
-        if (p === 'out.css') {
+        if (p === 'output.css') {
           isEqual(p, 'test/fixtures/b.css')
           .then(() => done())
           .catch(done)
@@ -193,9 +203,10 @@ test.skip.cb('--watch dependencies', function (t) {
           path.resolve('bin/postcss'),
           [
             'import.css',
-            '-o', 'out.css',
+            '-o', 'output.css',
             '-u', 'postcss-import',
-            '-w', '--no-map'
+            '-w',
+            '--no-map'
           ],
           { cwd: dir }
         )

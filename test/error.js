@@ -3,7 +3,7 @@ import test from 'ava'
 import tmp from './helpers/tmp.js'
 import cli from './helpers/cli.js'
 
-test.skip('multiple input files && --output', (t) => {
+test('multiple input files && --output', (t) => {
   return cli(
     [
       'test/fixtures/*.css',
@@ -16,7 +16,7 @@ test.skip('multiple input files && --output', (t) => {
   })
 })
 
-test.skip('invalid --config', (t) => {
+test('invalid --config', (t) => {
   return cli(
     [
       'test/fixtures/*.css',
@@ -30,7 +30,7 @@ test.skip('invalid --config', (t) => {
   })
 })
 
-test.skip('PluginError', (t) => {
+test('PluginError', (t) => {
   return cli(
     [
       'test/fixtures/a.css',
@@ -44,7 +44,7 @@ test.skip('PluginError', (t) => {
   })
 })
 
-test.skip('CssSyntaxError', (t) => {
+test('CssSyntaxError', (t) => {
   return cli(
     [
       'test/fixtures/a.css',

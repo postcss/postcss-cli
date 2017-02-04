@@ -23,24 +23,3 @@ test('--use works', async function (t) {
     await read('test/fixtures/a.css')
   )
 })
-
-test('--use options works', async function (t) {
-  const output = tmp('i.css')
-
-  const { error, stderr } = await cli(
-    [
-      'test/fixtures/import.css',
-      '-u', 'postcss-import',
-      '--postcss-import.root', 'test/fixtures/import',
-      '-o', output,
-      '--no-map'
-    ]
-  )
-
-  t.ifError(error, stderr)
-
-  t.is(
-    await read(output),
-    await read('test/fixtures/a.css')
-  )
-})

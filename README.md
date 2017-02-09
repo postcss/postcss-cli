@@ -1,7 +1,8 @@
+[![npm][npm]][npm-url]
+[![node][node]][node-url]
+[![deps][deps]][deps-url]
 [![tests][tests]][tests-url]
 [![cover][cover]][cover-url]
-[![deps][deps]][deps-url]
-[![npm][npm]][npm-url]
 [![code style][style]][style-url]
 [![chat][chat]][chat-url]
 
@@ -13,71 +14,114 @@
   <h1>PostCSS CLI</h1>
 </div>
 
-## Installation
+<h2 align="center">Install</h2>
 
 ```bash
-npm i -D postcss-cli
+npm i -g|-D postcss-cli
 ```
 
-## Usage
+<h2 align="center">Usage</h2>
 
+```bash
+postcss [input.css] [OPTIONS] [-o|--output output.css] [-w|--watch]
 ```
-postcss [input.css] [OPTIONS] [--output|-o output.css] [--watch]
 
-Options:
-  -o, --output       Output file                                        [string]
-  -d, --dir          Output directory                                   [string]
-  -r, --replace      Replace (overwrite) the input file                [boolean]
-  -u, --use          List of postcss plugins to use                      [array]
-  -p, --parser       Custom postcss parser                              [string]
-  -t, --stringifier  Custom postcss stringifier                         [string]
-  -s, --syntax       Custom postcss syntax                              [string]
-  -w, --watch        Watch files for changes and recompile as needed   [boolean]
-  -x, --extension    Override the output file extension                 [string]
-  -e, --env          A shortcut for setting NODE_ENV                    [string]
-  -c, --config       Set a custom path to look for a config file        [string]
-  -m, --map          Create an external sourcemap
-  --no-map           Disable the default inline sourcemaps
-  -h, --help         Show help                                         [boolean]
-  -v, --version      Show version number                               [boolean]
+> ⚠️  If there are multiple input files, the --dir or --replace option must be passed.
 
-Examples:
-  postcss input.css -o output.css       Basic usage
-  cat input.css | postcss -u            Piping input & output
-  autoprefixer > output.css
+```bash
+cat input.css | postcss [OPTIONS] > output.css
+```
 
-If no input files are passed, it reads from stdin. If neither -o, --dir, or
+> ⚠️  If no input files are passed, it reads from stdin. If neither -o, --dir, or
 --replace is passed, it writes to stdout.
 
-If there are multiple input files, the --dir or --replace option must be passed.
-```
+<h2 align="center">Options</h2>
 
-For more details on custom parsers, stringifiers and syntaxes, see the [postcss docs](https://github.com/postcss/postcss#syntaxes).
+|Name|Type|Default|Description|
+|:---|:--:|:-----:|:----------|
+|`-d, --dir`|`{String}`|`undefined`|Output Directory|
+|`-o, --output`|`{String}`|`undefined`|Output File|
+|`-r, --replace`|`{String}`|`undefined`|Input <=> Output|
+|`-x, --extension`|`{String}`|`extname(output)`|Output File Extension|
+|`-p, --parser`|`{String}`|`undefined`|Custom PostCSS Parser|
+|`-s, --syntax`|`{String}`|`undefined`|Custom PostCSS Syntax|
+|`-s, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
+|`-u, --use`|`{Array}`|`[]`|List of PostCSS Plugins|
+|`-m, --map`|`{Boolean}`|`{ inline: true }`|External Sourcemap|
+|`--no-map`|`{Boolean}`|`false`|Disable Sourcemaps|
+|`-e, --env`|`{String}`|`process.env.NODE_ENV`|Shortcut for setting `$NODE_ENV`|
+|`-c, --config`|`{String}`|`dirname(file)`|Path to `postcss.config.js`|
+|`-h, --help`|`{Boolean}`|`false`|CLI Help|
+|`-v, --version`|`{Boolean}`|`false`|CLI Version|
 
-## Configuration
+
+> ℹ️  More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).
+
+### [Config](https://github.com/michael-ciniawsky/postcss-load-config)
 
 If you need to pass options to your plugins, or have a long plugin chain, you'll want to use a configuration file.
 
-Example `postcss.config.js`:
+**postcss.config.js**
 
 ```js
-module.exports = () => {
+module.exports = {
   parser: 'sugarss',
   plugins: [
-    require('postcss-import')({ /* Options */ }),
-    require('postcss-url')({
-      url: 'copy',
-      useHash: true
-    })
+    require('postcss-import')({...options}),
+    require('postcss-url')({ url: 'copy', useHash: true })
   ]
 }
 ```
 
-Configuration files are handled by [postcss-load-config](https://github.com/michael-ciniawsky/postcss-load-config). Refer to the docs there for more details.
+### Context
+
+For more advanced usage it's recommend to to use a function in `postcss.config.js`, this gives you access to the CLI context to dynamically apply options and plugins **per file**
+
+|Name|Type|Default|Description|
+|:--:|:--:|:-----:|:----------|
+|`env`|`{String}`|`'development'`|process.env.NODE_ENV|
+|`file`|`{Object}`|`dirname, basename, extname`|File|
+|`options`|`{Object}`|`map, parser, syntax, stringifier`|PostCSS Options|
+
+**postcss.config.js**
+
+```js
+module.exports = (ctx) => ({
+  map: ctx.options.map,
+  parser: ctx.file.extname === '.sss' ? 'sugarss' : false,
+  plugins: {
+    'postcss-import': { root: ctx.file.dirname }),
+    'cssnano': ctx.env === 'production' ? {} : false
+  }
+})
+```
+
+> ⚠️  If you want to set options via CLI, it's mandatory to reference `ctx.options` in `postcss.config.js`
+
+
+```bash
+postcss input.sss -p sugarss -o output.css -m
+```
+
+**postcss.config.js**
+
+```js
+module.exports = (ctx) => ({
+  map: ctx.options.map,
+  parser: ctx.options.parser,
+  plugins: {
+    'postcss-import': { root: ctx.file.dirname }),
+    'cssnano': ctx.env === 'production' ? {} : false
+  }
+})
+```
 
 
 [npm]: https://img.shields.io/npm/v/postcss-cli.svg
 [npm-url]: https://npmjs.com/package/postcss-cli
+
+[node]: https://img.shields.io/node/v/posthtml-loader.svg
+[node-url]: https://nodejs.org/
 
 [deps]: https://img.shields.io/gemnasium/postcss/postcss-cli.svg
 [deps-url]: https://gemnasium.com/postcss/postcss-cli

@@ -154,7 +154,12 @@ async.forEach(inputFiles, compile, onError);
 function fsWatcher(entryPoints) {
   var watchedFiles = entryPoints;
   var index = {}; // source files by entry point
-  var opts = {};
+  var opts = {
+      awaitWriteFinish: {
+        stabilityThreshold: 50,
+        pollInterval: 10
+      }
+  };
 
   if (argv.poll) {
     opts.usePolling = true;

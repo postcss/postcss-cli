@@ -3,6 +3,7 @@
   "version": "2.6.0",
   "description": "CLI for PostCSS",
   "main": "index.js",
+  "engines": { "node": ">=4" },
   "bin": {
     "postcss": "./bin/postcss"
   },

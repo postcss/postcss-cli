@@ -255,18 +255,11 @@ function css (css, file) {
 
       if (file === 'stdin' && output) file = output
 
-      if (file !== 'stdin' && output || output || dir || argv.replace) {
-        options = Object.assign(
-          {
-            from: file,
-            to: output || (
-              argv.replace
-                ? file
-                : path.join(dir, path.basename(file))
-            )
-          },
-          config.options
-        )
+      // TODO: Unit test this
+      if (file !== 'stdin') options.from = file
+
+      if (output || dir || argv.replace) {
+        options.to = output || (argv.replace ? file : path.join(dir, path.basename(file)))
 
         if (argv.ext) {
           options.to = options.to

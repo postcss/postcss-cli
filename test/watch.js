@@ -2,7 +2,7 @@ import test from 'ava'
 
 import fs from 'fs-promise'
 import path from 'path'
-import { execFile } from 'child_process'
+import { exec, execFile } from 'child_process'
 import chokidar from 'chokidar'
 
 import ENV from './helpers/env.js'
@@ -44,17 +44,11 @@ test.cb('--watch works', function (t) {
 
       // Start postcss-cli:
       watcher.on('ready', () => {
-        cp = execFile(
-          path.resolve('bin/postcss'),
-          [
-            'a.css',
-            '-o', 'output.css',
-            '-w',
-            '--no-map'
-          ],
+        // Using exec() and quoting "*.css" to test watch's glob handling:
+        cp = exec(
+          `${path.resolve('bin/postcss')} "*.css" -o output.css --no-map -w`,
           { cwd: dir }
         )
-
         cp.on('error', t.end)
         cp.on('exit', code => { if (code) t.end(code) })
       })

@@ -176,7 +176,9 @@ Promise.resolve()
       error('Must use --dir or --replace with multiple input files')
     }
 
-    return files(i)
+    input = i
+
+    return files(input)
   })
   .then((results) => {
     if (argv.watch) {

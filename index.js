@@ -130,8 +130,6 @@ let output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
-console.warn(chalk.bold.red(logo))
-
 let config = {
   options: {
     map: argv.map !== undefined ? argv.map : { inline: true },

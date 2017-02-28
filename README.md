@@ -46,6 +46,7 @@ cat input.css | postcss [OPTIONS] > output.css
 |`-p, --parser`|`{String}`|`undefined`|Custom PostCSS Parser|
 |`-s, --syntax`|`{String}`|`undefined`|Custom PostCSS Syntax|
 |`-s, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
+|`-w, --watch`|`{Boolean}`|`false`|Watch files for changes and recompile as needed
 |`-u, --use`|`{Array}`|`[]`|List of PostCSS Plugins|
 |`-m, --map`|`{Boolean}`|`{ inline: true }`|External Sourcemap|
 |`--no-map`|`{Boolean}`|`false`|Disable Sourcemaps|

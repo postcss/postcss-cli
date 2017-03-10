@@ -14,7 +14,7 @@
 - `--ext` (`-x`) option allows you to set the file extensions for your output files when using `--dir`.
 - `--env` allows you to set `NODE_ENV` in a cross-platform manner.
 
-Migration guide: https://github.com/postcss/postcss-cli/wiki/Migrating-from-v2----v3
+Migration guide: https://github.com/postcss/postcss-cli/wiki/Migrating-from-v2-to-v3
 
 2.6.0 / 2016-08-30
 ==================

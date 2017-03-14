@@ -227,3 +227,62 @@ test.cb('--watch dependencies', function (t) {
   // Timeout:
   setTimeout(() => t.end('test timeout'), 50000)
 })
+
+test.cb("--watch doesn't exit on CssSyntaxError", function (t) {
+  t.plan(0)
+
+  ENV('', ['a.css'])
+    .then((dir) => {
+      // Init watcher:
+      const watcher = chokidar.watch('.', {
+        cwd: dir,
+        ignoreInitial: true,
+        awaitWriteFinish: true
+      })
+      watcher.on('add', (p) => {
+        if (p === 'output.css') {
+          // Change to invalid CSS
+          fs.writeFile(path.join(dir, 'a.css'), '.a { color: red')
+            .catch(done)
+        }
+      })
+
+      let killed = false
+      let cp = execFile(
+        path.resolve('bin/postcss'),
+        [
+          'a.css',
+          '-o', 'output.css',
+          '-w',
+          '--no-map'
+        ],
+        { cwd: dir }
+      )
+      cp.on('error', t.end)
+      cp.stderr.on('data', chunk => {
+        // When error message is printed, kill the process after a timeout
+        if (~chunk.indexOf('Unclosed block')) {
+          setTimeout(() => {
+            killed = true
+            cp.kill()
+          }, 1000)
+        }
+      })
+      cp.on('exit', code => {
+        if (!killed) return t.end(`Should not exit (exited with code ${code})`)
+        done()
+      })
+
+      function done (err) {
+        try {
+          cp.kill()
+        } catch (e) {}
+
+        t.end(err)
+      }
+    })
+    .catch(t.end)
+
+  // Timeout:
+  setTimeout(() => t.end('test timeout'), 50000)
+})

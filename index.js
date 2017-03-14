@@ -310,6 +310,10 @@ function css (css, file) {
               return result
             })
         })
+    }).catch(err => {
+      // Fail spinner and send error up the promise chain
+      spinner.fail()
+      throw err
     })
 }
 
@@ -341,6 +345,8 @@ function error (err) {
       .replace(/:\s/, '] ')
     console.error('\n', chalk.bold.red(`[${err.message}`))
     console.error('\n', err.showSourceCode(), '\n')
+    // If watch mode, don't exit the process:
+    if (argv.watch) return
   } else {
     // JS Error
     // Don't use chalk here; we want a JS stack trace:

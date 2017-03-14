@@ -3,10 +3,11 @@
 
 ## Breaking Changes
 - Uses https://github.com/michael-ciniawsky/postcss-load-config for config files. Dropped support for the v2 config file format.
+- Can't set input files in config file; pass input files on the command line instead.
 - `--use` accepts a list of plugins. This may cause issues if you have your list of css files at the end of your command.
 - Can't pass options to plugins via `--plugin.key=value` anymore, use a config file.
 - Changed usage of the `--map` option; use `--map` for external sourcemaps, `--no-map` to disable all maps. Inline sourcemaps are default.
-- Writes to stdout if neither `-o`, `--dir`, or `--replace` is set.
+- Removed `--log` flag; this behavior is now default.
 - Removed the `--local-plugins` flag; same result can be achieved with `postcss.config.js`.
 - Removed the global `watchCSS` handler, plugins that import/rely on other files should use a `dependency` message instead.
 

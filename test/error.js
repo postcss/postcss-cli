@@ -12,7 +12,7 @@ test('multiple input files && --output', (t) => {
   )
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /Must use --dir or --replace/)
+    t.regex(err, /Input Error: Must use --dir or --replace/)
   })
 })
 
@@ -20,7 +20,7 @@ test('multiple input files && writing to stdout', (t) => {
   return cli(['test/fixtures/*.css'])
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /Must use --dir or --replace/)
+    t.regex(err, /Input Error: Must use --dir or --replace/)
   })
 })
 
@@ -28,7 +28,7 @@ test('--map && writing to stdout', (t) => {
   return cli(['test/fixtures/a.css', '--map'])
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /Cannot output external sourcemaps when writing to stdout/)
+    t.regex(err, /Output Error: Cannot output external sourcemaps when writing to STDOUT/)
   })
 })
 
@@ -56,7 +56,7 @@ test('PluginError', (t) => {
   )
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /PluginError: Cannot find module 'postcss-plugin'/)
+    t.regex(err, /Plugin Error: Cannot find module 'postcss-plugin'/)
   })
 })
 

@@ -47,6 +47,7 @@ cat input.css | postcss [OPTIONS] > output.css
 |`-s, --syntax`|`{String}`|`undefined`|Custom PostCSS Syntax|
 |`-s, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
 |`-w, --watch`|`{Boolean}`|`false`|Enable Watch Mode|
+|`--poll`|`{Boolean}`|`false`|Use polling for file watching|
 |`-u, --use`|`{Array}`|`[]`|PostCSS Plugins|
 |`-m, --map`|`{Boolean}`|`{ inline: true }`|External Sourcemaps|
 |`--no-map`|`{Boolean}`|`false`|Disable Sourcemaps|
@@ -72,6 +73,8 @@ module.exports = {
   ]
 }
 ```
+
+Note that you **can not** set the `from` or `to` options for postcss in the config file. They are set automatically based on the CLI arguments.
 
 ### Context
 

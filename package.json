@@ -1,6 +1,6 @@
 {
   "name": "postcss-cli",
-  "version": "3.0.0-beta",
+  "version": "3.0.0",
   "description": "CLI for PostCSS",
   "main": "index.js",
   "engines": {

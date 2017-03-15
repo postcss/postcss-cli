@@ -88,6 +88,10 @@ Usage:
     desc: 'Watch files for changes and recompile as needed',
     type: 'boolean'
   })
+  .option('poll', {
+    desc: 'Use polling for file watching',
+    type: 'boolean'
+  })
   .option('x', {
     alias: 'ext',
     desc: 'Override the output file extension',
@@ -180,7 +184,10 @@ Promise.resolve()
   })
   .then((results) => {
     if (argv.watch) {
-      const watcher = chokidar.watch(input.concat(dependencies(results)))
+      const watcher = chokidar.watch(
+        input.concat(dependencies(results)),
+        { usePolling: argv.poll }
+      )
 
       if (config.file) watcher.add(config.file)
 

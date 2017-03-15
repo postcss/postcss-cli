@@ -3,9 +3,9 @@
 const fs = require('fs-promise')
 const path = require('path')
 
+const ora = require('ora')
 const stdin = require('get-stdin')
 const chalk = require('chalk')
-const ora = require('ora')
 const globber = require('globby')
 const chokidar = require('chokidar')
 
@@ -134,6 +134,8 @@ let output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
+const spinner = ora()
+
 let config = {
   options: {
     map: argv.map !== undefined ? argv.map : { inline: true },
@@ -146,7 +148,7 @@ let config = {
       try {
         return require(plugin)()
       } catch (e) {
-        error(`PluginError: Cannot find module '${plugin}'`)
+        error(`Plugin Error: Cannot find module '${plugin}'`)
       }
     })
     : []
@@ -159,23 +161,21 @@ Promise.resolve()
   .then(() => {
     if (input && input.length) return globber(input)
 
-    console.warn(chalk.bold.yellow('Warning: No files passed, reading from stdin\n'))
-
-    if (argv.replace || argv.dir) error('Cannot use --dir or --replace when reading from stdin')
+    if (argv.replace || argv.dir) error('Input Error: Cannot use --dir or --replace when reading from stdin')
 
     if (argv.watch) {
-      error('Cannot run in watch mode when reading from stdin')
+      error('Input Error: Cannot run in watch mode when reading from stdin')
     }
 
     return ['stdin']
   })
   .then((i) => {
     if (!i || !i.length) {
-      error('You must pass a valid list of files to parse')
+      error('Input Error: You must pass a valid list of files to parse')
     }
 
     if (i.length > 1 && !argv.dir && !argv.replace) {
-      error('Must use --dir or --replace with multiple input files')
+      error('Input Error: Must use --dir or --replace with multiple input files')
     }
 
     input = i
@@ -227,8 +227,8 @@ function files (files) {
     if (file === 'stdin') {
       return stdin()
         .then((content) => {
-          if (!content) return error('Error: Did not receive any stdin')
-          css(content, 'stdin')
+          if (!content) return error('Input Error: Did not receive any STDIN')
+          return css(content, 'stdin')
         })
     }
 
@@ -254,7 +254,8 @@ function css (css, file) {
 
   const time = process.hrtime()
 
-  const spinner = ora(`Processing ${file}`).start()
+  spinner.text = `Processing ${file}`
+  spinner.start()
 
   return rc(ctx, argv.config)
     .then(() => {
@@ -276,10 +277,9 @@ function css (css, file) {
         options.to = path.resolve(options.to)
       }
 
-      // Can't use external sourcemaps when writing to stdout:
       if (!options.to && config.options.map && !config.options.map.inline) {
         spinner.fail()
-        error('Cannot output external sourcemaps when writing to stdout')
+        error('Output Error: Cannot output external sourcemaps when writing to STDOUT')
       }
 
       return postcss(config.plugins)
@@ -302,7 +302,13 @@ function css (css, file) {
                 )
               )
             }
-          } else process.stdout.write(result.css, 'utf8')
+          } else {
+            spinner.text = chalk.bold.green(
+              `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
+            )
+            spinner.succeed()
+            return process.stdout.write(result.css, 'utf8')
+          }
 
           return Promise.all(tasks)
             .then(() => {
@@ -317,8 +323,7 @@ function css (css, file) {
               return result
             })
         })
-    }).catch(err => {
-      // Fail spinner and send error up the promise chain
+    }).catch((err) => {
       spinner.fail()
       throw err
     })
@@ -342,21 +347,26 @@ function dependencies (results) {
 
 function error (err) {
   if (typeof err === 'string') {
-    // Manual error
-    console.error(chalk.bold.red(err))
+    spinner.fail(chalk.bold.red(err))
   } else if (err.name === 'CssSyntaxError') {
-    // CSS Syntax Error
-    console.error(chalk.bold.red(`${err.file}`))
-    err.message = err.message
-      .substr(err.file.length + 1)
-      .replace(/:\s/, '] ')
+    console.error('\n')
+
+    spinner.text = spinner.text.replace('Processing ', '')
+    spinner.fail(chalk.bold.red(`Syntax Error: ${spinner.text}`))
+
+    if (err.file) {
+      err.message = err.message.substr(err.file.length + 1)
+    } else {
+      err.message = err.message.replace('<css input>:', '')
+    }
+
+    err.message = err.message.replace(/:\s/, '] ')
+
     console.error('\n', chalk.bold.red(`[${err.message}`))
-    console.error('\n', err.showSourceCode(), '\n')
-    // If watch mode, don't exit the process:
+    console.error('\n', err.showSourceCode(), '\n\n')
+
     if (argv.watch) return
   } else {
-    // JS Error
-    // Don't use chalk here; we want a JS stack trace:
     console.error(err)
   }
   process.exit(1)

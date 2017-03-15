@@ -214,7 +214,12 @@ function rc (ctx, path) {
   if (argv.use) return Promise.resolve()
 
   return postcssrc(ctx, path)
-    .then((rc) => { config = rc })
+    .then((rc) => {
+      if (rc.options.from || rc.options.to) {
+        error('Config Error: Can not set from or to options in config file, use CLI arguments instead')
+      }
+      config = rc
+    })
     .catch((err) => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
     })

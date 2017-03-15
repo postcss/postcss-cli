@@ -45,3 +45,33 @@ test("doesn't error on empty config", async function (t) {
     await read('test/fixtures/a.css')
   )
 })
+
+test('errors if `to` is set', async function (t) {
+  const env = `module.exports = {
+    to: 'out.css'
+  }`
+
+  const dir = await ENV(env, ['a.css'])
+
+  const { stderr } = await cli(
+    ['a.css', '-o', 'output.css', '--no-map'],
+    dir
+  )
+
+  t.regex(stderr, /Config Error: Can not set from or to options in config file, use CLI arguments instead/)
+})
+
+test('errors if `from` is set', async function (t) {
+  const env = `module.exports = {
+    from: 'in.css'
+  }`
+
+  const dir = await ENV(env, ['a.css'])
+
+  const { stderr } = await cli(
+    ['a.css', '-o', 'output.css', '--no-map'],
+    dir
+  )
+
+  t.regex(stderr, /Config Error: Can not set from or to options in config file, use CLI arguments instead/)
+})

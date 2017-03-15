@@ -40,18 +40,18 @@ cat input.css | postcss [OPTIONS] > output.css
 |Name|Type|Default|Description|
 |:---|:--:|:-----:|:----------|
 |`-d, --dir`|`{String}`|`undefined`|Output Directory|
+|`-x, --ext`|`{String}`|`extname(output)`|Output File Extension|
 |`-o, --output`|`{String}`|`undefined`|Output File|
-|`-r, --replace`|`{String}`|`undefined`|Input <=> Output|
-|`-x, --extension`|`{String}`|`extname(output)`|Output File Extension|
+|`-r, --replace`|`{String}`|`undefined`|Replace Input <=> Output|
 |`-p, --parser`|`{String}`|`undefined`|Custom PostCSS Parser|
 |`-s, --syntax`|`{String}`|`undefined`|Custom PostCSS Syntax|
 |`-s, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
-|`-w, --watch`|`{Boolean}`|`false`|Watch files for changes and recompile as needed
-|`-u, --use`|`{Array}`|`[]`|List of PostCSS Plugins|
-|`-m, --map`|`{Boolean}`|`{ inline: true }`|External Sourcemap|
+|`-w, --watch`|`{Boolean}`|`false`|Enable Watch Mode|
+|`-u, --use`|`{Array}`|`[]`|PostCSS Plugins|
+|`-m, --map`|`{Boolean}`|`{ inline: true }`|External Sourcemaps|
 |`--no-map`|`{Boolean}`|`false`|Disable Sourcemaps|
-|`-e, --env`|`{String}`|`process.env.NODE_ENV`|Shortcut for setting `$NODE_ENV`|
-|`-c, --config`|`{String}`|`dirname(file)`|Path to `postcss.config.js`|
+|`-e, --env`|`{String}`|`process.env.NODE_ENV`|Sets `$NODE_ENV`|
+|`-c, --config`|`{String}`|`dirname(file)`|PostCSS Config Path `postcss.config.js`|
 |`-h, --help`|`{Boolean}`|`false`|CLI Help|
 |`-v, --version`|`{Boolean}`|`false`|CLI Version|
 
@@ -63,7 +63,6 @@ cat input.css | postcss [OPTIONS] > output.css
 If you need to pass options to your plugins, or have a long plugin chain, you'll want to use a configuration file.
 
 **postcss.config.js**
-
 ```js
 module.exports = {
   parser: 'sugarss',
@@ -85,7 +84,6 @@ For more advanced usage it's recommend to to use a function in `postcss.config.j
 |`options`|`{Object}`|`map, parser, syntax, stringifier`|PostCSS Options|
 
 **postcss.config.js**
-
 ```js
 module.exports = (ctx) => ({
   map: ctx.options.map,
@@ -105,7 +103,6 @@ postcss input.sss -p sugarss -o output.css -m
 ```
 
 **postcss.config.js**
-
 ```js
 module.exports = (ctx) => ({
   map: ctx.options.map,

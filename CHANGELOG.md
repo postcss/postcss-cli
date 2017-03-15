@@ -1,3 +1,43 @@
+3.0.0 / 2017-03-15
+==========
+
+## Changes since 3.0.0-beta
+
+### Breaking Changes
+
+- Don't exit on `CssSyntaxError` in watch mode. v2 behaved this way, but v3.0.0-beta didn't.
+- Error out if `from` or `to` options are set in the config file. Use command line arguments instead.
+
+### New Features
+
+- Add `--poll` option. v2 had this, however, this new implementation removes the capability to set the interval, which was supported in v2.
+
+### Bugfixes
+
+- Set `from` option for correct sourcemaps
+- Fix `--watch`'s glob handling
+- Fix error handling
+
+
+## Changes since v2.6.0
+
+### Breaking Changes
+- Uses https://github.com/michael-ciniawsky/postcss-load-config for config files. Dropped support for the v2 config file format.
+- Can't set input files in config file; pass input files on the command line instead.
+- `--use` accepts a list of plugins. This may cause issues if you have your list of css files at the end of your command.
+- Can't pass options to plugins via `--plugin.key=value` anymore, use a config file.
+- Changed usage of the `--map` option; use `--map` for external sourcemaps, `--no-map` to disable all maps. Inline sourcemaps are default.
+- Removed `--log` flag; this behavior is now default.
+- Removed the `--local-plugins` flag; same result can be achieved with `postcss.config.js`.
+- Removed the global `watchCSS` handler, plugins that import/rely on other files should use a `dependency` message instead.
+- Changed behavior of the `--poll` option; no longer accepts an integer `interval`.
+
+### New Features
+- `--ext` (`-x`) option allows you to set the file extensions for your output files when using `--dir`.
+- `--env` allows you to set `NODE_ENV` in a cross-platform manner.
+
+Migration guide for upgrading from v2: https://github.com/postcss/postcss-cli/wiki/Migrating-from-v2-to-v3
+
 3.0.0-beta / 2017-03-17
 ==========
 

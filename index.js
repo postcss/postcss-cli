@@ -5,6 +5,7 @@ const path = require('path')
 
 const ora = require('ora')
 const stdin = require('get-stdin')
+const read = require('read-cache')
 const chalk = require('chalk')
 const globber = require('globby')
 const chokidar = require('chokidar')
@@ -237,7 +238,7 @@ function files (files) {
         })
     }
 
-    return fs.readFile(file)
+    return read(file)
       .then((content) => css(content, file))
   }))
 }

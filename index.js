@@ -14,6 +14,8 @@ const postcss = require('postcss')
 const postcssrc = require('postcss-load-config')
 const reporter = require('postcss-reporter/lib/formatter')()
 
+const depGraph = require('./lib/depGraph')
+
 const logo = `
                                       /|\\
                                     //   //
@@ -179,6 +181,8 @@ Promise.resolve()
       error('Input Error: Must use --dir or --replace with multiple input files')
     }
 
+    if (i[0] !== 'stdin') i = i.map(i => path.resolve(i))
+
     input = i
 
     return files(input)
@@ -195,15 +199,18 @@ Promise.resolve()
       watcher
         .on('ready', (file) => console.warn(chalk.bold.cyan('Waiting for file changes...')))
         .on('change', (file) => {
-          if (input.indexOf(file) === -1) {
-            return files(input)
-              .then((results) => watcher.add(dependencies(results)))
-              .then(() => console.warn(chalk.bold.cyan('Waiting for file changes...')))
-              .catch(error)
-          }
+          let recompile = []
 
-          files(file)
-            .then((result) => watcher.add(dependencies(result)))
+          if (~input.indexOf(file)) recompile.push(file)
+
+          recompile = recompile.concat(
+            depGraph.dependantsOf(file).filter(file => ~input.indexOf(file))
+          )
+
+          if (!recompile.length) recompile = input
+
+          return files(recompile)
+            .then((results) => watcher.add(dependencies(results)))
             .then(() => console.warn(chalk.bold.cyan('Waiting for file changes...')))
             .catch(error)
         })
@@ -256,11 +263,13 @@ function css (css, file) {
     if (!argv.config) argv.config = path.dirname(file)
   }
 
+  const relativePath = file !== 'stdin' ? path.relative(path.resolve(), file) : file
+
   if (!argv.config) argv.config = process.cwd()
 
   const time = process.hrtime()
 
-  spinner.text = `Processing ${file}`
+  spinner.text = `Processing ${relativePath}`
   spinner.start()
 
   return rc(ctx, argv.config)
@@ -310,7 +319,7 @@ function css (css, file) {
             }
           } else {
             spinner.text = chalk.bold.green(
-              `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
+              `Finished ${relativePath} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
             )
             spinner.succeed()
             return process.stdout.write(result.css, 'utf8')
@@ -319,7 +328,7 @@ function css (css, file) {
           return Promise.all(tasks)
             .then(() => {
               spinner.text = chalk.bold.green(
-                `Finished ${file} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
+                `Finished ${relativePath} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
               )
               if (result.warnings().length) {
                 spinner.fail()
@@ -345,6 +354,7 @@ function dependencies (results) {
 
     result.messages
       .filter((msg) => msg.type === 'dependency' ? msg : '')
+      .map(depGraph.add)
       .forEach((dependency) => messages.push(dependency.file))
   })
 

@@ -279,7 +279,7 @@ function css (css, file) {
       if (file === 'stdin' && output) file = output
 
       // TODO: Unit test this
-      if (file !== 'stdin') options.from = file
+      options.from = file === 'stdin' ? path.join(process.cwd(), 'stdin') : file
 
       if (output || dir || argv.replace) {
         options.to = output || (argv.replace ? file : path.join(dir, path.basename(file)))

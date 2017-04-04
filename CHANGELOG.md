@@ -1,3 +1,8 @@
+3.1.1 / 2017-04-04
+==================
+
+- Fixed `files` property in `package.json`; `lib/` folder wasn't included in v3.1.0
+
 3.1.0 / 2017-04-04
 ==================
 

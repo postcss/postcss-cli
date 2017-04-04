@@ -121,19 +121,19 @@ module.exports = (ctx) => ({
 [npm]: https://img.shields.io/npm/v/postcss-cli.svg
 [npm-url]: https://npmjs.com/package/postcss-cli
 
-[node]: https://img.shields.io/node/v/posthtml-loader.svg
+[node]: https://img.shields.io/node/v/postcss-cli.svg
 [node-url]: https://nodejs.org/
 
 [deps]: https://img.shields.io/gemnasium/postcss/postcss-cli.svg
 [deps-url]: https://gemnasium.com/postcss/postcss-cli
 
-[tests]: http://img.shields.io/travis/postcss/postcss-cli.svg
+[tests]: http://img.shields.io/travis/postcss/postcss-cli/master.svg
 [tests-url]: https://travis-ci.org/postcss/postcss-cli
 
 [style]: https://img.shields.io/badge/code%20style-standard-yellow.svg
 [style-url]: http://standardjs.com/
 
-[cover]: https://coveralls.io/repos/github/postcss/postcss-cli/badge.svg
+[cover]: https://img.shields.io/coveralls/postcss/postcss-cli/master.svg
 [cover-url]: https://coveralls.io/github/postcss/postcss-cli
 
 [chat]: https://img.shields.io/gitter/room/postcss/postcss.svg

@@ -1,3 +1,11 @@
+3.1.0 / 2017-04-04
+==================
+
+- Improved incremental rebuilds for better performance in watch mode.
+- Switched to `read-cache` for file reading for better performance.
+- Set a dummy filename when reading from stdin to help plugins like autoprefixer find config files.
+- Updated `fs-promise` dependency.
+
 3.0.0 / 2017-03-15
 ==========
 

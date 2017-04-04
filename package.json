@@ -40,7 +40,8 @@
   },
   "files": [
     "bin",
-    "index.js"
+    "index.js",
+    "lib"
   ],
   "keywords": [
     "cli",

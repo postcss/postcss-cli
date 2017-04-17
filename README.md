@@ -45,7 +45,8 @@ cat input.css | postcss [OPTIONS] > output.css
 |`-r, --replace`|`{String}`|`undefined`|Replace Input <=> Output|
 |`-p, --parser`|`{String}`|`undefined`|Custom PostCSS Parser|
 |`-s, --syntax`|`{String}`|`undefined`|Custom PostCSS Syntax|
-|`-s, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
+|`--context`|`{String}`|`undefined`|Use together with `--dir` for keeping directory structure.|
+|`-t, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
 |`-w, --watch`|`{Boolean}`|`false`|Enable Watch Mode|
 |`--poll`|`{Boolean}`|`false`|Use polling for file watching|
 |`-u, --use`|`{Array}`|`[]`|PostCSS Plugins|

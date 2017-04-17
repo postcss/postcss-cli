@@ -109,6 +109,10 @@ Usage:
     desc: 'A shortcut for setting NODE_ENV',
     type: 'string'
   })
+  .option('context', {
+    desc: 'Mirror the directory structure relative to this path in the output directory, this only works together with --dir',
+    type: 'string'
+  })
   .option('c', {
     alias: 'config',
     desc: 'Set a custom path to look for a config file',
@@ -282,7 +286,7 @@ function css (css, file) {
       options.from = file === 'stdin' ? path.join(process.cwd(), 'stdin') : file
 
       if (output || dir || argv.replace) {
-        options.to = output || (argv.replace ? file : path.join(dir, path.basename(file)))
+        options.to = output || (argv.replace ? file : path.join(dir, argv.context ? file.replace(path.resolve(argv.context), '') : path.basename(file)))
 
         if (argv.ext) {
           options.to = options.to

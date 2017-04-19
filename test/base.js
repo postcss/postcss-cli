@@ -12,7 +12,7 @@ test('--base --dir works', async function (t) {
     [
       'test/fixtures/base/**/*.css',
       '--dir', dir,
-      '--context', 'test/fixtures/base',
+      '--base', 'test/fixtures/base',
       '--no-map'
     ]
   )

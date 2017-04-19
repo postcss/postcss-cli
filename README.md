@@ -40,12 +40,12 @@ cat input.css | postcss [OPTIONS] > output.css
 |Name|Type|Default|Description|
 |:---|:--:|:-----:|:----------|
 |`-d, --dir`|`{String}`|`undefined`|Output Directory|
+|`--base`|`{String}`|`undefined`|Use together with `--dir` for keeping directory structure.|
 |`-x, --ext`|`{String}`|`extname(output)`|Output File Extension|
 |`-o, --output`|`{String}`|`undefined`|Output File|
 |`-r, --replace`|`{String}`|`undefined`|Replace Input <=> Output|
 |`-p, --parser`|`{String}`|`undefined`|Custom PostCSS Parser|
 |`-s, --syntax`|`{String}`|`undefined`|Custom PostCSS Syntax|
-|`--context`|`{String}`|`undefined`|Use together with `--dir` for keeping directory structure.|
 |`-t, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
 |`-w, --watch`|`{Boolean}`|`false`|Enable Watch Mode|
 |`--poll`|`{Boolean}`|`false`|Use polling for file watching|

@@ -109,7 +109,8 @@ Usage:
     desc: 'A shortcut for setting NODE_ENV',
     type: 'string'
   })
-  .option('base', {
+  .option('b', {
+    alias: 'base',
     desc: 'Mirror the directory structure relative to this path in the output directory, this only works together with --dir',
     type: 'string'
   })

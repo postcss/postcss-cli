@@ -1,3 +1,8 @@
+3.2.0 / 2017-04-21
+==================
+
+- Added `--base` CLI option for keeping directory structure
+
 3.1.1 / 2017-04-04
 ==================
 

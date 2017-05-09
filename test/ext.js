@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import fs from 'fs'
+import fs from 'fs-extra'
 import path from 'path'
 
 import cli from './helpers/cli.js'
@@ -19,5 +19,5 @@ test('--ext works', async function (t) {
   )
   t.ifError(error, stderr)
 
-  t.truthy(fs.existsSync(path.join(dir, 'a.css')))
+  t.truthy(await fs.pathExists(path.join(dir, 'a.css')))
 })

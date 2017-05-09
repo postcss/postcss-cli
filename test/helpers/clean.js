@@ -1,8 +1,13 @@
 'use strict'
 
-const fs = require('fs-promise')
+const fs = require('fs-extra')
 
-fs.emptyDir('./test/fixtures/.tmp/')
-
-fs.remove('./coverage')
-fs.remove('./.nyc_output')
+Promise.all([
+  fs.emptyDir('./test/fixtures/.tmp/'),
+  fs.remove('./coverage'),
+  fs.remove('./.nyc_output')
+])
+  .catch(err => {
+    console.error(err)
+    process.exit(1)
+  })

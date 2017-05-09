@@ -1,5 +1,5 @@
 import test from 'ava'
-import fs from 'fs-promise'
+import fs from 'fs-extra'
 
 import cli from './helpers/cli.js'
 import tmp from './helpers/tmp.js'
@@ -26,7 +26,7 @@ test('--map generates external sourcemaps', async function (t) {
 
   t.ifError(error, stderr)
 
-  t.truthy(await fs.exists(output.replace('.css', '.css.map')))
+  t.truthy(await fs.pathExists(output.replace('.css', '.css.map')))
 })
 
 test('--no-map disables internal sourcemaps', async function (t) {

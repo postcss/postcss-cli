@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import fs from 'fs-promise'
+import fs from 'fs-extra'
 import path from 'path'
 import { exec, execFile } from 'child_process'
 import chokidar from 'chokidar'

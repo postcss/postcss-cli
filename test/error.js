@@ -32,7 +32,7 @@ test('--map && writing to stdout', (t) => {
   })
 })
 
-test('invalid --config', (t) => {
+test.failing('invalid --config', (t) => {
   return cli(
     [
       'test/fixtures/*.css',

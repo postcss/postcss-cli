@@ -23,7 +23,7 @@
     "get-stdin": "^5.0.1",
     "globby": "^6.1.0",
     "ora": "^1.1.0",
-    "postcss": "^5.2.16",
+    "postcss": "^6.0.1",
     "postcss-load-config": "^1.1.0",
     "postcss-reporter": "^3.0.0",
     "read-cache": "^1.0.0",

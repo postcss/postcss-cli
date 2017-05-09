@@ -12,7 +12,7 @@ test('multiple input files && --output', (t) => {
   )
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /Input Error: Must use --dir or --replace/)
+    t.regex(err.toString(), /Input Error: Must use --dir or --replace/)
   })
 })
 
@@ -20,7 +20,7 @@ test('multiple input files && writing to stdout', (t) => {
   return cli(['test/fixtures/*.css'])
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /Input Error: Must use --dir or --replace/)
+    t.regex(err.toString(), /Input Error: Must use --dir or --replace/)
   })
 })
 
@@ -28,7 +28,7 @@ test('--map && writing to stdout', (t) => {
   return cli(['test/fixtures/a.css', '--map'])
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /Output Error: Cannot output external sourcemaps when writing to STDOUT/)
+    t.regex(err.toString(), /Output Error: Cannot output external sourcemaps when writing to STDOUT/)
   })
 })
 
@@ -42,7 +42,7 @@ test.failing('invalid --config', (t) => {
   )
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /ENOENT: no such file or directory/)
+    t.regex(err.toString(), /ENOENT: no such file or directory/)
   })
 })
 
@@ -56,7 +56,7 @@ test('PluginError', (t) => {
   )
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /Plugin Error: Cannot find module 'postcss-plugin'/)
+    t.regex(err.toString(), /Plugin Error: Cannot find module 'postcss-plugin'/)
   })
 })
 
@@ -70,6 +70,6 @@ test('CssSyntaxError', (t) => {
   )
   .then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err, /\[1:4] Unnecessary curly bracket/)
+    t.regex(err.toString(), /\[1:4] Unnecessary curly bracket/)
   })
 })

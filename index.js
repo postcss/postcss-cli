@@ -142,7 +142,7 @@ let output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
-const spinner = ora({stream: process.stderr})
+const spinner = ora({stream: process.stdout})
 
 let config = {
   options: {

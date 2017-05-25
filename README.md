@@ -26,13 +26,13 @@ npm i -g|-D postcss-cli
 postcss [input.css] [OPTIONS] [-o|--output output.css] [-w|--watch]
 ```
 
-> The input may also be a glob:
+The input may also be a glob:
 
 ```bash
 postcss src/*.css [OPTIONS]
 ```
 
-> Recursively read a directory:
+Recursively read a directory:
 
 ```bash
 postcss src/**/*.css [OPTIONS]

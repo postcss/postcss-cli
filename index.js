@@ -95,6 +95,11 @@ Usage:
     desc: 'Use polling for file watching',
     type: 'boolean'
   })
+  .option('i', {
+    alias: 'interval',
+    desc: 'Set polling interval for file watching',
+    type: 'number'
+  })
   .option('x', {
     alias: 'ext',
     desc: 'Override the output file extension',
@@ -196,7 +201,10 @@ Promise.resolve()
     if (argv.watch) {
       const watcher = chokidar.watch(
         input.concat(dependencies(results)),
-        { usePolling: argv.poll }
+        { 
+          usePolling: argv.poll,
+          interval: argv.i 
+        }
       )
 
       if (config.file) watcher.add(config.file)

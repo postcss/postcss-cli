@@ -26,6 +26,18 @@ npm i -g|-D postcss-cli
 postcss [input.css] [OPTIONS] [-o|--output output.css] [-w|--watch]
 ```
 
+> The input may also be a glob:
+
+```bash
+postcss src/*.css [OPTIONS]
+```
+
+> Recursively read a directory:
+
+```bash
+postcss src/**/*.css [OPTIONS]
+```
+
 > ⚠️  If there are multiple input files, the --dir or --replace option must be passed.
 
 ```bash
@@ -34,12 +46,6 @@ cat input.css | postcss [OPTIONS] > output.css
 
 > ⚠️  If no input files are passed, it reads from stdin. If neither -o, --dir, or
 --replace is passed, it writes to stdout.
-
-### The CLI also accepts a glob pattern as an input.
-
-```bash
-postcss dist/*.css [OPTIONS]
-```
 
 <h2 align="center">Options</h2>
 

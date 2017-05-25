@@ -92,8 +92,7 @@ Usage:
     type: 'boolean'
   })
   .option('poll', {
-    desc: 'Use polling for file watching',
-    type: 'boolean'
+    desc: 'Use polling for file watching. Can optionally pass polling interval; default 100 ms',
   })
   .option('x', {
     alias: 'ext',
@@ -196,7 +195,10 @@ Promise.resolve()
     if (argv.watch) {
       const watcher = chokidar.watch(
         input.concat(dependencies(results)),
-        { usePolling: argv.poll }
+        {
+          usePolling: argv.poll,
+          interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100
+        }
       )
 
       if (config.file) watcher.add(config.file)

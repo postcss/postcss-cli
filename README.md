@@ -35,6 +35,12 @@ cat input.css | postcss [OPTIONS] > output.css
 > ⚠️  If no input files are passed, it reads from stdin. If neither -o, --dir, or
 --replace is passed, it writes to stdout.
 
+### The CLI also accepts a glob pattern as an input.
+
+```bash
+postcss dist/*.css [OPTIONS]
+```
+
 <h2 align="center">Options</h2>
 
 |Name|Type|Default|Description|

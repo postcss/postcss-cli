@@ -92,7 +92,7 @@ Usage:
     type: 'boolean'
   })
   .option('poll', {
-    desc: 'Use polling for file watching. Can optionally pass polling interval; default 100 ms',
+    desc: 'Use polling for file watching. Can optionally pass polling interval; default 100 ms'
   })
   .option('x', {
     alias: 'ext',

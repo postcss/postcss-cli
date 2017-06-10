@@ -1,3 +1,9 @@
+4.1.0 / 2017-06-10
+==================
+
+- Can now pass a number to `--poll` to set poll interval
+- Updated `postcss-reporter` dependency to v4.0.0
+
 4.0.0 / 2017-05-09
 ==================
 

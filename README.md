@@ -60,7 +60,7 @@ cat input.css | postcss [OPTIONS] > output.css
 |`-s, --syntax`|`{String}`|`undefined`|Custom PostCSS Syntax|
 |`-t, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
 |`-w, --watch`|`{Boolean}`|`false`|Enable Watch Mode|
-|`--poll`|`{Boolean|Number}`|`100`|Use polling for file watching. Can optionally pass polling interval; default 100 ms|
+|`--poll`|`{Boolean\|Number}`|`100`|Use polling for file watching. Can optionally pass polling interval; default 100 ms|
 |`-u, --use`|`{Array}`|`[]`|PostCSS Plugins|
 |`-m, --map`|`{Boolean}`|`{ inline: true }`|External Sourcemaps|
 |`--no-map`|`{Boolean}`|`false`|Disable Sourcemaps|

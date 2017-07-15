@@ -7,17 +7,17 @@ import { execFile } from 'child_process'
 import tmp from './helpers/tmp.js'
 import read from './helpers/read.js'
 
-test.cb('reads from stdin', (t) => {
+test.cb('reads from stdin', t => {
   const output = tmp('output.css')
 
-  let cp = execFile(
+  const cp = execFile(
     path.resolve('bin/postcss'),
     ['-o', output, '--no-map'],
     (error, stdout, stderr) => {
       if (error) t.end(error, stderr)
 
-      Promise.all([ read(output), read('test/fixtures/a.css') ])
-        .then(([ a, e ]) => {
+      Promise.all([read(output), read('test/fixtures/a.css')])
+        .then(([a, e]) => {
           t.is(a, e)
           t.end()
         })

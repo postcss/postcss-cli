@@ -8,14 +8,14 @@ import chokidar from 'chokidar'
 import ENV from './helpers/env.js'
 import read from './helpers/read.js'
 
-test.cb('--watch works', function (t) {
+test.cb('--watch works', t => {
   let cp
 
   t.plan(2)
 
   ENV('', ['a.css'])
-    .then((dir) => {
-    // Init watcher:
+    .then(dir => {
+      // Init watcher:
       const watcher = chokidar.watch('.', {
         cwd: dir,
         ignoreInitial: true,
@@ -23,7 +23,7 @@ test.cb('--watch works', function (t) {
       })
 
       // On the first output:
-      watcher.on('add', (p) => {
+      watcher.on('add', p => {
         // Assert, then change the source file
         if (p === 'output.css') {
           isEqual(p, 'test/fixtures/a.css')
@@ -34,11 +34,9 @@ test.cb('--watch works', function (t) {
       })
 
       // When the change is picked up:
-      watcher.on('change', (p) => {
+      watcher.on('change', p => {
         if (p === 'output.css') {
-          isEqual(p, 'test/fixtures/b.css')
-            .then(() => done())
-            .catch(done)
+          isEqual(p, 'test/fixtures/b.css').then(() => done()).catch(done)
         }
       })
 
@@ -50,19 +48,20 @@ test.cb('--watch works', function (t) {
           { cwd: dir }
         )
         cp.on('error', t.end)
-        cp.on('exit', code => { if (code) t.end(code) })
+        cp.on('exit', code => {
+          if (code) t.end(code)
+        })
       })
 
       // Helper functions:
-      function isEqual (p, expected) {
+      function isEqual(p, expected) {
         return Promise.all([
           read(path.join(dir, p)),
           read(expected)
-        ])
-          .then(([a, e]) => t.is(a, e))
+        ]).then(([a, e]) => t.is(a, e))
       }
 
-      function done (err) {
+      function done(err) {
         try {
           cp.kill()
         } catch (e) {}
@@ -70,19 +69,19 @@ test.cb('--watch works', function (t) {
         t.end(err)
       }
     })
-  .catch(t.end)
+    .catch(t.end)
 
   // Timeout:
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb('--watch postcss.config.js', function (t) {
+test.cb('--watch postcss.config.js', t => {
   let cp
 
   t.plan(2)
 
   ENV('module.exports = {}', ['import.css', 'a.css'])
-    .then((dir) => {
+    .then(dir => {
       // Init watcher:
       const watcher = chokidar.watch('.', {
         cwd: dir,
@@ -91,11 +90,11 @@ test.cb('--watch postcss.config.js', function (t) {
       })
 
       // On the first output:
-      watcher.on('add', (p) => {
+      watcher.on('add', p => {
         // Assert, then change the source file
         if (p === 'output.css') {
           read(path.join(dir, p))
-            .then((css) => {
+            .then(css => {
               t.is(css, '@import "./a.css";\n')
 
               return fs.writeFile(
@@ -112,11 +111,9 @@ test.cb('--watch postcss.config.js', function (t) {
       })
 
       // When the change is picked up:
-      watcher.on('change', (p) => {
+      watcher.on('change', p => {
         if (p === 'output.css') {
-          isEqual(p, 'test/fixtures/a.css')
-            .then(() => done())
-            .catch(done)
+          isEqual(p, 'test/fixtures/a.css').then(() => done()).catch(done)
         }
       })
 
@@ -124,26 +121,25 @@ test.cb('--watch postcss.config.js', function (t) {
       watcher.on('ready', () => {
         cp = execFile(
           path.resolve('bin/postcss'),
-          [
-            'import.css',
-            '-o', 'output.css',
-            '-w',
-            '--no-map'
-          ],
+          ['import.css', '-o', 'output.css', '-w', '--no-map'],
           { cwd: dir }
         )
 
         cp.on('error', t.end)
-        cp.on('exit', (code) => { if (code) t.end(code) })
+        cp.on('exit', code => {
+          if (code) t.end(code)
+        })
       })
 
       // Helper functions:
-      function isEqual (p, expected) {
-        return Promise.all([ read(path.join(dir, p)), read(expected) ])
-          .then(([a, e]) => t.is(a, e))
+      function isEqual(p, expected) {
+        return Promise.all([
+          read(path.join(dir, p)),
+          read(expected)
+        ]).then(([a, e]) => t.is(a, e))
       }
 
-      function done (err) {
+      function done(err) {
         try {
           cp.kill()
         } catch (e) {}
@@ -151,20 +147,20 @@ test.cb('--watch postcss.config.js', function (t) {
         t.end(err)
       }
     })
-  .catch(t.end)
+    .catch(t.end)
 
   // Timeout:
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb('--watch dependencies', function (t) {
+test.cb('--watch dependencies', t => {
   let cp
 
   t.plan(2)
 
   ENV('', ['import.css', 'a.css'])
-    .then((dir) => {
-    // Init watcher:
+    .then(dir => {
+      // Init watcher:
       const watcher = chokidar.watch('.', {
         cwd: dir,
         ignoreInitial: true,
@@ -172,7 +168,7 @@ test.cb('--watch dependencies', function (t) {
       })
 
       // On the first output:
-      watcher.on('add', (p) => {
+      watcher.on('add', p => {
         // Assert, then change the source file
         if (p === 'output.css') {
           isEqual(p, 'test/fixtures/a.css')
@@ -183,11 +179,9 @@ test.cb('--watch dependencies', function (t) {
       })
 
       // When the change is picked up:
-      watcher.on('change', (p) => {
+      watcher.on('change', p => {
         if (p === 'output.css') {
-          isEqual(p, 'test/fixtures/b.css')
-          .then(() => done())
-          .catch(done)
+          isEqual(p, 'test/fixtures/b.css').then(() => done()).catch(done)
         }
       })
 
@@ -197,8 +191,10 @@ test.cb('--watch dependencies', function (t) {
           path.resolve('bin/postcss'),
           [
             'import.css',
-            '-o', 'output.css',
-            '-u', 'postcss-import',
+            '-o',
+            'output.css',
+            '-u',
+            'postcss-import',
             '-w',
             '--no-map'
           ],
@@ -206,56 +202,54 @@ test.cb('--watch dependencies', function (t) {
         )
 
         cp.on('error', t.end)
-        cp.on('exit', code => { if (code) t.end(code) })
+        cp.on('exit', code => {
+          if (code) t.end(code)
+        })
       })
 
       // Helper functions:
-      function isEqual (p, expected) {
-        return Promise.all([read(path.join(dir, p)), read(expected)])
-        .then(([a, e]) => t.is(a, e))
+      function isEqual(p, expected) {
+        return Promise.all([
+          read(path.join(dir, p)),
+          read(expected)
+        ]).then(([a, e]) => t.is(a, e))
       }
 
-      function done (err) {
+      function done(err) {
         try {
           cp.kill()
         } catch (e) {}
         t.end(err)
       }
     })
-  .catch(t.end)
+    .catch(t.end)
 
   // Timeout:
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb("--watch doesn't exit on CssSyntaxError", function (t) {
+test.cb("--watch doesn't exit on CssSyntaxError", t => {
   t.plan(0)
 
   ENV('', ['a.css'])
-    .then((dir) => {
+    .then(dir => {
       // Init watcher:
       const watcher = chokidar.watch('.', {
         cwd: dir,
         ignoreInitial: true,
         awaitWriteFinish: true
       })
-      watcher.on('add', (p) => {
+      watcher.on('add', p => {
         if (p === 'output.css') {
           // Change to invalid CSS
-          fs.writeFile(path.join(dir, 'a.css'), '.a { color: red')
-            .catch(done)
+          fs.writeFile(path.join(dir, 'a.css'), '.a { color: red').catch(done)
         }
       })
 
       let killed = false
-      let cp = execFile(
+      const cp = execFile(
         path.resolve('bin/postcss'),
-        [
-          'a.css',
-          '-o', 'output.css',
-          '-w',
-          '--no-map'
-        ],
+        ['a.css', '-o', 'output.css', '-w', '--no-map'],
         { cwd: dir }
       )
       cp.on('error', t.end)
@@ -273,7 +267,7 @@ test.cb("--watch doesn't exit on CssSyntaxError", function (t) {
         done()
       })
 
-      function done (err) {
+      function done(err) {
         try {
           cp.kill()
         } catch (e) {}

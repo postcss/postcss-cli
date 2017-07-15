@@ -7,7 +7,7 @@ import cli from './helpers/cli.js'
 import tmp from './helpers/tmp.js'
 import read from './helpers/read.js'
 
-test('--replace works', async function (t) {
+test('--replace works', async t => {
   const dir = tmp()
 
   const output = path.join(dir, 'output.css')
@@ -17,19 +17,15 @@ test('--replace works', async function (t) {
     fs.copy('test/fixtures/a.css', path.join(dir, 'a.css'))
   ])
 
-  const { error, stderr } = await cli(
-    [
-      output,
-      '--replace',
-      '-u', 'postcss-import',
-      '--no-map'
-    ]
-  )
+  const { error, stderr } = await cli([
+    output,
+    '--replace',
+    '-u',
+    'postcss-import',
+    '--no-map'
+  ])
 
   t.ifError(error, stderr)
 
-  t.is(
-    await read(output),
-    await read('test/fixtures/a.css')
-  )
+  t.is(await read(output), await read('test/fixtures/a.css'))
 })

@@ -5,17 +5,17 @@ import cli from './helpers/cli.js'
 import tmp from './helpers/tmp.js'
 import read from './helpers/read.js'
 
-test('--base --dir works', async function (t) {
+test('--base --dir works', async t => {
   const dir = tmp()
 
-  const { error, stderr } = await cli(
-    [
-      'test/fixtures/base/**/*.css',
-      '--dir', dir,
-      '--base', 'test/fixtures/base',
-      '--no-map'
-    ]
-  )
+  const { error, stderr } = await cli([
+    'test/fixtures/base/**/*.css',
+    '--dir',
+    dir,
+    '--base',
+    'test/fixtures/base',
+    '--no-map'
+  ])
 
   t.ifError(error, stderr)
 

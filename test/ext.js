@@ -6,17 +6,18 @@ import path from 'path'
 import cli from './helpers/cli.js'
 import tmp from './helpers/tmp.js'
 
-test('--ext works', async function (t) {
+test('--ext works', async t => {
   const dir = tmp()
 
-  const { error, stderr } = await cli(
-    [
-      'test/fixtures/a.sss',
-      '-p', 'sugarss',
-      '-d', dir,
-      '--ext', '.css'
-    ]
-  )
+  const { error, stderr } = await cli([
+    'test/fixtures/a.sss',
+    '-p',
+    'sugarss',
+    '-d',
+    dir,
+    '--ext',
+    '.css'
+  ])
   t.ifError(error, stderr)
 
   t.truthy(await fs.pathExists(path.join(dir, 'a.css')))

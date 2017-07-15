@@ -1,0 +1,10 @@
+env:
+  node: true
+extends: problems
+plugins:
+  - prettier
+rules:
+  prettier/prettier:
+    - error
+    - { semi: false, singleQuote: true }
+  no-console: off

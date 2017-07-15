@@ -47,11 +47,11 @@ const version = () => {
 
 const argv = require('yargs')
   .usage(
-`${chalk.bold.red(logo)}
+    `${chalk.bold.red(logo)}
 Usage:
 
   $0 [input.css] [OPTIONS] [--output|-o output.css] [--watch]`
-)
+  )
   .option('o', {
     alias: 'output',
     desc: 'Output file',
@@ -93,14 +93,15 @@ Usage:
     type: 'boolean'
   })
   .option('poll', {
-    desc: 'Use polling for file watching. Can optionally pass polling interval; default 100 ms'
+    desc:
+      'Use polling for file watching. Can optionally pass polling interval; default 100 ms'
   })
   .option('x', {
     alias: 'ext',
     desc: 'Override the output file extension',
     type: 'string',
-    coerce (ext) {
-      if (ext.indexOf('.') !== 0) return '.' + ext
+    coerce(ext) {
+      if (ext.indexOf('.') !== 0) return `.${ext}`
       return ext
     }
   })
@@ -111,7 +112,8 @@ Usage:
   })
   .option('b', {
     alias: 'base',
-    desc: 'Mirror the directory structure relative to this path in the output directory, this only works together with --dir',
+    desc:
+      'Mirror the directory structure relative to this path in the output directory, this only works together with --dir',
     type: 'string'
   })
   .option('c', {
@@ -120,25 +122,29 @@ Usage:
     type: 'string'
   })
   .alias('m', 'map')
-    .describe('m', 'Create an external sourcemap')
-    .describe('no-map', 'Disable the default inline sourcemaps')
-  .version(version).alias('v', 'version')
-  .help('h').alias('h', 'help')
+  .describe('m', 'Create an external sourcemap')
+  .describe('no-map', 'Disable the default inline sourcemaps')
+  .version(version)
+  .alias('v', 'version')
+  .help('h')
+  .alias('h', 'help')
   .example('$0 input.css -o output.css', 'Basic usage')
-  .example('cat input.css | $0 -u autoprefixer > output.css', 'Piping input & output')
+  .example(
+    'cat input.css | $0 -u autoprefixer > output.css',
+    'Piping input & output'
+  )
   .epilog(
-`If no input files are passed, it reads from stdin. If neither -o, --dir, or --replace is passed, it writes to stdout.
+    `If no input files are passed, it reads from stdin. If neither -o, --dir, or --replace is passed, it writes to stdout.
 
 If there are multiple input files, the --dir or --replace option must be passed.
 
 For more details, please see https://github.com/postcss/postcss-cli`
-  )
-  .argv
+  ).argv
 
-let dir = argv.dir
+const dir = argv.dir
 
 let input = argv._
-let output = argv.output
+const output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
@@ -152,13 +158,13 @@ let config = {
     stringifier: argv.stringifier ? require(argv.stringifier) : undefined
   },
   plugins: argv.use
-    ? argv.use.map((plugin) => {
-      try {
-        return require(plugin)()
-      } catch (e) {
-        error(`Plugin Error: Cannot find module '${plugin}'`)
-      }
-    })
+    ? argv.use.map(plugin => {
+        try {
+          return require(plugin)()
+        } catch (e) {
+          return error(`Plugin Error: Cannot find module '${plugin}'`)
+        }
+      })
     : []
 }
 
@@ -169,7 +175,11 @@ Promise.resolve()
   .then(() => {
     if (input && input.length) return globber(input)
 
-    if (argv.replace || argv.dir) error('Input Error: Cannot use --dir or --replace when reading from stdin')
+    if (argv.replace || argv.dir) {
+      error(
+        'Input Error: Cannot use --dir or --replace when reading from stdin'
+      )
+    }
 
     if (argv.watch) {
       error('Input Error: Cannot run in watch mode when reading from stdin')
@@ -177,13 +187,15 @@ Promise.resolve()
 
     return ['stdin']
   })
-  .then((i) => {
+  .then(i => {
     if (!i || !i.length) {
       error('Input Error: You must pass a valid list of files to parse')
     }
 
     if (i.length > 1 && !argv.dir && !argv.replace) {
-      error('Input Error: Must use --dir or --replace with multiple input files')
+      error(
+        'Input Error: Must use --dir or --replace with multiple input files'
+      )
     }
 
     if (i[0] !== 'stdin') i = i.map(i => path.resolve(i))
@@ -192,21 +204,20 @@ Promise.resolve()
 
     return files(input)
   })
-  .then((results) => {
+  .then(results => {
     if (argv.watch) {
-      const watcher = chokidar.watch(
-        input.concat(dependencies(results)),
-        {
-          usePolling: argv.poll,
-          interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100
-        }
-      )
+      const watcher = chokidar.watch(input.concat(dependencies(results)), {
+        usePolling: argv.poll,
+        interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100
+      })
 
       if (config.file) watcher.add(config.file)
 
       watcher
-        .on('ready', (file) => console.warn(chalk.bold.cyan('Waiting for file changes...')))
-        .on('change', (file) => {
+        .on('ready', () => {
+          console.warn(chalk.bold.cyan('Waiting for file changes...'))
+        })
+        .on('change', file => {
           let recompile = []
 
           if (~input.indexOf(file)) recompile.push(file)
@@ -218,47 +229,51 @@ Promise.resolve()
           if (!recompile.length) recompile = input
 
           return files(recompile)
-            .then((results) => watcher.add(dependencies(results)))
-            .then(() => console.warn(chalk.bold.cyan('Waiting for file changes...')))
+            .then(results => watcher.add(dependencies(results)))
+            .then(() => {
+              console.warn(chalk.bold.cyan('Waiting for file changes...'))
+            })
             .catch(error)
         })
     }
   })
   .catch(error)
 
-function rc (ctx, path) {
+function rc(ctx, path) {
   if (argv.use) return Promise.resolve()
 
   return postcssrc(ctx, path)
-    .then((rc) => {
+    .then(rc => {
       if (rc.options.from || rc.options.to) {
-        error('Config Error: Can not set from or to options in config file, use CLI arguments instead')
+        error(
+          'Config Error: Can not set from or to options in config file, use CLI arguments instead'
+        )
       }
       config = rc
     })
-    .catch((err) => {
+    .catch(err => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
     })
 }
 
-function files (files) {
-  if (typeof files === 'string') files = [ files ]
+function files(files) {
+  if (typeof files === 'string') files = [files]
 
-  return Promise.all(files.map((file) => {
-    if (file === 'stdin') {
-      return stdin()
-        .then((content) => {
+  return Promise.all(
+    files.map(file => {
+      if (file === 'stdin') {
+        return stdin().then(content => {
           if (!content) return error('Input Error: Did not receive any STDIN')
           return css(content, 'stdin')
         })
-    }
+      }
 
-    return read(file)
-      .then((content) => css(content, file))
-  }))
+      return read(file).then(content => css(content, file))
+    })
+  )
 }
 
-function css (css, file) {
+function css(css, file) {
   const ctx = { options: config.options }
 
   if (file !== 'stdin') {
@@ -271,7 +286,8 @@ function css (css, file) {
     if (!argv.config) argv.config = path.dirname(file)
   }
 
-  const relativePath = file !== 'stdin' ? path.relative(path.resolve(), file) : file
+  const relativePath =
+    file !== 'stdin' ? path.relative(path.resolve(), file) : file
 
   if (!argv.config) argv.config = process.cwd()
 
@@ -282,7 +298,7 @@ function css (css, file) {
 
   return rc(ctx, argv.config)
     .then(() => {
-      let options = config.options
+      const options = config.options
 
       if (file === 'stdin' && output) file = output
 
@@ -290,11 +306,13 @@ function css (css, file) {
       options.from = file === 'stdin' ? path.join(process.cwd(), 'stdin') : file
 
       if (output || dir || argv.replace) {
-        options.to = output || (argv.replace ? file : path.join(dir, argv.base ? file.replace(path.resolve(argv.base), '') : path.basename(file)))
+        const base = argv.base
+          ? file.replace(path.resolve(argv.base), '')
+          : path.basename(file)
+        options.to = output || (argv.replace ? file : path.join(dir, base))
 
         if (argv.ext) {
-          options.to = options.to
-            .replace(path.extname(options.to), argv.ext)
+          options.to = options.to.replace(path.extname(options.to), argv.ext)
         }
 
         options.to = path.resolve(options.to)
@@ -302,74 +320,73 @@ function css (css, file) {
 
       if (!options.to && config.options.map && !config.options.map.inline) {
         spinner.fail()
-        error('Output Error: Cannot output external sourcemaps when writing to STDOUT')
+        error(
+          'Output Error: Cannot output external sourcemaps when writing to STDOUT'
+        )
       }
 
-      return postcss(config.plugins)
-        .process(css, options)
-        .then((result) => {
-          const tasks = []
+      return postcss(config.plugins).process(css, options).then(result => {
+        const tasks = []
 
-          if (options.to) {
-            tasks.push(fs.outputFile(options.to, result.css))
+        if (options.to) {
+          tasks.push(fs.outputFile(options.to, result.css))
 
-            if (result.map) {
-              tasks.push(
-                fs.outputFile(
-                  options.to
-                    .replace(
-                      path.extname(options.to),
-                      path.extname(options.to) + '.map'
-                    ),
-                    result.map
-                )
+          if (result.map) {
+            tasks.push(
+              fs.outputFile(
+                options.to.replace(
+                  path.extname(options.to),
+                  `${path.extname(options.to)}.map`
+                ),
+                result.map
               )
-            }
-          } else {
-            spinner.text = chalk.bold.green(
-              `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
             )
-            spinner.succeed()
-            return process.stdout.write(result.css, 'utf8')
           }
+        } else {
+          spinner.text = chalk.bold.green(
+            `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
+          )
+          spinner.succeed()
+          return process.stdout.write(result.css, 'utf8')
+        }
 
-          return Promise.all(tasks)
-            .then(() => {
-              spinner.text = chalk.bold.green(
-                `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
-              )
-              if (result.warnings().length) {
-                spinner.fail()
-                console.warn(reporter(result))
-              } else spinner.succeed()
+        return Promise.all(tasks).then(() => {
+          spinner.text = chalk.bold.green(
+            `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
+          )
+          if (result.warnings().length) {
+            spinner.fail()
+            console.warn(reporter(result))
+          } else spinner.succeed()
 
-              return result
-            })
+          return result
         })
-    }).catch((err) => {
+      })
+    })
+    .catch(err => {
       spinner.fail()
       throw err
     })
 }
 
-function dependencies (results) {
-  if (!Array.isArray(results)) results = [ results ]
+function dependencies(results) {
+  if (!Array.isArray(results)) results = [results]
 
   const messages = []
 
-  results.forEach((result) => {
+  results.forEach(result => {
     if (result.messages <= 0) return
 
     result.messages
-      .filter((msg) => msg.type === 'dependency' ? msg : '')
+      .filter(msg => (msg.type === 'dependency' ? msg : ''))
       .map(depGraph.add)
-      .forEach((dependency) => messages.push(dependency.file))
+      .forEach(dependency => messages.push(dependency.file))
   })
 
   return messages
 }
 
-function error (err) {
+function error(err) {
   if (typeof err === 'string') {
     spinner.fail(chalk.bold.red(err))
   } else if (err.name === 'CssSyntaxError') {

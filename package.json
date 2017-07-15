@@ -26,6 +26,7 @@
     "postcss": "^6.0.1",
     "postcss-load-config": "^1.1.0",
     "postcss-reporter": "^4.0.0",
+    "pretty-hrtime": "^1.0.3",
     "read-cache": "^1.0.0",
     "yargs": "^8.0.1"
   },

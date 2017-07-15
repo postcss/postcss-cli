@@ -4,6 +4,7 @@ const fs = require('fs-extra')
 const path = require('path')
 
 const ora = require('ora')
+const prettyHrtime = require('pretty-hrtime')
 const stdin = require('get-stdin')
 const read = require('read-cache')
 const chalk = require('chalk')
@@ -326,7 +327,7 @@ function css (css, file) {
             }
           } else {
             spinner.text = chalk.bold.green(
-              `Finished ${relativePath} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
+              `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
             )
             spinner.succeed()
             return process.stdout.write(result.css, 'utf8')
@@ -335,7 +336,7 @@ function css (css, file) {
           return Promise.all(tasks)
             .then(() => {
               spinner.text = chalk.bold.green(
-                `Finished ${relativePath} (${Math.round(process.hrtime(time)[1] / 1e6)}ms)`
+                `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
               )
               if (result.warnings().length) {
                 spinner.fail()

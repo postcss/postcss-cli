@@ -36,7 +36,9 @@ test.cb('--watch works', t => {
       // When the change is picked up:
       watcher.on('change', p => {
         if (p === 'output.css') {
-          isEqual(p, 'test/fixtures/b.css').then(() => done()).catch(done)
+          isEqual(p, 'test/fixtures/b.css')
+            .then(() => done())
+            .catch(done)
         }
       })
 
@@ -113,7 +115,9 @@ test.cb('--watch postcss.config.js', t => {
       // When the change is picked up:
       watcher.on('change', p => {
         if (p === 'output.css') {
-          isEqual(p, 'test/fixtures/a.css').then(() => done()).catch(done)
+          isEqual(p, 'test/fixtures/a.css')
+            .then(() => done())
+            .catch(done)
         }
       })
 
@@ -181,7 +185,9 @@ test.cb('--watch dependencies', t => {
       // When the change is picked up:
       watcher.on('change', p => {
         if (p === 'output.css') {
-          isEqual(p, 'test/fixtures/b.css').then(() => done()).catch(done)
+          isEqual(p, 'test/fixtures/b.css')
+            .then(() => done())
+            .catch(done)
         }
       })
 

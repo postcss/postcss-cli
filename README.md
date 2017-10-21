@@ -1,6 +1,7 @@
 [![npm][npm]][npm-url]
 [![node][node]][node-url]
 [![deps][deps]][deps-url]
+[![Greenkeeper badge](https://badges.greenkeeper.io/postcss/postcss-cli.svg)](https://greenkeeper.io/)
 [![tests][tests]][tests-url]
 [![cover][cover]][cover-url]
 [![code style][style]][style-url]

@@ -204,43 +204,45 @@ function css(css, file) {
         )
       }
 
-      return postcss(config.plugins).process(css, options).then(result => {
-        const tasks = []
+      return postcss(config.plugins)
+        .process(css, options)
+        .then(result => {
+          const tasks = []
 
-        if (options.to) {
-          tasks.push(fs.outputFile(options.to, result.css))
+          if (options.to) {
+            tasks.push(fs.outputFile(options.to, result.css))
 
-          if (result.map) {
-            tasks.push(
-              fs.outputFile(
-                options.to.replace(
-                  path.extname(options.to),
-                  `${path.extname(options.to)}.map`
-                ),
-                result.map
+            if (result.map) {
+              tasks.push(
+                fs.outputFile(
+                  options.to.replace(
+                    path.extname(options.to),
+                    `${path.extname(options.to)}.map`
+                  ),
+                  result.map
+                )
               )
+            }
+          } else {
+            spinner.text = chalk.bold.green(
+              `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
             )
+            spinner.succeed()
+            return process.stdout.write(result.css, 'utf8')
           }
-        } else {
-          spinner.text = chalk.bold.green(
-            `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
-          )
-          spinner.succeed()
-          return process.stdout.write(result.css, 'utf8')
-        }
 
-        return Promise.all(tasks).then(() => {
-          spinner.text = chalk.bold.green(
-            `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
-          )
-          if (result.warnings().length) {
-            spinner.fail()
-            console.warn(reporter(result))
-          } else spinner.succeed()
+          return Promise.all(tasks).then(() => {
+            spinner.text = chalk.bold.green(
+              `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
+            )
+            if (result.warnings().length) {
+              spinner.fail()
+              console.warn(reporter(result))
+            } else spinner.succeed()
 
-          return result
+            return result
+          })
         })
-      })
     })
     .catch(err => {
       spinner.fail()

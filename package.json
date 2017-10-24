@@ -29,7 +29,7 @@
     "postcss-reporter": "^5.0.0",
     "pretty-hrtime": "^1.0.3",
     "read-cache": "^1.0.0",
-    "yargs": "^8.0.1"
+    "yargs": "^10.0.3"
   },
   "devDependencies": {
     "ava": "^0.22.0",

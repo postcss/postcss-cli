@@ -8,7 +8,9 @@ import chokidar from 'chokidar'
 import ENV from './helpers/env.js'
 import read from './helpers/read.js'
 
-test.cb('--watch works', t => {
+// XXX: All the tests in these files are skipped; the tests are too flaky on the CI
+
+test.cb.skip('--watch works', t => {
   let cp
 
   t.plan(2)
@@ -77,7 +79,7 @@ test.cb('--watch works', t => {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb('--watch postcss.config.js', t => {
+test.cb.skip('--watch postcss.config.js', t => {
   let cp
 
   t.plan(2)
@@ -157,7 +159,7 @@ test.cb('--watch postcss.config.js', t => {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb('--watch dependencies', t => {
+test.cb.skip('--watch dependencies', t => {
   let cp
 
   t.plan(2)
@@ -234,7 +236,7 @@ test.cb('--watch dependencies', t => {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb("--watch doesn't exit on CssSyntaxError", t => {
+test.cb.skip("--watch doesn't exit on CssSyntaxError", t => {
   t.plan(0)
 
   ENV('', ['a.css'])

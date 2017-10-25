@@ -4,7 +4,6 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/postcss/postcss-cli.svg)](https://greenkeeper.io/)
 [![tests][tests]][tests-url]
 [![cover][cover]][cover-url]
-[![code style][style]][style-url]
 [![chat][chat]][chat-url]
 
 <div align="center">
@@ -143,9 +142,6 @@ module.exports = (ctx) => ({
 
 [tests]: http://img.shields.io/travis/postcss/postcss-cli/master.svg
 [tests-url]: https://travis-ci.org/postcss/postcss-cli
-
-[style]: https://img.shields.io/badge/code%20style-standard-yellow.svg
-[style-url]: http://standardjs.com/
 
 [cover]: https://img.shields.io/coveralls/postcss/postcss-cli/master.svg
 [cover-url]: https://coveralls.io/github/postcss/postcss-cli

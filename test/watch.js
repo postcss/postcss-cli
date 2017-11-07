@@ -59,10 +59,9 @@ test.cb.skip('--watch works', t => {
 
       // Helper functions:
       function isEqual(p, expected) {
-        return Promise.all([
-          read(path.join(dir, p)),
-          read(expected)
-        ]).then(([a, e]) => t.is(a, e))
+        return Promise.all([read(path.join(dir, p)), read(expected)]).then(
+          ([a, e]) => t.is(a, e)
+        )
       }
 
       function done(err) {
@@ -139,10 +138,9 @@ test.cb.skip('--watch postcss.config.js', t => {
 
       // Helper functions:
       function isEqual(p, expected) {
-        return Promise.all([
-          read(path.join(dir, p)),
-          read(expected)
-        ]).then(([a, e]) => t.is(a, e))
+        return Promise.all([read(path.join(dir, p)), read(expected)]).then(
+          ([a, e]) => t.is(a, e)
+        )
       }
 
       function done(err) {
@@ -217,10 +215,9 @@ test.cb.skip('--watch dependencies', t => {
 
       // Helper functions:
       function isEqual(p, expected) {
-        return Promise.all([
-          read(path.join(dir, p)),
-          read(expected)
-        ]).then(([a, e]) => t.is(a, e))
+        return Promise.all([read(path.join(dir, p)), read(expected)]).then(
+          ([a, e]) => t.is(a, e)
+        )
       }
 
       function done(err) {

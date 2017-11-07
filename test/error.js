@@ -41,27 +41,22 @@ test.failing('invalid --config', t => {
 })
 
 test('PluginError', t => {
-  return cli([
-    'test/fixtures/a.css',
-    '-u',
-    'postcss-plugin',
-    '-o',
-    tmp()
-  ]).then(({ err, code }) => {
-    t.is(code, 1, 'expected non-zero error code')
-    t.regex(err.toString(), /Plugin Error: Cannot find module 'postcss-plugin'/)
-  })
+  return cli(['test/fixtures/a.css', '-u', 'postcss-plugin', '-o', tmp()]).then(
+    ({ err, code }) => {
+      t.is(code, 1, 'expected non-zero error code')
+      t.regex(
+        err.toString(),
+        /Plugin Error: Cannot find module 'postcss-plugin'/
+      )
+    }
+  )
 })
 
 test('CssSyntaxError', t => {
-  return cli([
-    'test/fixtures/a.css',
-    '-p',
-    'sugarss',
-    '-o',
-    tmp()
-  ]).then(({ err, code }) => {
-    t.is(code, 1, 'expected non-zero error code')
-    t.regex(err.toString(), /\[1:4] Unnecessary curly bracket/)
-  })
+  return cli(['test/fixtures/a.css', '-p', 'sugarss', '-o', tmp()]).then(
+    ({ err, code }) => {
+      t.is(code, 1, 'expected non-zero error code')
+      t.regex(err.toString(), /\[1:4] Unnecessary curly bracket/)
+    }
+  )
 })

@@ -90,28 +90,31 @@ Promise.resolve()
 
       if (config.file) watcher.add(config.file)
 
+      const recompile = file => {
+        let changed = []
+
+        if (~input.indexOf(file)) changed.push(file)
+
+        changed = changed.concat(
+          depGraph.dependantsOf(file).filter(file => ~input.indexOf(file))
+        )
+
+        if (!changed.length) changed = input
+
+        return files(changed)
+          .then(results => watcher.add(dependencies(results)))
+          .then(() => {
+            console.warn(chalk.bold.cyan('Waiting for file changes...'))
+          })
+          .catch(error)
+      }
+
       watcher
         .on('ready', () => {
           console.warn(chalk.bold.cyan('Waiting for file changes...'))
         })
-        .on('change', file => {
-          let recompile = []
-
-          if (~input.indexOf(file)) recompile.push(file)
-
-          recompile = recompile.concat(
-            depGraph.dependantsOf(file).filter(file => ~input.indexOf(file))
-          )
-
-          if (!recompile.length) recompile = input
-
-          return files(recompile)
-            .then(results => watcher.add(dependencies(results)))
-            .then(() => {
-              console.warn(chalk.bold.cyan('Waiting for file changes...'))
-            })
-            .catch(error)
-        })
+        .on('add', recompile)
+        .on('change', recompile)
     }
   })
   .catch(error)

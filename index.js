@@ -25,7 +25,7 @@ const output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
-const spinner = ora()
+const spinner = ora({ stream: process.stdout })
 
 let config = {
   options: {

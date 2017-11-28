@@ -25,7 +25,8 @@ const output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
-const spinner = ora({ stream: process.stdout })
+const cssToStdout = output || dir || argv.replace;
+const spinner = ora({ stream: cssToStdout ? process.stderr : process.stdout })
 
 let config = {
   options: {

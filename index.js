@@ -25,7 +25,7 @@ const output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
-const stdoutIsFree = !output && !dir && !argv.replace
+const stdoutIsFree = output || dir || argv.replace
 const spinner = ora({ stream: stdoutIsFree ? process.stdout : process.stderr })
 
 let config = {

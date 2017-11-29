@@ -54,7 +54,6 @@ cat input.css | postcss [OPTIONS] > output.css
 |`-d, --dir`|`{String}`|`undefined`|Output Directory|
 |`-b, --base`|`{String}`|`undefined`|Use together with `--dir` for keeping directory structure.|
 |`-x, --ext`|`{String}`|`extname(output)`|Output File Extension|
-|`-l, --stdout`|`{Boolean}`|`false`|Print non-errors to stdout|
 |`-o, --output`|`{String}`|`undefined`|Output File|
 |`-r, --replace`|`{String}`|`undefined`|Replace Input <=> Output|
 |`-p, --parser`|`{String}`|`undefined`|Custom PostCSS Parser|

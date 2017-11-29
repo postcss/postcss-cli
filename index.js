@@ -29,7 +29,7 @@ const createSpinner = (argv, ora) => {
   const isSTDOUT = argv.dir || argv.output || argv.replace
 
   const stream = isSTDOUT ? process.stdout : process.stderr
-  return ora({ stream })
+  return ora({ stream: stream })
 }
 
 const spinner = createSpinner(argv, ora)

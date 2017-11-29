@@ -26,7 +26,9 @@ const output = argv.output
 if (argv.map) argv.map = { inline: false }
 
 const stdoutIsFree = output || dir || argv.replace
-const spinner = ora({ stream: stdoutIsFree ? process.stdout : process.stderr })
+const spinnerStream =
+  argv.stdout && stdoutIsFree ? process.stdout : process.stderr
+const spinner = ora({ stream: spinnerStream })
 
 let config = {
   options: {
@@ -61,6 +63,10 @@ Promise.resolve()
 
     if (argv.watch) {
       error('Input Error: Cannot run in watch mode when reading from stdin')
+    }
+
+    if (argv.stdout && !stdoutIsFree) {
+      error('Input Error: Cannot use --stdout when outputing to stdout')
     }
 
     return ['stdin']

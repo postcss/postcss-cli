@@ -97,12 +97,10 @@ Promise.resolve()
           console.warn(chalk.bold.cyan('Waiting for file changes...'))
         })
         .on('change', file => {
-          if (argv.replace) {
-            if (file in updatingFiles) {
-              delete updatingFiles[file]
-              console.warn(chalk.bold.cyan('Ignoring change to busy file'))
-              return
-            }
+          if (file in updatingFiles) {
+            delete updatingFiles[file]
+            console.warn(chalk.bold.cyan('Ignoring change to busy file'))
+            return
           }
           let recompile = []
 
@@ -221,7 +219,7 @@ function css(css, file) {
           const tasks = []
 
           if (options.to) {
-            if (argv.replace) {
+            if (options.to === options.from) {
               updatingFiles[options.to] = true
             }
 

@@ -48,6 +48,8 @@ let config = {
 if (argv.env) process.env.NODE_ENV = argv.env
 if (argv.config) argv.config = path.resolve(argv.config)
 
+const updatingFiles = {}
+
 Promise.resolve()
   .then(() => {
     if (input && input.length) return globber(input)
@@ -83,7 +85,6 @@ Promise.resolve()
   })
   .then(results => {
     if (argv.watch) {
-      const updatingFiles = {}
       const watcher = chokidar.watch(input.concat(dependencies(results)), {
         usePolling: argv.poll,
         interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100
@@ -102,7 +103,6 @@ Promise.resolve()
               console.warn(chalk.bold.cyan('Ignoring change to busy file'))
               return
             }
-            updatingFiles[file] = true
           }
           let recompile = []
 
@@ -221,6 +221,10 @@ function css(css, file) {
           const tasks = []
 
           if (options.to) {
+            if (argv.replace) {
+              updatingFiles[options.to] = true
+            }
+
             tasks.push(fs.outputFile(options.to, result.css))
 
             if (result.map) {

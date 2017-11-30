@@ -83,6 +83,7 @@ Promise.resolve()
   })
   .then(results => {
     if (argv.watch) {
+      const updatingFiles = {}
       const watcher = chokidar.watch(input.concat(dependencies(results)), {
         usePolling: argv.poll,
         interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100
@@ -95,6 +96,14 @@ Promise.resolve()
           console.warn(chalk.bold.cyan('Waiting for file changes...'))
         })
         .on('change', file => {
+          if (argv.replace) {
+            if (file in updatingFiles) {
+              delete updatingFiles[file]
+              console.warn(chalk.bold.cyan('Ignoring change to busy file'))
+              return
+            }
+            updatingFiles[file] = true
+          }
           let recompile = []
 
           if (~input.indexOf(file)) recompile.push(file)
@@ -106,7 +115,9 @@ Promise.resolve()
           if (!recompile.length) recompile = input
 
           return files(recompile)
-            .then(results => watcher.add(dependencies(results)))
+            .then(results => {
+              return watcher.add(dependencies(results))
+            })
             .then(() => {
               console.warn(chalk.bold.cyan('Waiting for file changes...'))
             })

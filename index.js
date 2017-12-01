@@ -116,6 +116,7 @@ Promise.resolve()
   })
   .catch(err => {
     error(err)
+
     process.exit(1)
   })
 

@@ -219,7 +219,7 @@ function css(css, file) {
           const tasks = []
 
           if (options.to) {
-            if (options.to === options.from) {
+            if (argv.watch && options.to === options.from) {
               updatingFiles[options.to] = true
             }
 

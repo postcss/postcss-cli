@@ -9,7 +9,7 @@ test('--parser works', async t => {
 
   const { error, stderr } = await cli([
     'test/fixtures/a.sss',
-    '-p',
+    '--parser',
     'sugarss',
     '-o',
     output,

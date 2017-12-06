@@ -22,55 +22,57 @@ npm i -g|-D postcss-cli
 
 <h2 align="center">Usage</h2>
 
-```bash
-postcss [input.css] [OPTIONS] [-o|--output output.css] [-w|--watch]
+```
+Usage:
+  postcss [input.css] [OPTIONS] [-o|--output output.css] [--watch|-w]
+  postcss <input.css>... [OPTIONS] --dir <output-directory> [--watch|-w]
+  postcss <input.css>... [OPTIONS] --replace
+
+Basic options:
+  -o, --output   Output file                                            [string]
+  -d, --dir      Output directory                                       [string]
+  -r, --replace  Replace (overwrite) the input file                    [boolean]
+  --map, -m      Create an external sourcemap
+  --no-map       Disable the default inline sourcemaps
+  --watch, -w    Watch files for changes and recompile as needed       [boolean]
+  --env          A shortcut for setting NODE_ENV                        [string]
+
+Options for when not using a config file:
+  -u, --use      List of postcss plugins to use                          [array]
+  --parser       Custom postcss parser                                  [string]
+  --stringifier  Custom postcss stringifier                             [string]
+  --syntax       Custom postcss syntax                                  [string]
+
+Advanced options:
+  --ext     Override the output file extension; for use with --dir      [string]
+  --base    Mirror the directory structure relative to this path in the output
+            directory, for use with --dir                               [string]
+  --poll    Use polling for file watching. Can optionally pass polling interval;
+            default 100 ms
+  --config  Set a custom path to look for a config file                 [string]
+
+Options:
+  -v, --version  Show version number                                   [boolean]
+  -h, --help     Show help                                             [boolean]
+
+Examples:
+  postcss input.css -o output.css                       Basic usage
+  cat input.css | postcss -u autoprefixer > output.css  Piping input & output
+
+If no input files are passed, it reads from stdin. If neither -o, --dir, or
+--replace is passed, it writes to stdout.
+
+If there are multiple input files, the --dir or --replace option must be passed.
+Input files may contain globs.
 ```
 
-The input may also be a glob:
+> ℹ️  More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).
 
-```bash
-postcss "src/*.css" [OPTIONS]
-```
-
-Recursively read a directory:
+To recursively read a directory, you'd do:
 
 ```bash
 postcss "src/**/*.css" [OPTIONS]
 ```
-
-> ⚠️  If there are multiple input files, the --dir or --replace option must be passed.
-
-```bash
-cat input.css | postcss [OPTIONS] > output.css
-```
-
-> ⚠️  If no input files are passed, it reads from stdin. If neither -o, --dir, or
---replace is passed, it writes to stdout.
-
-<h2 align="center">Options</h2>
-
-|Name|Type|Default|Description|
-|:---|:--:|:-----:|:----------|
-|`-d, --dir`|`{String}`|`undefined`|Output Directory|
-|`-b, --base`|`{String}`|`undefined`|Use together with `--dir` for keeping directory structure.|
-|`-x, --ext`|`{String}`|`extname(output)`|Output File Extension|
-|`-o, --output`|`{String}`|`undefined`|Output File|
-|`-r, --replace`|`{String}`|`undefined`|Replace Input <=> Output|
-|`-p, --parser`|`{String}`|`undefined`|Custom PostCSS Parser|
-|`-s, --syntax`|`{String}`|`undefined`|Custom PostCSS Syntax|
-|`-t, --stringifier`|`{String}`|`undefined`|Custom PostCSS Stringifier|
-|`-w, --watch`|`{Boolean}`|`false`|Enable Watch Mode|
-|`--poll`|`{Boolean\|Number}`|`100`|Use polling for file watching. Can optionally pass polling interval; default 100 ms|
-|`-u, --use`|`{Array}`|`[]`|PostCSS Plugins|
-|`-m, --map`|`{Boolean}`|`{ inline: true }`|External Sourcemaps|
-|`--no-map`|`{Boolean}`|`false`|Disable Sourcemaps|
-|`-e, --env`|`{String}`|`process.env.NODE_ENV`|Sets `$NODE_ENV`|
-|`-c, --config`|`{String}`|`dirname(file)`|PostCSS Config Path `postcss.config.js`|
-|`-h, --help`|`{Boolean}`|`false`|CLI Help|
-|`-v, --version`|`{Boolean}`|`false`|CLI Version|
-
-
-> ℹ️  More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).
 
 ### [Config](https://github.com/michael-ciniawsky/postcss-load-config)
 

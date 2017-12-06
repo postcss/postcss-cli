@@ -9,7 +9,7 @@ test('--syntax works', async t => {
 
   const { error, stderr } = await cli([
     'test/fixtures/a.sss',
-    '-s',
+    '--syntax',
     'sugarss',
     '-o',
     output,

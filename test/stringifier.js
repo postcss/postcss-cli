@@ -9,7 +9,7 @@ test('--stringifier works', async t => {
 
   const { error, stderr } = await cli([
     'test/fixtures/a.css',
-    '-t',
+    '--stringifier',
     'sugarss',
     '-o',
     output,

@@ -53,7 +53,7 @@ test('PluginError', t => {
 })
 
 test('CssSyntaxError', t => {
-  return cli(['test/fixtures/a.css', '-p', 'sugarss', '-o', tmp()]).then(
+  return cli(['test/fixtures/a.css', '--parser', 'sugarss', '-o', tmp()]).then(
     ({ err, code }) => {
       t.is(code, 1, 'expected non-zero error code')
       t.regex(err.toString(), /\[1:4] Unnecessary curly bracket/)

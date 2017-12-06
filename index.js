@@ -48,6 +48,8 @@ let config = {
 if (argv.env) process.env.NODE_ENV = argv.env
 if (argv.config) argv.config = path.resolve(argv.config)
 
+const updatingFiles = {}
+
 Promise.resolve()
   .then(() => {
     if (input && input.length) return globber(input)
@@ -95,6 +97,11 @@ Promise.resolve()
           console.warn(chalk.bold.cyan('Waiting for file changes...'))
         })
         .on('change', file => {
+          if (file in updatingFiles) {
+            delete updatingFiles[file]
+            console.warn(chalk.bold.cyan('Ignoring change to busy file'))
+            return
+          }
           let recompile = []
 
           if (~input.indexOf(file)) recompile.push(file)
@@ -106,7 +113,9 @@ Promise.resolve()
           if (!recompile.length) recompile = input
 
           return files(recompile)
-            .then(results => watcher.add(dependencies(results)))
+            .then(results => {
+              return watcher.add(dependencies(results))
+            })
             .then(() => {
               console.warn(chalk.bold.cyan('Waiting for file changes...'))
             })
@@ -210,6 +219,10 @@ function css(css, file) {
           const tasks = []
 
           if (options.to) {
+            if (argv.watch && options.to === options.from) {
+              updatingFiles[options.to] = true
+            }
+
             tasks.push(fs.outputFile(options.to, result.css))
 
             if (result.map) {

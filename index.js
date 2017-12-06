@@ -114,7 +114,11 @@ Promise.resolve()
         })
     }
   })
-  .catch(error)
+  .catch(err => {
+    error(err)
+
+    process.exit(1)
+  })
 
 function rc(ctx, path) {
   if (argv.use) return Promise.resolve()

@@ -9,7 +9,7 @@ import read from './helpers/read.js'
 test.cb('writes to stdout', t => {
   const cp = execFile(
     path.resolve('bin/postcss'),
-    ['-p', 'sugarss', '-u', 'postcss-import', '--no-map'],
+    ['--parser', 'sugarss', '-u', 'postcss-import', '--no-map'],
     (error, stdout, stderr) => {
       if (error) t.end(error, stderr)
 

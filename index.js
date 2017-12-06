@@ -50,6 +50,9 @@ if (argv.config) argv.config = path.resolve(argv.config)
 
 Promise.resolve()
   .then(() => {
+    if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
+      error('Cannot write to stdout in watch mode')
+    }
     if (input && input.length) return globber(input)
 
     if (argv.replace || argv.dir) {

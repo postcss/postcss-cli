@@ -153,7 +153,11 @@ function files(files) {
 }
 
 function css(css, file) {
-  const ctx = { options: config.options }
+  // XXX: cli arguments seem to be handled differently in different environments
+  // therefore explicitly copy options up to main ctx (particularly the --map setting which is needed by the postcss process function)
+  const ctx = Object.assign({}, config.options)
+  // now copy the options object onto the ctx to preserve functionality down line
+  ctx.options = config.options
 
   if (file !== 'stdin') {
     ctx.file = {

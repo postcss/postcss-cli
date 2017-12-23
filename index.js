@@ -293,10 +293,10 @@ function error(err) {
 
     console.error('\n', chalk.bold.red(`[${err.message}`))
     console.error('\n', err.showSourceCode(), '\n\n')
-
-    if (argv.watch) return
   } else {
     console.error(err)
   }
+  // Watch mode shouldn't exit on error
+  if (argv.watch) return
   process.exit(1)
 }

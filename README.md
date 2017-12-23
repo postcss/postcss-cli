@@ -54,7 +54,7 @@ Advanced options:
   --config  Set a custom path to look for a config file                 [string]
 
 Options:
-  -v, --version  Show version number                                   [boolean]
+  --version  Show version number                                       [boolean]
   -h, --help     Show help                                             [boolean]
 
 Examples:

@@ -26,6 +26,7 @@ npm i -g|-D postcss-cli
 Usage:
   postcss [input.css] [OPTIONS] [-o|--output output.css] [--watch|-w]
   postcss <input.css>... [OPTIONS] --dir <output-directory> [--watch|-w]
+  postcss <input-directory> [OPTIONS] --dir <output-directory> [--watch|-w]
   postcss <input.css>... [OPTIONS] --replace
 
 Basic options:
@@ -63,16 +64,12 @@ If no input files are passed, it reads from stdin. If neither -o, --dir, or
 --replace is passed, it writes to stdout.
 
 If there are multiple input files, the --dir or --replace option must be passed.
-Input files may contain globs.
+
+Input files may contain globs. If you pass an input directory, it will process
+all files in the directory and any subdirectories.
 ```
 
 > ℹ️  More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).
-
-To recursively read a directory, you'd do:
-
-```bash
-postcss "src/**/*.css" [OPTIONS]
-```
 
 ### [Config](https://github.com/michael-ciniawsky/postcss-load-config)
 

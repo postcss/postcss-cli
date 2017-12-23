@@ -3,7 +3,6 @@
 const fs = require('fs-extra')
 const path = require('path')
 
-const ora = require('ora')
 const prettyHrtime = require('pretty-hrtime')
 const stdin = require('get-stdin')
 const read = require('read-cache')
@@ -24,8 +23,6 @@ let input = argv._
 const output = argv.output
 
 if (argv.map) argv.map = { inline: false }
-
-const spinner = ora()
 
 let config = {
   options: {
@@ -86,6 +83,8 @@ Promise.resolve()
   })
   .then(results => {
     if (argv.watch) {
+      const printMessage = () =>
+        printVerbose(chalk.dim('\nWaiting for file changes...'))
       const watcher = chokidar.watch(input.concat(dependencies(results)), {
         usePolling: argv.poll,
         interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100
@@ -93,28 +92,22 @@ Promise.resolve()
 
       if (config.file) watcher.add(config.file)
 
-      watcher
-        .on('ready', () => {
-          console.warn(chalk.bold.cyan('Waiting for file changes...'))
-        })
-        .on('change', file => {
-          let recompile = []
+      watcher.on('ready', printMessage).on('change', file => {
+        let recompile = []
 
-          if (~input.indexOf(file)) recompile.push(file)
+        if (~input.indexOf(file)) recompile.push(file)
 
-          recompile = recompile.concat(
-            depGraph.dependantsOf(file).filter(file => ~input.indexOf(file))
-          )
+        recompile = recompile.concat(
+          depGraph.dependantsOf(file).filter(file => ~input.indexOf(file))
+        )
 
-          if (!recompile.length) recompile = input
+        if (!recompile.length) recompile = input
 
-          return files(recompile)
-            .then(results => watcher.add(dependencies(results)))
-            .then(() => {
-              console.warn(chalk.bold.cyan('Waiting for file changes...'))
-            })
-            .catch(error)
-        })
+        return files(recompile)
+          .then(results => watcher.add(dependencies(results)))
+          .then(printMessage)
+          .catch(error)
+      })
     }
   })
   .catch(err => {
@@ -179,8 +172,7 @@ function css(css, file) {
 
   const time = process.hrtime()
 
-  spinner.text = `Processing ${relativePath}`
-  spinner.start()
+  printVerbose(chalk`{cyan Processing {bold ${relativePath}}...}`)
 
   return rc(ctx, argv.config)
     .then(() => {
@@ -205,7 +197,6 @@ function css(css, file) {
       }
 
       if (!options.to && config.options.map && !config.options.map.inline) {
-        spinner.fail()
         error(
           'Output Error: Cannot output external sourcemaps when writing to STDOUT'
         )
@@ -220,39 +211,29 @@ function css(css, file) {
             tasks.push(fs.outputFile(options.to, result.css))
 
             if (result.map) {
-              tasks.push(
-                fs.outputFile(
-                  options.to.replace(
-                    path.extname(options.to),
-                    `${path.extname(options.to)}.map`
-                  ),
-                  result.map
-                )
+              const mapfile = options.to.replace(
+                path.extname(options.to),
+                `${path.extname(options.to)}.map`
               )
+              tasks.push(fs.outputFile(mapfile, result.map))
             }
-          } else {
-            spinner.text = chalk.bold.green(
-              `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
-            )
-            spinner.succeed()
-            return process.stdout.write(result.css, 'utf8')
-          }
+          } else process.stdout.write(result.css, 'utf8')
 
           return Promise.all(tasks).then(() => {
-            spinner.text = chalk.bold.green(
-              `Finished ${relativePath} (${prettyHrtime(process.hrtime(time))})`
+            const prettyTime = prettyHrtime(process.hrtime(time))
+            printVerbose(
+              chalk`{green Finished {bold ${relativePath}} in {bold ${prettyTime}}}`
             )
+
             if (result.warnings().length) {
-              spinner.fail()
               console.warn(reporter(result))
-            } else spinner.succeed()
+            }
 
             return result
           })
         })
     })
     .catch(err => {
-      spinner.fail()
       throw err
     })
 }
@@ -274,25 +255,18 @@ function dependencies(results) {
   return messages
 }
 
+function printVerbose(message) {
+  if (argv.verbose) console.warn(message)
+}
+
 function error(err) {
+  // Seperate error from logging output
+  if (argv.verbose) console.error()
+
   if (typeof err === 'string') {
-    spinner.fail(chalk.bold.red(err))
+    console.error(chalk.red(err))
   } else if (err.name === 'CssSyntaxError') {
-    console.error('\n')
-
-    spinner.text = spinner.text.replace('Processing ', '')
-    spinner.fail(chalk.bold.red(`Syntax Error: ${spinner.text}`))
-
-    if (err.file) {
-      err.message = err.message.substr(err.file.length + 1)
-    } else {
-      err.message = err.message.replace('<css input>:', '')
-    }
-
-    err.message = err.message.replace(/:\s/, '] ')
-
-    console.error('\n', chalk.bold.red(`[${err.message}`))
-    console.error('\n', err.showSourceCode(), '\n\n')
+    console.error(err.toString())
   } else {
     console.error(err)
   }

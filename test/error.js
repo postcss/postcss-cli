@@ -56,7 +56,10 @@ test('CssSyntaxError', t => {
   return cli(['test/fixtures/a.css', '--parser', 'sugarss', '-o', tmp()]).then(
     ({ err, code }) => {
       t.is(code, 1, 'expected non-zero error code')
-      t.regex(err.toString(), /\[1:4] Unnecessary curly bracket/)
+      t.regex(
+        err.toString(),
+        /CssSyntaxError: .*a.css:1:4: Unnecessary curly bracket/
+      )
     }
   )
 })

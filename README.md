@@ -35,6 +35,7 @@ Basic options:
   -r, --replace  Replace (overwrite) the input file                    [boolean]
   --map, -m      Create an external sourcemap
   --no-map       Disable the default inline sourcemaps
+  --verbose      Be verbose                                            [boolean]
   --watch, -w    Watch files for changes and recompile as needed       [boolean]
   --env          A shortcut for setting NODE_ENV                        [string]
 

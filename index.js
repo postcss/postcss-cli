@@ -53,7 +53,11 @@ Promise.resolve()
     if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
       error('Cannot write to stdout in watch mode')
     }
-    if (input && input.length) return globber(input)
+    if (input && input.length) {
+      return globber(input, {
+        expandDirectories: { extensions: ['css'] }
+      })
+    }
 
     if (argv.replace || argv.dir) {
       error(

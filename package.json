@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "chalk": "^2.1.0",
-    "chokidar": "^1.6.1",
+    "chokidar": "^2.0.0",
     "dependency-graph": "^0.7.0",
     "fs-extra": "^5.0.0",
     "get-stdin": "^5.0.1",

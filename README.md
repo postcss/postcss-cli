@@ -70,18 +70,19 @@ Input files may contain globs. If you pass an input directory, it will process
 all files in the directory and any subdirectories.
 ```
 
-> ℹ️  More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).
+> ℹ️ More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).
 
 ### [Config](https://github.com/michael-ciniawsky/postcss-load-config)
 
 If you need to pass options to your plugins, or have a long plugin chain, you'll want to use a configuration file.
 
 **postcss.config.js**
+
 ```js
 module.exports = {
   parser: 'sugarss',
   plugins: [
-    require('postcss-import')({...options}),
+    require('postcss-import')({ ...options }),
     require('postcss-url')({ url: 'copy', useHash: true })
   ]
 }
@@ -93,58 +94,53 @@ Note that you **can not** set the `from` or `to` options for postcss in the conf
 
 For more advanced usage it's recommend to to use a function in `postcss.config.js`, this gives you access to the CLI context to dynamically apply options and plugins **per file**
 
-|Name|Type|Default|Description|
-|:--:|:--:|:-----:|:----------|
-|`env`|`{String}`|`'development'`|process.env.NODE_ENV|
-|`file`|`{Object}`|`dirname, basename, extname`|File|
-|`options`|`{Object}`|`map, parser, syntax, stringifier`|PostCSS Options|
+|   Name    |    Type    |              Default               | Description          |
+| :-------: | :--------: | :--------------------------------: | :------------------- |
+|   `env`   | `{String}` |          `'development'`           | process.env.NODE_ENV |
+|  `file`   | `{Object}` |    `dirname, basename, extname`    | File                 |
+| `options` | `{Object}` | `map, parser, syntax, stringifier` | PostCSS Options      |
 
 **postcss.config.js**
+
 ```js
-module.exports = (ctx) => ({
+module.exports = ctx => ({
   map: ctx.options.map,
   parser: ctx.file.extname === '.sss' ? 'sugarss' : false,
   plugins: {
     'postcss-import': { root: ctx.file.dirname },
-    'cssnano': ctx.env === 'production' ? {} : false
+    cssnano: ctx.env === 'production' ? {} : false
   }
 })
 ```
 
-> ⚠️  If you want to set options via CLI, it's mandatory to reference `ctx.options` in `postcss.config.js`
-
+> ⚠️ If you want to set options via CLI, it's mandatory to reference `ctx.options` in `postcss.config.js`
 
 ```bash
 postcss input.sss -p sugarss -o output.css -m
 ```
 
 **postcss.config.js**
+
 ```js
-module.exports = (ctx) => ({
+module.exports = ctx => ({
   map: ctx.options.map,
   parser: ctx.options.parser,
   plugins: {
     'postcss-import': { root: ctx.file.dirname },
-    'cssnano': ctx.env === 'production' ? {} : false
+    cssnano: ctx.env === 'production' ? {} : false
   }
 })
 ```
 
-
 [npm]: https://img.shields.io/npm/v/postcss-cli.svg
 [npm-url]: https://npmjs.com/package/postcss-cli
-
 [node]: https://img.shields.io/node/v/postcss-cli.svg
 [node-url]: https://nodejs.org/
-
 [deps]: https://img.shields.io/gemnasium/postcss/postcss-cli.svg
 [deps-url]: https://gemnasium.com/postcss/postcss-cli
-
 [tests]: http://img.shields.io/travis/postcss/postcss-cli/master.svg
 [tests-url]: https://travis-ci.org/postcss/postcss-cli
-
 [cover]: https://img.shields.io/coveralls/postcss/postcss-cli/master.svg
 [cover-url]: https://coveralls.io/github/postcss/postcss-cli
-
 [chat]: https://img.shields.io/gitter/room/postcss/postcss.svg
 [chat-url]: https://gitter.im/postcss/postcss

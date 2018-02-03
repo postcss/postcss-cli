@@ -10,9 +10,10 @@
     "postcss": "./bin/postcss"
   },
   "scripts": {
-    "ci": "eslint . && nyc ava -v",
+    "ci": "eslint . && nyc ava -v && npm run prettier -- --list-different",
     "clean": "node test/helpers/clean.js",
-    "format": "eslint . --fix",
+    "prettier": "prettier --single-quote --no-semi **/*.{js,md}",
+    "format": "npm run prettier -- --write && eslint . --fix",
     "pretest": "npm run clean && npm run format",
     "test": "nyc ava -v"
   },
@@ -35,11 +36,10 @@
     "coveralls": "^3.0.0",
     "eslint": "^4.2.0",
     "eslint-config-problems": "0.0.2",
-    "eslint-plugin-prettier": "^2.1.2",
     "nyc": "^11.0.2",
     "per-env": "^1.0.2",
     "postcss-import": "^11.0.0",
-    "prettier": "1.9.2",
+    "prettier": "1.10.2",
     "standard": "^10.0.2",
     "sugarss": "^1.0.0",
     "uuid": "^3.0.1"

@@ -24,7 +24,7 @@ const output = argv.output
 
 if (argv.map) argv.map = { inline: false }
 
-let config = {
+const cliConfig = {
   options: {
     map: argv.map !== undefined ? argv.map : { inline: true },
     parser: argv.parser ? require(argv.parser) : undefined,
@@ -41,6 +41,8 @@ let config = {
       })
     : []
 }
+
+let configFile
 
 if (argv.env) process.env.NODE_ENV = argv.env
 if (argv.config) argv.config = path.resolve(argv.config)
@@ -90,7 +92,7 @@ Promise.resolve()
         interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100
       })
 
-      if (config.file) watcher.add(config.file)
+      if (configFile) watcher.add(configFile)
 
       watcher.on('ready', printMessage).on('change', file => {
         let recompile = []
@@ -117,7 +119,7 @@ Promise.resolve()
   })
 
 function rc(ctx, path) {
-  if (argv.use) return Promise.resolve()
+  if (argv.use) return Promise.resolve(cliConfig)
 
   // Set argv: false to keep cosmiconfig from attempting to read the --config
   // flag from process.argv
@@ -128,7 +130,8 @@ function rc(ctx, path) {
           'Config Error: Can not set from or to options in config file, use CLI arguments instead'
         )
       }
-      config = rc
+      configFile = rc.file
+      return rc
     })
     .catch(err => {
       if (err.message.indexOf('No PostCSS Config found') === -1) throw err
@@ -153,7 +156,7 @@ function files(files) {
 }
 
 function css(css, file) {
-  const ctx = { options: config.options }
+  const ctx = { options: cliConfig.options }
 
   if (file !== 'stdin') {
     ctx.file = {
@@ -175,7 +178,8 @@ function css(css, file) {
   printVerbose(chalk`{cyan Processing {bold ${relativePath}}...}`)
 
   return rc(ctx, argv.config)
-    .then(() => {
+    .then(config => {
+      config = config || cliConfig
       const options = config.options
 
       if (file === 'stdin' && output) file = output

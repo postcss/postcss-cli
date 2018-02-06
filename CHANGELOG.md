@@ -1,3 +1,12 @@
+# 5.0.0 / 2018-02-06
+
+* Now allows passing a directory as the input (all files in the directory will be processed)
+* The CLI is now silent by default; added `--verbose` flag for if you want noisy logs
+* Doesn't exit watch mode when there's an error in the plugin chain
+* Removed non-obvious shorthand arguments (`-x`, `-p`, `-s`, `-t`, `-e`, `-b`, & `-c`). Also removed `-v` as an alias for `--version`.
+* Prevent stupid option combinations like `--dir` & `-o`, and `--watch` & `--replace`
+* Doesn't allow `--watch` when writing to STDOUT
+
 # 4.1.1 / 2017-08-17
 
 * Fixed bug with `--config`

@@ -54,7 +54,7 @@
     "postcss",
     "postcss-runner"
   ],
-  "authors": [
+  "contributors": [
     {
       "name": "Michael Ciniawky",
       "email": "michael.ciniawsky@gmail.com"

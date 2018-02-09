@@ -1,11 +1,10 @@
 import path from 'path'
-import { execFile } from 'child_process'
+import { exec } from 'child_process'
 
 export default function(args, cwd) {
   return new Promise(resolve => {
-    execFile(
-      path.resolve('bin/postcss'),
-      args,
+    exec(
+      `node ${path.resolve('bin/postcss')} ${args.join(' ')}`,
       { cwd },
       (err, stdout, stderr) => {
         resolve({

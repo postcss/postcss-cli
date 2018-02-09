@@ -2,7 +2,7 @@ import test from 'ava'
 
 import fs from 'fs-extra'
 import path from 'path'
-import { exec, execFile } from 'child_process'
+import { exec } from 'child_process'
 import chokidar from 'chokidar'
 
 import ENV from './helpers/env.js'
@@ -48,7 +48,9 @@ test.cb.skip('--watch works', t => {
       watcher.on('ready', () => {
         // Using exec() and quoting "*.css" to test watch's glob handling:
         cp = exec(
-          `${path.resolve('bin/postcss')} "*.css" -o output.css --no-map -w`,
+          `node ${path.resolve(
+            'bin/postcss'
+          )} "*.css" -o output.css --no-map -w`,
           { cwd: dir }
         )
         cp.on('error', t.end)
@@ -124,9 +126,10 @@ test.cb.skip('--watch postcss.config.js', t => {
 
       // Start postcss-cli:
       watcher.on('ready', () => {
-        cp = execFile(
-          path.resolve('bin/postcss'),
-          ['import.css', '-o', 'output.css', '-w', '--no-map'],
+        cp = exec(
+          `node ${path.resolve(
+            'bin/postcss'
+          )} import.css -o output.css -w --no-map`,
           { cwd: dir }
         )
 
@@ -193,17 +196,10 @@ test.cb.skip('--watch dependencies', t => {
 
       // Start postcss-cli:
       watcher.on('ready', () => {
-        cp = execFile(
-          path.resolve('bin/postcss'),
-          [
-            'import.css',
-            '-o',
-            'output.css',
-            '-u',
-            'postcss-import',
-            '-w',
-            '--no-map'
-          ],
+        cp = exec(
+          `node ${path.resolve(
+            'bin/postcss'
+          )} import.css -o output.css -u postcss-import -w --no-map`,
           { cwd: dir }
         )
 
@@ -252,9 +248,8 @@ test.cb.skip("--watch doesn't exit on CssSyntaxError", t => {
       })
 
       let killed = false
-      const cp = execFile(
-        path.resolve('bin/postcss'),
-        ['a.css', '-o', 'output.css', '-w', '--no-map'],
+      const cp = exec(
+        `node ${path.resolve('bin/postcss')} a.css -o output.css -w --no-map`,
         { cwd: dir }
       )
       cp.on('error', t.end)

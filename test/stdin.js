@@ -2,7 +2,7 @@ import test from 'ava'
 
 import fs from 'fs-extra'
 import path from 'path'
-import { execFile } from 'child_process'
+import { exec } from 'child_process'
 
 import tmp from './helpers/tmp.js'
 import read from './helpers/read.js'
@@ -10,9 +10,8 @@ import read from './helpers/read.js'
 test.cb('reads from stdin', t => {
   const output = tmp('output.css')
 
-  const cp = execFile(
-    path.resolve('bin/postcss'),
-    ['-o', output, '--no-map'],
+  const cp = exec(
+    `node ${path.resolve('bin/postcss')} -o ${output} --no-map`,
     (error, stdout, stderr) => {
       if (error) t.end(error, stderr)
 

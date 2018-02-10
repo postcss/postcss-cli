@@ -9,7 +9,7 @@ test('--base --dir works', async t => {
   const dir = tmp()
 
   const { error, stderr } = await cli([
-    'test/fixtures/base/**/*.css',
+    '"test/fixtures/base/**/*.css"',
     '--dir',
     dir,
     '--base',

@@ -17,8 +17,9 @@ test('--replace works', async t => {
     fs.copy('test/fixtures/a.css', path.join(dir, 'a.css'))
   ])
 
+  // XXX: Should be able to pass output instead of dir here, but this test env is weird
   const { error, stderr } = await cli([
-    output,
+    dir,
     '--replace',
     '-u',
     'postcss-import',

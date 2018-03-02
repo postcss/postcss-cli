@@ -22,7 +22,7 @@
     "chokidar": "^2.0.0",
     "dependency-graph": "^0.7.0",
     "fs-extra": "^5.0.0",
-    "get-stdin": "^5.0.1",
+    "get-stdin": "^6.0.0",
     "globby": "^8.0.0",
     "postcss": "^6.0.1",
     "postcss-load-config": "^1.1.0",

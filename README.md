@@ -27,6 +27,7 @@ Usage:
   postcss [input.css] [OPTIONS] [-o|--output output.css] [--watch|-w]
   postcss <input.css>... [OPTIONS] --dir <output-directory> [--watch|-w]
   postcss <input-directory> [OPTIONS] --dir <output-directory> [--watch|-w]
+  postcss <input-glob-pattern> [OPTIONS] --dir <output-directory> [--watch|-w]
   postcss <input.css>... [OPTIONS] --replace
 
 Basic options:
@@ -59,6 +60,7 @@ Options:
 
 Examples:
   postcss input.css -o output.css                       Basic usage
+  postcss src/**/*.css --base src --dir bild            Glob Pattern & output
   cat input.css | postcss -u autoprefixer > output.css  Piping input & output
 
 If no input files are passed, it reads from stdin. If neither -o, --dir, or

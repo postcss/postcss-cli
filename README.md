@@ -60,7 +60,7 @@ Options:
 
 Examples:
   postcss input.css -o output.css                       Basic usage
-  postcss src/**/*.css --base src --dir bild            Glob Pattern & output
+  postcss src/**/*.css --base src --dir build           Glob Pattern & output
   cat input.css | postcss -u autoprefixer > output.css  Piping input & output
 
 If no input files are passed, it reads from stdin. If neither -o, --dir, or
@@ -68,8 +68,8 @@ If no input files are passed, it reads from stdin. If neither -o, --dir, or
 
 If there are multiple input files, the --dir or --replace option must be passed.
 
-Input files may contain globs. If you pass an input directory, it will process
-all files in the directory and any subdirectories.
+Input files may contain globs (ie: src/**/*.css). If you pass an input directory, it will process
+all files in the directory and any subdirectories, respecting the glob pattern.
 ```
 
 > ℹ️ More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).

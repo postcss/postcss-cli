@@ -180,7 +180,7 @@ function css(css, file) {
   return rc(ctx, argv.config)
     .then(config => {
       config = config || cliConfig
-      const options = config.options
+      const options = Object.assign({}, config.options)
 
       if (file === 'stdin' && output) file = output
 

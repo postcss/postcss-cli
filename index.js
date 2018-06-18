@@ -89,7 +89,11 @@ Promise.resolve()
         printVerbose(chalk.dim('\nWaiting for file changes...'))
       const watcher = chokidar.watch(input.concat(dependencies(results)), {
         usePolling: argv.poll,
-        interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100
+        interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
+        awaitWriteFinish: {
+          stabilityThreshold: 50,
+          pollInterval: 10
+        }
       })
 
       if (configFile) watcher.add(configFile)

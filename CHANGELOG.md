@@ -1,3 +1,8 @@
+# 5.0.1 / 2018-06-18
+
+- Shallow copy options object; fixes a few edge cases
+- Adjust options for file watching to play better with some editors
+
 # 5.0.0 / 2018-02-06
 
 - Now allows passing a directory as the input (all files in the directory will be processed)

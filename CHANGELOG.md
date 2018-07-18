@@ -1,3 +1,9 @@
+# 6.0.0 / 2018-07-18
+
+- Drop support for Node 4
+- Upgrade to postcss v7 ([release notes](https://github.com/postcss/postcss/blob/master/CHANGELOG.md#70-president-amy))
+- Upgrade to postcss-load-config v2 ([release notes](https://github.com/michael-ciniawsky/postcss-load-config/blob/master/CHANGELOG.md#200-2018-07-10))
+
 # 5.0.1 / 2018-06-18
 
 - Shallow copy options object; fixes a few edge cases

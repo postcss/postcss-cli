@@ -125,9 +125,7 @@ Promise.resolve()
 function rc(ctx, path) {
   if (argv.use) return Promise.resolve(cliConfig)
 
-  // Set argv: false to keep cosmiconfig from attempting to read the --config
-  // flag from process.argv
-  return postcssrc(ctx, path, { argv: false })
+  return postcssrc(ctx, path)
     .then(rc => {
       if (rc.options.from || rc.options.to) {
         error(

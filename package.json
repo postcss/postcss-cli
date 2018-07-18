@@ -34,7 +34,7 @@
   "devDependencies": {
     "ava": "^0.25.0",
     "coveralls": "^3.0.0",
-    "eslint": "^4.2.0",
+    "eslint": "^5.0.0",
     "eslint-config-problems": "1.0.0",
     "nyc": "^11.0.2",
     "postcss-import": "^11.0.0",

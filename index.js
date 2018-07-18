@@ -17,10 +17,8 @@ const reporter = require('postcss-reporter/lib/formatter')()
 const argv = require('./lib/args')
 const depGraph = require('./lib/depGraph')
 
-const dir = argv.dir
-
 let input = argv._
-const output = argv.output
+const { dir, output } = argv
 
 if (argv.map) argv.map = { inline: false }
 
@@ -101,10 +99,10 @@ Promise.resolve()
       watcher.on('ready', printMessage).on('change', file => {
         let recompile = []
 
-        if (~input.indexOf(file)) recompile.push(file)
+        if (input.includes(file)) recompile.push(file)
 
         recompile = recompile.concat(
-          depGraph.dependantsOf(file).filter(file => ~input.indexOf(file))
+          depGraph.dependantsOf(file).filter(file => input.includes(file))
         )
 
         if (!recompile.length) recompile = input
@@ -136,7 +134,7 @@ function rc(ctx, path) {
       return rc
     })
     .catch(err => {
-      if (err.message.indexOf('No PostCSS Config found') === -1) throw err
+      if (!err.message.includes('No PostCSS Config found')) throw err
     })
 }
 

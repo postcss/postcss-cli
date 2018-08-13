@@ -206,6 +206,10 @@ function css(css, file) {
         )
       }
 
+      if (!options.parser && !options.syntax && !options.stringifier) {
+        options.syntax = require('postcss-syntax')
+      }
+
       return postcss(config.plugins)
         .process(css, options)
         .then(result => {

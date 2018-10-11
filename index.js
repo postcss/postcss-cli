@@ -34,7 +34,10 @@ const cliConfig = {
         try {
           return require(plugin)()
         } catch (e) {
-          return error(`Plugin Error: Cannot find module '${plugin}'`)
+          const msg = e.message || `Cannot find module '${plugin}'`
+          let prefix = msg.includes(plugin) ? '' : ` (${plugin})`
+          if (e.name && e.name !== 'Error') prefix += `: ${e.name}`
+          return error(`Plugin Error${prefix}: ${msg}'`)
         }
       })
     : []

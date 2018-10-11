@@ -40,7 +40,7 @@ test.failing('invalid --config', t => {
   })
 })
 
-test('PluginError', t => {
+test('plugin not found', t => {
   return cli(['test/fixtures/a.css', '-u', 'postcss-plugin', '-o', tmp()]).then(
     ({ err, code }) => {
       t.is(code, 1, 'expected non-zero error code')
@@ -50,6 +50,19 @@ test('PluginError', t => {
       )
     }
   )
+})
+
+test('plugin throws on require', t => {
+  return cli([
+    'test/fixtures/a.css',
+    '-u',
+    './test/fixtures/bad-plugin',
+    '-o',
+    tmp()
+  ]).then(({ err, code }) => {
+    t.is(code, 1, 'expected non-zero error code')
+    t.regex(err.toString(), /Plugin Error \(.*bad-plugin\): This fails/)
+  })
 })
 
 test('CssSyntaxError', t => {

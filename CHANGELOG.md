@@ -1,3 +1,9 @@
+# 6.0.1 / 2018-10-17
+
+- Better error handling for errors thrown by plugins ([#242](https://github.com/postcss/postcss-cli/issues/242), [#243](https://github.com/postcss/postcss-cli/pull/243))
+- Update dependencies
+- Clarify docs ([#233](https://github.com/postcss/postcss-cli/issues/233))
+
 # 6.0.0 / 2018-07-18
 
 - Drop support for Node 4

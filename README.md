@@ -33,6 +33,7 @@ Basic options:
   -o, --output   Output file                                            [string]
   -d, --dir      Output directory                                       [string]
   -r, --replace  Replace (overwrite) the input file                    [boolean]
+  --rename       Rename the output file                                 [string]
   --map, -m      Create an external sourcemap
   --no-map       Disable the default inline sourcemaps
   --verbose      Be verbose                                            [boolean]
@@ -62,10 +63,10 @@ Examples:
   postcss src/**/*.css --base src --dir build           Glob Pattern & output
   cat input.css | postcss -u autoprefixer > output.css  Piping input & output
 
-If no input files are passed, it reads from stdin. If neither -o, --dir, or
---replace is passed, it writes to stdout.
+If no input files are passed, it reads from stdin. If neither -o, --dir, --replace
+or --rename is passed, it writes to stdout.
 
-If there are multiple input files, the --dir or --replace option must be passed.
+If there are multiple input files, the --dir, --replace or --rename option must be passed.
 
 Input files may contain globs (e.g. src/**/*.css). If you pass an input directory, it will process
 all files in the directory and any subdirectories, respecting the glob pattern.

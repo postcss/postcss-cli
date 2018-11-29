@@ -50,14 +50,14 @@ if (argv.config) argv.config = path.resolve(argv.config)
 
 Promise.resolve()
   .then(() => {
-    if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
+    if (argv.watch && !(argv.output || argv.replace || argv.rename || argv.dir)) {
       error('Cannot write to stdout in watch mode')
     }
     if (input && input.length) return globber(input)
 
-    if (argv.replace || argv.dir) {
+    if (argv.replace || argv.rename || argv.dir) {
       error(
-        'Input Error: Cannot use --dir or --replace when reading from stdin'
+        'Input Error: Cannot use --dir, --replace or --rename when reading from stdin'
       )
     }
 
@@ -72,9 +72,9 @@ Promise.resolve()
       error('Input Error: You must pass a valid list of files to parse')
     }
 
-    if (i.length > 1 && !argv.dir && !argv.replace) {
+    if (i.length > 1 && !argv.dir && !argv.replace && !argv.rename ) {
       error(
-        'Input Error: Must use --dir or --replace with multiple input files'
+        'Input Error: Must use --dir, --replace or --rename with multiple input files'
       )
     }
 
@@ -190,11 +190,20 @@ function css(css, file) {
       // TODO: Unit test this
       options.from = file === 'stdin' ? path.join(process.cwd(), 'stdin') : file
 
-      if (output || dir || argv.replace) {
+      if (output || dir || argv.replace || argv.rename) {
         const base = argv.base
           ? file.replace(path.resolve(argv.base), '')
           : path.basename(file)
-        options.to = output || (argv.replace ? file : path.join(dir, base))
+
+        if (output) {
+          options.to = output;
+        } else if (argv.replace) {
+          options.to = file;
+        } else if (argv.rename) {
+          options.to = path.join(dir ? dir : path.dirname(file), argv.rename);
+        } else {
+          options.to = path.join(dir, base);
+        }
 
         if (argv.ext) {
           options.to = options.to.replace(path.extname(options.to), argv.ext)

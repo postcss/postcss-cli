@@ -6,14 +6,20 @@ import cli from './helpers/cli.js'
 test('multiple input files && --output', t => {
   return cli(['test/fixtures/*.css', '-o', tmp()]).then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err.toString(), /Input Error: Must use --dir or --replace/)
+    t.regex(
+      err.toString(),
+      /Input Error: Must use --dir, --replace or --rename/
+    )
   })
 })
 
 test('multiple input files && writing to stdout', t => {
   return cli(['test/fixtures/*.css']).then(({ err, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(err.toString(), /Input Error: Must use --dir or --replace/)
+    t.regex(
+      err.toString(),
+      /Input Error: Must use --dir, --replace or --rename/
+    )
   })
 })
 

@@ -14,7 +14,7 @@ test('works with defaults', async t => {
     '--no-map'
   ])
 
-  t.ifError(error, stderr)
+  t.falsy(error, stderr)
 
   t.is(await read(output), await read('test/fixtures/a.css'))
 })

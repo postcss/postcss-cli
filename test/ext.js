@@ -18,7 +18,7 @@ test('--ext works', async t => {
     '--ext',
     '.css'
   ])
-  t.ifError(error, stderr)
+  t.falsy(error, stderr)
 
   t.truthy(await fs.pathExists(path.join(dir, 'a.css')))
 })

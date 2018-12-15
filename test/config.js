@@ -20,7 +20,7 @@ test('supports common config', async t => {
     dir
   )
 
-  t.ifError(error, stderr)
+  t.falsy(error, stderr)
 
   t.is(
     await read(path.join(dir, 'output.css')),
@@ -38,7 +38,7 @@ test("doesn't error on empty config", async t => {
     dir
   )
 
-  t.ifError(error, stderr)
+  t.falsy(error, stderr)
 
   t.is(
     await read(path.join(dir, 'output.css')),

@@ -15,7 +15,7 @@ test('works with glob patterns', async t => {
     '--no-map'
   ])
 
-  t.ifError(error, stderr)
+  t.falsy(error, stderr)
 
   t.is(
     await read(path.join(output, 'a.css')),

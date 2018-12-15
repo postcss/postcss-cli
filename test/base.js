@@ -17,7 +17,7 @@ test('--base --dir works', async t => {
     '--no-map'
   ])
 
-  t.ifError(error, stderr)
+  t.falsy(error, stderr)
 
   t.is(
     await read(path.join(dir, 'level-1/level-2/a.css')),

@@ -53,7 +53,10 @@ Promise.resolve()
     if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
       error('Cannot write to stdout in watch mode')
     }
-    if (input && input.length) return globber(input)
+
+    if (input && input.length) {
+      return globber(input, { dot: argv.includeDotfiles })
+    }
 
     if (argv.replace || argv.dir) {
       error(

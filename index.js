@@ -232,9 +232,13 @@ function css(css, file) {
               chalk`{green Finished {bold ${relativePath}} in {bold ${prettyTime}}}`
             )
 
-            if (result.warnings().length) {
-              console.warn(reporter(result))
-            }
+            console.warn(
+              reporter(
+                Object.assign({}, result, {
+                  messages: result.warnings()
+                })
+              )
+            )
 
             return result
           })

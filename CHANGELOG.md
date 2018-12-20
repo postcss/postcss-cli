@@ -1,3 +1,8 @@
+# 6.1.0 / 2018-12-19
+
+- Add `--include-dotfiles` flag to allow globs to match dotfiles. ([#254](https://github.com/postcss/postcss-cli/pull/254))
+- Only log warning messages. This has always been intended behavior, but it wasn't working as expected. ([#244](https://github.com/postcss/postcss-cli/pull/244))
+
 # 6.0.1 / 2018-10-17
 
 - Better error handling for errors thrown by plugins ([#242](https://github.com/postcss/postcss-cli/issues/242), [#243](https://github.com/postcss/postcss-cli/pull/243))

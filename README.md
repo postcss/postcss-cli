@@ -30,14 +30,15 @@ Usage:
   postcss <input.css>... [OPTIONS] --replace
 
 Basic options:
-  -o, --output   Output file                                            [string]
-  -d, --dir      Output directory                                       [string]
-  -r, --replace  Replace (overwrite) the input file                    [boolean]
-  --map, -m      Create an external sourcemap
-  --no-map       Disable the default inline sourcemaps
-  --verbose      Be verbose                                            [boolean]
-  --watch, -w    Watch files for changes and recompile as needed       [boolean]
-  --env          A shortcut for setting NODE_ENV                        [string]
+  -o, --output        Output file                                            [string]
+  -d, --dir           Output directory                                       [string]
+  -r, --replace       Replace (overwrite) the input file                    [boolean]
+  --map, -m           Create an external sourcemap
+  --no-map            Disable the default inline sourcemaps
+  --verbose           Be verbose                                            [boolean]
+  --watch, -w         Watch files for changes and recompile as needed       [boolean]
+  --env               A shortcut for setting NODE_ENV                        [string]
+  --include-dotfiles  Enables glob to match files/dirs that begin with "."  [boolean]
 
 Options for when not using a config file:
   -u, --use      List of postcss plugins to use                          [array]

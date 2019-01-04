@@ -235,13 +235,16 @@ function css(css, file) {
               chalk`{green Finished {bold ${relativePath}} in {bold ${prettyTime}}}`
             )
 
-            console.warn(
-              reporter(
-                Object.assign({}, result, {
-                  messages: result.warnings()
-                })
+            const messages = result.warnings()
+            if (messages.length) {
+              console.warn(
+                reporter(
+                  Object.assign({}, result, {
+                    messages
+                  })
+                )
               )
-            )
+            }
 
             return result
           })

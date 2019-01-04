@@ -6,4 +6,4 @@ node_js:
 script:
   - npm run ci
 after_success:
-- './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'
+- if [[ "$TRAVIS_NODE_VERSION" = "6" ]]; then './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'; fi

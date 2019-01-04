@@ -1,3 +1,7 @@
+# 6.1.1 / 2019-01-04
+
+- Fix empty lines being printed in some cases ([#256](https://github.com/postcss/postcss-cli/issues/256), [#257](https://github.com/postcss/postcss-cli/pull/257))
+
 # 6.1.0 / 2018-12-19
 
 - Add `--include-dotfiles` flag to allow globs to match dotfiles. ([#254](https://github.com/postcss/postcss-cli/pull/254))

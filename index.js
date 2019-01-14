@@ -55,7 +55,7 @@ Promise.resolve()
     }
 
     if (input && input.length) {
-      return globber(input, { dot: argv.includeDotfiles })
+      return globber(input, { dot: argv.includeDotfiles, gitignore: true })
     }
 
     if (argv.replace || argv.dir) {

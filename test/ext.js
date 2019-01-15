@@ -11,7 +11,7 @@ test('--ext works', async t => {
 
   const { error, stderr } = await cli([
     'test/fixtures/a.sss',
-    '-p',
+    '--parser',
     'sugarss',
     '-d',
     dir,

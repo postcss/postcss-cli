@@ -6,10 +6,10 @@ export default function(args, cwd) {
     exec(
       `node ${path.resolve('bin/postcss')} ${args.join(' ')}`,
       { cwd },
-      (err, stdout, stderr) => {
+      (error, stdout, stderr) => {
         resolve({
-          code: err && err.code ? err.code : 0,
-          err,
+          code: error && error.code ? error.code : 0,
+          error,
           stdout,
           stderr
         })

@@ -8,9 +8,10 @@ import chokidar from 'chokidar'
 import ENV from './helpers/env.js'
 import read from './helpers/read.js'
 
-// XXX: All the tests in these files are skipped; the tests are too flaky on the CI
+// XXX: All the tests in this file are skipped on the CI; too flacky there
+const testCb = process.env.CI ? test.cb.skip : test.cb
 
-test.cb.skip('--watch works', t => {
+testCb('--watch works', t => {
   let cp
 
   t.plan(2)
@@ -80,7 +81,7 @@ test.cb.skip('--watch works', t => {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb.skip('--watch postcss.config.js', t => {
+testCb('--watch postcss.config.js', t => {
   let cp
 
   t.plan(2)
@@ -160,7 +161,7 @@ test.cb.skip('--watch postcss.config.js', t => {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb.skip('--watch dependencies', t => {
+testCb('--watch dependencies', t => {
   let cp
 
   t.plan(2)
@@ -229,7 +230,7 @@ test.cb.skip('--watch dependencies', t => {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-test.cb.skip("--watch doesn't exit on CssSyntaxError", t => {
+testCb("--watch doesn't exit on CssSyntaxError", t => {
   t.plan(0)
 
   ENV('', ['a.css'])

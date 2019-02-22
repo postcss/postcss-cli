@@ -1,3 +1,7 @@
+# 6.1.2 / 2019-02-22
+
+- Upgrade dependency globby to fix bug in sub-dependency ([#265](https://github.com/postcss/postcss-cli/issues/265), [#270](https://github.com/postcss/postcss-cli/pull/270))
+
 # 6.1.1 / 2019-01-04
 
 - Fix empty lines being printed in some cases ([#256](https://github.com/postcss/postcss-cli/issues/256), [#257](https://github.com/postcss/postcss-cli/pull/257))

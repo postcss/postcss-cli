@@ -23,7 +23,7 @@
     "dependency-graph": "^0.8.0",
     "fs-extra": "^7.0.0",
     "get-stdin": "^6.0.0",
-    "globby": "^8.0.0",
+    "globby": "^9.0.0",
     "postcss": "^7.0.0",
     "postcss-load-config": "^2.0.0",
     "postcss-reporter": "^6.0.0",

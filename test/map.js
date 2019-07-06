@@ -65,6 +65,10 @@ test('mapFile path is property resolved', async t => {
     {
       input: '/foo/bar.sss/baz/index.sss',
       want: '/foo/bar.sss/baz/index.sss.map'
+    },
+    {
+      input: '/foo/bar.css/baz/bar.css',
+      want: '/foo/bar.css/baz/bar.css.map'
     }
   ]
 

@@ -1,3 +1,7 @@
+# 6.1.3 / 2019-07-08
+
+- Fix external sorcemap filenames when the directory name contains `.css` ([#283](https://github.com/postcss/postcss-cli/issues/283), [#286](https://github.com/postcss/postcss-cli/pull/286))
+
 # 6.1.2 / 2019-02-22
 
 - Upgrade dependency globby to fix bug in sub-dependency ([#265](https://github.com/postcss/postcss-cli/issues/265), [#270](https://github.com/postcss/postcss-cli/pull/270))

@@ -16,6 +16,7 @@ const reporter = require('postcss-reporter/lib/formatter')()
 
 const argv = require('./lib/args')
 const depGraph = require('./lib/depGraph')
+const getMapfile = require('./lib/getMapfile')
 
 let input = argv._
 const { dir, output } = argv
@@ -221,10 +222,7 @@ function css(css, file) {
             tasks.push(fs.outputFile(options.to, result.css))
 
             if (result.map) {
-              const mapfile = options.to.replace(
-                path.extname(options.to),
-                `${path.extname(options.to)}.map`
-              )
+              const mapfile = getMapfile(options.to)
               tasks.push(fs.outputFile(mapfile, result.map))
             }
           } else process.stdout.write(result.css, 'utf8')

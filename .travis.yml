@@ -1,5 +1,7 @@
-sudo: false
 language: node_js
+os:
+  - linux
+  - windows
 node_js:
   - node
   - 12
@@ -7,4 +9,4 @@ node_js:
 script:
   - npm run ci
 after_success:
-- './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'
+  - './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'

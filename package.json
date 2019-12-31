@@ -70,5 +70,10 @@
     "url": "https://github.com/postcss/postcss-cli/issues"
   },
   "homepage": "https://github.com/postcss/postcss-cli#readme",
-  "license": "MIT"
+  "license": "MIT",
+  "ava": {
+    "helpers": [
+      "test/helpers/*"
+    ]
+  }
 }

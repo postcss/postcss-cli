@@ -56,7 +56,7 @@ test('plugin throws on require', t => {
   return cli([
     'test/fixtures/a.css',
     '-u',
-    './test/fixtures/bad-plugin',
+    './test/fixtures/_bad-plugin',
     '-o',
     tmp()
   ]).then(({ error, code }) => {

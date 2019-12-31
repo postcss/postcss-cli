@@ -32,7 +32,7 @@
     "yargs": "^15.0.2"
   },
   "devDependencies": {
-    "ava": "^1.0.1",
+    "ava": "^2.4.0",
     "coveralls": "^3.0.0",
     "eslint": "^5.0.0",
     "eslint-config-problems": "2.0.0",
@@ -70,5 +70,10 @@
     "url": "https://github.com/postcss/postcss-cli/issues"
   },
   "homepage": "https://github.com/postcss/postcss-cli#readme",
-  "license": "MIT"
+  "license": "MIT",
+  "ava": {
+    "helpers": [
+      "test/helpers/*"
+    ]
+  }
 }

@@ -187,7 +187,7 @@ function css(css, file) {
   return rc(ctx, argv.config)
     .then(config => {
       config = config || cliConfig
-      const options = Object.assign({}, config.options)
+      const options = { ...config.options }
 
       if (file === 'stdin' && output) file = output
 
@@ -235,13 +235,7 @@ function css(css, file) {
 
             const messages = result.warnings()
             if (messages.length) {
-              console.warn(
-                reporter(
-                  Object.assign({}, result, {
-                    messages
-                  })
-                )
-              )
+              console.warn(reporter({ ...result, messages }))
             }
 
             return result

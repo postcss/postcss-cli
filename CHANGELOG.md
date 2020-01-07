@@ -1,3 +1,9 @@
+# 7.0.0 / 2020-01-07
+
+- **BREAKING:** Drop support for Node 6 & 8
+- Update `globby`, which may be a breaking change for a small number of users using certain glob patterns, see https://github.com/mrmlnc/fast-glob#pattern-syntax for details ([#303](https://github.com/postcss/postcss-cli/pull/303))
+- Update dependencies
+
 # 6.1.3 / 2019-07-08
 
 - Fix external sorcemap filenames when the directory name contains `.css` ([#283](https://github.com/postcss/postcss-cli/issues/283), [#286](https://github.com/postcss/postcss-cli/pull/286))

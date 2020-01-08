@@ -222,7 +222,7 @@ function css(css, file) {
             tasks.push(fs.outputFile(options.to, result.css))
 
             if (result.map) {
-              const mapfile = getMapfile(options.to)
+              const mapfile = getMapfile(options)
               tasks.push(fs.outputFile(mapfile, result.map))
             }
           } else process.stdout.write(result.css, 'utf8')

@@ -1,3 +1,7 @@
+# 7.1.0 / 2020-01-09
+
+- Respect `map.annotation` option when set to a string ([#307](https://github.com/postcss/postcss-cli/pull/307))
+
 # 7.0.0 / 2020-01-07
 
 - **BREAKING:** Drop support for Node 6 & 8

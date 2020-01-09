@@ -59,16 +59,20 @@ test('--no-map disables internal sourcemaps', async t => {
 test('mapFile path is property resolved', async t => {
   const paths = [
     {
-      input: '/foo/bar.css/baz/index.css',
+      input: { to: '/foo/bar.css/baz/index.css' },
       want: '/foo/bar.css/baz/index.css.map'
     },
     {
-      input: '/foo/bar.sss/baz/index.sss',
+      input: { to: '/foo/bar.sss/baz/index.sss' },
       want: '/foo/bar.sss/baz/index.sss.map'
     },
     {
-      input: '/foo/bar.css/baz/bar.css',
+      input: { to: '/foo/bar.css/baz/bar.css' },
       want: '/foo/bar.css/baz/bar.css.map'
+    },
+    {
+      input: { map: { annotation: 'foo.map' }, to: '/foo/bar.css/baz/bar.css' },
+      want: '/foo/bar.css/baz/foo.map'
     }
   ]
 

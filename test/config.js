@@ -1,10 +1,10 @@
-import test from 'ava'
-import path from 'path'
+const test = require('ava')
+const path = require('path')
 
-import ENV from './helpers/env.js'
+const ENV = require('./helpers/env.js')
 
-import cli from './helpers/cli.js'
-import read from './helpers/read.js'
+const cli = require('./helpers/cli.js')
+const read = require('./helpers/read.js')
 
 test('supports common config', async t => {
   const env = `module.exports = {

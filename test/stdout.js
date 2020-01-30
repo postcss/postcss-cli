@@ -1,10 +1,10 @@
-import test from 'ava'
+const test = require('ava')
 
-import fs from 'fs-extra'
-import path from 'path'
-import { exec } from 'child_process'
+const fs = require('fs-extra')
+const path = require('path')
+const { exec } = require('child_process')
 
-import read from './helpers/read.js'
+const read = require('./helpers/read.js')
 
 test.cb('writes to stdout', t => {
   const cp = exec(

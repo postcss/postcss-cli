@@ -1,6 +1,6 @@
-import test from 'ava'
+const test = require('ava')
 
-import cli from './helpers/cli.js'
+const cli = require('./helpers/cli.js')
 
 test('--help', async t => {
   const help = await cli(['--help'])

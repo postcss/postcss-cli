@@ -1,7 +1,7 @@
-import path from 'path'
-import uuid from 'uuid'
+const path = require('path')
+const uuid = require('uuid')
 
-export default function(ext) {
+module.exports = function(ext) {
   ext = ext || ''
 
   return path.join('test/fixtures/.tmp', uuid(), ext)

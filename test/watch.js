@@ -1,12 +1,12 @@
-import test from 'ava'
+const test = require('ava')
 
-import fs from 'fs-extra'
-import path from 'path'
-import { exec } from 'child_process'
-import chokidar from 'chokidar'
+const fs = require('fs-extra')
+const path = require('path')
+const { exec } = require('child_process')
+const chokidar = require('chokidar')
 
-import ENV from './helpers/env.js'
-import read from './helpers/read.js'
+const ENV = require('./helpers/env.js')
+const read = require('./helpers/read.js')
 
 // XXX: All the tests in this file are skipped on the CI; too flacky there
 const testCb = process.env.CI ? test.cb.skip : test.cb

@@ -1,10 +1,10 @@
-import fs from 'fs-extra'
-import path from 'path'
-import globby from 'globby'
+const fs = require('fs-extra')
+const path = require('path')
+const globby = require('globby')
 
-import tmp from './tmp.js'
+const tmp = require('./tmp.js')
 
-export default function(config, fixtures) {
+module.exports = function(config, fixtures) {
   fixtures = fixtures || '**/*'
   const dir = tmp()
 

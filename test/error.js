@@ -1,7 +1,7 @@
-import test from 'ava'
+const test = require('ava')
 
-import tmp from './helpers/tmp.js'
-import cli from './helpers/cli.js'
+const tmp = require('./helpers/tmp.js')
+const cli = require('./helpers/cli.js')
 
 test('multiple input files && --output', t => {
   return cli(['test/fixtures/*.css', '-o', tmp()]).then(({ error, code }) => {

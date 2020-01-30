@@ -1,11 +1,11 @@
-import test from 'ava'
+const test = require('ava')
 
-import fs from 'fs-extra'
-import path from 'path'
-import { exec } from 'child_process'
+const fs = require('fs-extra')
+const path = require('path')
+const { exec } = require('child_process')
 
-import tmp from './helpers/tmp.js'
-import read from './helpers/read.js'
+const tmp = require('./helpers/tmp.js')
+const read = require('./helpers/read.js')
 
 test.cb('reads from stdin', t => {
   const output = tmp('output.css')

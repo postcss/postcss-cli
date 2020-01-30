@@ -71,7 +71,7 @@ testCb('--watch works', t => {
       function done(err) {
         try {
           cp.kill()
-        } catch (e) {}
+        } catch {}
 
         t.end(err)
       }
@@ -152,7 +152,7 @@ testCb('--watch postcss.config.js', t => {
       function done(err) {
         try {
           cp.kill()
-        } catch (e) {}
+        } catch {}
 
         t.end(err)
       }
@@ -223,7 +223,7 @@ testCb('--watch dependencies', t => {
       function done(err) {
         try {
           cp.kill()
-        } catch (e) {}
+        } catch {}
         t.end(err)
       }
     })
@@ -274,7 +274,7 @@ testCb("--watch doesn't exit on CssSyntaxError", t => {
       function done(err) {
         try {
           cp.kill()
-        } catch (e) {}
+        } catch {}
 
         t.end(err)
       }

@@ -1,5 +1,5 @@
 env:
   node: true
-extends: problems/node10
+extends: problems
 rules:
   no-console: off

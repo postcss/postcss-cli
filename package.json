@@ -20,7 +20,7 @@
   "dependencies": {
     "chalk": "^3.0.0",
     "chokidar": "^3.3.0",
-    "dependency-graph": "^0.8.0",
+    "dependency-graph": "^0.9.0",
     "fs-extra": "^8.1.0",
     "get-stdin": "^7.0.0",
     "globby": "^10.0.1",

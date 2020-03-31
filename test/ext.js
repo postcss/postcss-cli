@@ -6,7 +6,7 @@ const path = require('path')
 const cli = require('./helpers/cli.js')
 const tmp = require('./helpers/tmp.js')
 
-test('--ext works', async t => {
+test('--ext works', async (t) => {
   const dir = tmp()
 
   const { error, stderr } = await cli([
@@ -16,7 +16,7 @@ test('--ext works', async t => {
     '-d',
     dir,
     '--ext',
-    '.css'
+    '.css',
   ])
   t.falsy(error, stderr)
 

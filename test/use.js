@@ -4,7 +4,7 @@ const cli = require('./helpers/cli.js')
 const tmp = require('./helpers/tmp.js')
 const read = require('./helpers/read.js')
 
-test('--use works', async t => {
+test('--use works', async (t) => {
   const output = tmp('i.css')
 
   const { error, stderr } = await cli([
@@ -13,7 +13,7 @@ test('--use works', async t => {
     'postcss-import',
     '-o',
     output,
-    '--no-map'
+    '--no-map',
   ])
 
   t.falsy(error, stderr)

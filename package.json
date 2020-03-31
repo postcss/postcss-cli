@@ -12,7 +12,7 @@
   "scripts": {
     "ci": "npm run format && git diff",
     "clean": "node test/helpers/clean.js",
-    "prettier": "prettier --single-quote --no-semi \"**/*.{js,md}\"",
+    "prettier": "prettier --single-quote --no-semi --end-of-line lf \"**/*.{js,md}\"",
     "format": "npm run prettier -- --write && eslint . --fix",
     "pretest": "npm run clean && npm run format",
     "test": "nyc ava -v"

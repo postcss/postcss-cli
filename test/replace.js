@@ -7,14 +7,14 @@ const cli = require('./helpers/cli.js')
 const tmp = require('./helpers/tmp.js')
 const read = require('./helpers/read.js')
 
-test('--replace works', async t => {
+test('--replace works', async (t) => {
   const dir = tmp()
 
   const output = path.join(dir, 'output.css')
 
   await Promise.all([
     fs.copy('test/fixtures/import.css', output),
-    fs.copy('test/fixtures/a.css', path.join(dir, 'a.css'))
+    fs.copy('test/fixtures/a.css', path.join(dir, 'a.css')),
   ])
 
   const { error, stderr } = await cli([
@@ -22,7 +22,7 @@ test('--replace works', async t => {
     '--replace',
     '-u',
     'postcss-import',
-    '--no-map'
+    '--no-map',
   ])
 
   t.falsy(error, stderr)

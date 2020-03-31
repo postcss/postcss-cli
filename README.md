@@ -85,8 +85,8 @@ module.exports = {
   parser: 'sugarss',
   plugins: [
     require('postcss-import')({ ...options }),
-    require('postcss-url')({ url: 'copy', useHash: true })
-  ]
+    require('postcss-url')({ url: 'copy', useHash: true }),
+  ],
 }
 ```
 
@@ -105,13 +105,13 @@ For more advanced usage it's recommend to to use a function in `postcss.config.j
 **postcss.config.js**
 
 ```js
-module.exports = ctx => ({
+module.exports = (ctx) => ({
   map: ctx.options.map,
   parser: ctx.file.extname === '.sss' ? 'sugarss' : false,
   plugins: {
     'postcss-import': { root: ctx.file.dirname },
-    cssnano: ctx.env === 'production' ? {} : false
-  }
+    cssnano: ctx.env === 'production' ? {} : false,
+  },
 })
 ```
 
@@ -124,13 +124,13 @@ postcss input.sss -p sugarss -o output.css -m
 **postcss.config.js**
 
 ```js
-module.exports = ctx => ({
+module.exports = (ctx) => ({
   map: ctx.options.map,
   parser: ctx.options.parser,
   plugins: {
     'postcss-import': { root: ctx.file.dirname },
-    cssnano: ctx.env === 'production' ? {} : false
-  }
+    cssnano: ctx.env === 'production' ? {} : false,
+  },
 })
 ```
 

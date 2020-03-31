@@ -7,7 +7,7 @@ const { exec } = require('child_process')
 const tmp = require('./helpers/tmp.js')
 const read = require('./helpers/read.js')
 
-test.cb('reads from stdin', t => {
+test.cb('reads from stdin', (t) => {
   const output = tmp('output.css')
 
   const cp = exec(

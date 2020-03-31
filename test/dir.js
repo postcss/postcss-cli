@@ -5,7 +5,7 @@ const cli = require('./helpers/cli.js')
 const tmp = require('./helpers/tmp.js')
 const read = require('./helpers/read.js')
 
-test('--dir works', async t => {
+test('--dir works', async (t) => {
   const dir = tmp()
 
   const { error, stderr } = await cli([
@@ -13,7 +13,7 @@ test('--dir works', async t => {
     'test/fixtures/b.css',
     '--dir',
     dir,
-    '--no-map'
+    '--no-map',
   ])
 
   t.falsy(error, stderr)

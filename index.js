@@ -28,10 +28,10 @@ const cliConfig = {
     map: argv.map !== undefined ? argv.map : { inline: true },
     parser: argv.parser ? require(argv.parser) : undefined,
     syntax: argv.syntax ? require(argv.syntax) : undefined,
-    stringifier: argv.stringifier ? require(argv.stringifier) : undefined
+    stringifier: argv.stringifier ? require(argv.stringifier) : undefined,
   },
   plugins: argv.use
-    ? argv.use.map(plugin => {
+    ? argv.use.map((plugin) => {
         try {
           return require(plugin)()
         } catch (e) {
@@ -41,7 +41,7 @@ const cliConfig = {
           return error(`Plugin Error${prefix}: ${msg}'`)
         }
       })
-    : []
+    : [],
 }
 
 let configFile
@@ -71,7 +71,7 @@ Promise.resolve()
 
     return ['stdin']
   })
-  .then(i => {
+  .then((i) => {
     if (!i || !i.length) {
       error('Input Error: You must pass a valid list of files to parse')
     }
@@ -82,13 +82,13 @@ Promise.resolve()
       )
     }
 
-    if (i[0] !== 'stdin') i = i.map(i => path.resolve(i))
+    if (i[0] !== 'stdin') i = i.map((i) => path.resolve(i))
 
     input = i
 
     return files(input)
   })
-  .then(results => {
+  .then((results) => {
     if (argv.watch) {
       const printMessage = () =>
         printVerbose(chalk.dim('\nWaiting for file changes...'))
@@ -97,31 +97,31 @@ Promise.resolve()
         interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
         awaitWriteFinish: {
           stabilityThreshold: 50,
-          pollInterval: 10
-        }
+          pollInterval: 10,
+        },
       })
 
       if (configFile) watcher.add(configFile)
 
-      watcher.on('ready', printMessage).on('change', file => {
+      watcher.on('ready', printMessage).on('change', (file) => {
         let recompile = []
 
         if (input.includes(file)) recompile.push(file)
 
         recompile = recompile.concat(
-          depGraph.dependantsOf(file).filter(file => input.includes(file))
+          depGraph.dependantsOf(file).filter((file) => input.includes(file))
         )
 
         if (!recompile.length) recompile = input
 
         return files(recompile)
-          .then(results => watcher.add(dependencies(results)))
+          .then((results) => watcher.add(dependencies(results)))
           .then(printMessage)
           .catch(error)
       })
     }
   })
-  .catch(err => {
+  .catch((err) => {
     error(err)
 
     process.exit(1)
@@ -131,7 +131,7 @@ function rc(ctx, path) {
   if (argv.use) return Promise.resolve(cliConfig)
 
   return postcssrc(ctx, path)
-    .then(rc => {
+    .then((rc) => {
       if (rc.options.from || rc.options.to) {
         error(
           'Config Error: Can not set from or to options in config file, use CLI arguments instead'
@@ -140,7 +140,7 @@ function rc(ctx, path) {
       configFile = rc.file
       return rc
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.message.includes('No PostCSS Config found')) throw err
     })
 }
@@ -149,15 +149,15 @@ function files(files) {
   if (typeof files === 'string') files = [files]
 
   return Promise.all(
-    files.map(file => {
+    files.map((file) => {
       if (file === 'stdin') {
-        return stdin().then(content => {
+        return stdin().then((content) => {
           if (!content) return error('Input Error: Did not receive any STDIN')
           return css(content, 'stdin')
         })
       }
 
-      return read(file).then(content => css(content, file))
+      return read(file).then((content) => css(content, file))
     })
   )
 }
@@ -169,7 +169,7 @@ function css(css, file) {
     ctx.file = {
       dirname: path.dirname(file),
       basename: path.basename(file),
-      extname: path.extname(file)
+      extname: path.extname(file),
     }
 
     if (!argv.config) argv.config = path.dirname(file)
@@ -185,7 +185,7 @@ function css(css, file) {
   printVerbose(chalk`{cyan Processing {bold ${relativePath}}...}`)
 
   return rc(ctx, argv.config)
-    .then(config => {
+    .then((config) => {
       config = config || cliConfig
       const options = { ...config.options }
 
@@ -215,7 +215,7 @@ function css(css, file) {
 
       return postcss(config.plugins)
         .process(css, options)
-        .then(result => {
+        .then((result) => {
           const tasks = []
 
           if (options.to) {
@@ -242,7 +242,7 @@ function css(css, file) {
           })
         })
     })
-    .catch(err => {
+    .catch((err) => {
       throw err
     })
 }
@@ -252,13 +252,13 @@ function dependencies(results) {
 
   const messages = []
 
-  results.forEach(result => {
+  results.forEach((result) => {
     if (result.messages <= 0) return
 
     result.messages
-      .filter(msg => (msg.type === 'dependency' ? msg : ''))
+      .filter((msg) => (msg.type === 'dependency' ? msg : ''))
       .map(depGraph.add)
-      .forEach(dependency => messages.push(dependency.file))
+      .forEach((dependency) => messages.push(dependency.file))
   })
 
   return messages

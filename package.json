@@ -38,7 +38,7 @@
     "eslint-config-problems": "4.0.0",
     "nyc": "^15.0.0",
     "postcss-import": "^12.0.0",
-    "prettier": "~1.19.1",
+    "prettier": "~2.0.0",
     "sugarss": "^2.0.0",
     "uuid": "^3.0.1"
   },

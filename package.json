@@ -10,7 +10,7 @@
     "postcss": "./bin/postcss"
   },
   "scripts": {
-    "ci": "eslint . && nyc ava -v && npm run prettier -- --list-different",
+    "ci": "npm run format && git diff",
     "clean": "node test/helpers/clean.js",
     "prettier": "prettier --single-quote --no-semi \"**/*.{js,md}\"",
     "format": "npm run prettier -- --write && eslint . --fix",

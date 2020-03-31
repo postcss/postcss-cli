@@ -1,4 +1,6 @@
 language: node_js
+git:
+  autocrlf: input
 os:
   - linux
   - windows

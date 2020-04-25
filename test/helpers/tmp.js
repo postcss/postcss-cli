@@ -1,5 +1,5 @@
 const path = require('path')
-const uuid = require('uuid')
+const { v4: uuid } = require('uuid')
 
 module.exports = function (ext) {
   ext = ext || ''

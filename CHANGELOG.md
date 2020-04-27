@@ -1,3 +1,8 @@
+# 7.1.1 / 2020-04-27
+
+- Fix bug where external source maps were not properly generated ([#324](https://github.com/postcss/postcss-cli/pull/324))
+- Update dependencies
+
 # 7.1.0 / 2020-01-09
 
 - Respect `map.annotation` option when set to a string ([#307](https://github.com/postcss/postcss-cli/pull/307))

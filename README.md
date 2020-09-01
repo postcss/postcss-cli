@@ -30,33 +30,36 @@ Usage:
   postcss <input.css>... [OPTIONS] --replace
 
 Basic options:
-  -o, --output        Output file                                            [string]
-  -d, --dir           Output directory                                       [string]
-  -r, --replace       Replace (overwrite) the input file                    [boolean]
-  --map, -m           Create an external sourcemap
-  --no-map            Disable the default inline sourcemaps
-  --verbose           Be verbose                                            [boolean]
-  --watch, -w         Watch files for changes and recompile as needed       [boolean]
-  --env               A shortcut for setting NODE_ENV                        [string]
-  --include-dotfiles  Enables glob to match files/dirs that begin with "."  [boolean]
+  -o, --output   Output file                                            [string]
+  -d, --dir      Output directory                                       [string]
+  -r, --replace  Replace (overwrite) the input file                    [boolean]
+  -m, --map      Create an external sourcemap
+  --no-map       Disable the default inline sourcemaps
+  -w, --watch    Watch files for changes and recompile as needed       [boolean]
+  --verbose      Be verbose                                            [boolean]
+  --env          A shortcut for setting NODE_ENV                        [string]
 
-Options for when not using a config file:
+Options for use without a config file:
   -u, --use      List of postcss plugins to use                          [array]
   --parser       Custom postcss parser                                  [string]
   --stringifier  Custom postcss stringifier                             [string]
   --syntax       Custom postcss syntax                                  [string]
 
+Options for use with --dir:
+  --ext   Override the output file extension; for use with --dir        [string]
+  --base  Mirror the directory structure relative to this path in the output
+          directory, for use with --dir                                 [string]
+
 Advanced options:
-  --ext     Override the output file extension; for use with --dir      [string]
-  --base    Mirror the directory structure relative to this path in the output
-            directory, for use with --dir                               [string]
-  --poll    Use polling for file watching. Can optionally pass polling interval;
-            default 100 ms
-  --config  Set a custom directory to look for a config file            [string]
+  --include-dotfiles  Enable glob to match files/dirs that begin with "."
+                                                                       [boolean]
+  --poll              Use polling for file watching. Can optionally pass polling
+                      interval; default 100 ms
+  --config            Set a custom directory to look for a config file  [string]
 
 Options:
-  --version  Show version number                                       [boolean]
-  -h, --help     Show help                                             [boolean]
+  --version   Show version number                                      [boolean]
+  -h, --help  Show help                                                [boolean]
 
 Examples:
   postcss input.css -o output.css                       Basic usage
@@ -68,8 +71,9 @@ If no input files are passed, it reads from stdin. If neither -o, --dir, or
 
 If there are multiple input files, the --dir or --replace option must be passed.
 
-Input files may contain globs (e.g. src/**/*.css). If you pass an input directory, it will process
-all files in the directory and any subdirectories, respecting the glob pattern.
+Input files may contain globs (e.g. src/**/*.css). If you pass an input
+directory, it will process all files in the directory and any subdirectories,
+respecting the glob pattern.
 ```
 
 > ℹ️ More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).

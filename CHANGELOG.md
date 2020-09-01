@@ -1,3 +1,9 @@
+# 7.1.2 / 2020-08-31
+
+- Make `--version` machine-readable ([#334](https://github.com/postcss/postcss-cli/issues/334), [#335](https://github.com/postcss/postcss-cli/pull/335))
+- Organize and clarify `--help` text ([#336](https://github.com/postcss/postcss-cli/pull/336))
+- Update dependencies
+
 # 7.1.1 / 2020-04-27
 
 - Fix bug where external source maps were not properly generated ([#324](https://github.com/postcss/postcss-cli/pull/324))

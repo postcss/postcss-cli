@@ -1,4 +1,4 @@
-'use strict' // eslint-disable-line
+'use strict'
 const fs = require('fs-extra')
 
 Promise.all([

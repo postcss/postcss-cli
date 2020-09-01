@@ -1,3 +1,4 @@
+'use strict'
 const test = require('ava')
 
 const tmp = require('./helpers/tmp.js')

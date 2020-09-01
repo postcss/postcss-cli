@@ -1,3 +1,4 @@
+'use strict'
 const test = require('ava')
 
 const cli = require('./helpers/cli.js')

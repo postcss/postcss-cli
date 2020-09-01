@@ -1,3 +1,4 @@
+'use strict'
 const test = require('ava')
 
 const fs = require('fs-extra')

@@ -1,3 +1,4 @@
+'use strict'
 const { readFile } = require('fs-extra')
 
 module.exports = function (path) {

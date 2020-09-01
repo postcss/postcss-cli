@@ -1,3 +1,4 @@
+'use strict'
 const path = require('path')
 const { v4: uuid } = require('uuid')
 

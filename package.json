@@ -24,7 +24,7 @@
     "fs-extra": "^9.0.0",
     "get-stdin": "^8.0.0",
     "globby": "^11.0.0",
-    "postcss": "^7.0.0",
+    "postcss": "^8.0.0",
     "postcss-load-config": "^2.0.0",
     "postcss-reporter": "^6.0.0",
     "pretty-hrtime": "^1.0.3",

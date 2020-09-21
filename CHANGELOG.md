@@ -1,3 +1,9 @@
+# 8.0.0 / 2020-09-21
+
+- **BREAKING:** Support postcss v8 ([#344](https://github.com/postcss/postcss-cli/issues/344), [#349](https://github.com/postcss/postcss-cli/pull/349))
+- **BREAKING:** postcss is now a `peerDependency`, you must install it seperately ([#344](https://github.com/postcss/postcss-cli/issues/344), [#349](https://github.com/postcss/postcss-cli/pull/349))
+- Upgrade dependencies ([#340](https://github.com/postcss/postcss-cli/pull/340))
+
 # 7.1.2 / 2020-08-31
 
 - Make `--version` machine-readable ([#334](https://github.com/postcss/postcss-cli/issues/334), [#335](https://github.com/postcss/postcss-cli/pull/335))

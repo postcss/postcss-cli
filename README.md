@@ -16,7 +16,7 @@
 <h2 align="center">Install</h2>
 
 ```bash
-npm i -g|-D postcss-cli
+npm i -D postcss postcss-cli
 ```
 
 <h2 align="center">Usage</h2>

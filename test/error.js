@@ -28,19 +28,6 @@ test('--map && writing to stdout', (t) => {
   })
 })
 
-test.failing('invalid --config', (t) => {
-  return cli([
-    'test/fixtures/*.css',
-    '-c',
-    'test/postcss.config.js',
-    '-d',
-    tmp(),
-  ]).then(({ error, code }) => {
-    t.is(code, 1, 'expected non-zero error code')
-    t.regex(error.toString(), /ENOENT: no such file or directory/)
-  })
-})
-
 test('plugin not found', (t) => {
   return cli(['test/fixtures/a.css', '-u', 'postcss-plugin', '-o', tmp()]).then(
     ({ error, code }) => {

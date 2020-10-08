@@ -1,3 +1,7 @@
+# 8.1.0 / 2020-10-08
+
+- Add support for `postcss.config.cjs` files ([#351](https://github.com/postcss/postcss-cli/pull/351))
+
 # 8.0.0 / 2020-09-21
 
 - **BREAKING:** Support postcss v8 ([#344](https://github.com/postcss/postcss-cli/issues/344), [#349](https://github.com/postcss/postcss-cli/pull/349))

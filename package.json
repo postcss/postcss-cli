@@ -48,7 +48,8 @@
   "files": [
     "bin",
     "index.js",
-    "lib"
+    "lib",
+    "!*.test.js"
   ],
   "keywords": [
     "cli",

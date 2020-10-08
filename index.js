@@ -15,8 +15,9 @@ const postcssrc = require('postcss-load-config')
 const reporter = require('postcss-reporter/lib/formatter')()
 
 const argv = require('./lib/args')
-const depGraph = require('./lib/depGraph')
+const createDependencyGraph = require('./lib/DependencyGraph')
 const getMapfile = require('./lib/getMapfile')
+const depGraph = createDependencyGraph()
 
 let input = argv._
 const { dir, output } = argv

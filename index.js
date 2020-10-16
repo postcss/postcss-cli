@@ -8,6 +8,7 @@ const stdin = require('get-stdin')
 const read = require('read-cache')
 const chalk = require('chalk')
 const globber = require('globby')
+const slash = require('slash')
 const chokidar = require('chokidar')
 
 const postcss = require('postcss')
@@ -57,7 +58,7 @@ Promise.resolve()
     }
 
     if (input && input.length) {
-      return globber(input, { dot: argv.includeDotfiles })
+      return globber(input.map(slash), { dot: argv.includeDotfiles })
     }
 
     if (argv.replace || argv.dir) {

@@ -1,3 +1,7 @@
+# 8.2.0 / 2020-10-29
+
+- Allow backslashes in paths for better Windows experence ([#355](https://github.com/postcss/postcss-cli/pull/355))
+
 # 8.1.0 / 2020-10-08
 
 - Add support for `postcss.config.cjs` files ([#351](https://github.com/postcss/postcss-cli/pull/351))

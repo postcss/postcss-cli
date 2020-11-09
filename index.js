@@ -92,6 +92,9 @@ Promise.resolve()
   })
   .then((results) => {
     if (argv.watch) {
+      process.stdin.on('end', () => process.exit(0))
+      process.stdin.resume()
+
       const printMessage = () =>
         printVerbose(chalk.dim('\nWaiting for file changes...'))
       const watcher = chokidar.watch(input.concat(dependencies(results)), {

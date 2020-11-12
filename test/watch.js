@@ -294,6 +294,6 @@ testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
     { shell: true }
   )
   cp.on('error', t.end)
-  cp.on('exit', () => t.end())
+  cp.on('exit', t.end)
   cp.stdin.end()
 })

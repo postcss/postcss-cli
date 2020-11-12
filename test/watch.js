@@ -3,7 +3,7 @@ const test = require('ava')
 
 const fs = require('fs-extra')
 const path = require('path')
-const { exec } = require('child_process')
+const { exec, spawn } = require('child_process')
 const chokidar = require('chokidar')
 
 const ENV = require('./helpers/env.js')
@@ -284,4 +284,16 @@ testCb("--watch doesn't exit on CssSyntaxError", (t) => {
 
   // Timeout:
   setTimeout(() => t.end('test timeout'), 50000)
+})
+
+testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
+  t.plan(0)
+
+  const cp = spawn(
+    `node ${path.resolve('bin/postcss')} -o output.css -w --no-map`,
+    { shell: true }
+  )
+  cp.on('error', t.end)
+  cp.on('exit', () => t.end())
+  cp.stdin.end()
 })

@@ -8,6 +8,7 @@ const chokidar = require('chokidar')
 
 const ENV = require('./helpers/env.js')
 const read = require('./helpers/read.js')
+const tmp = require('./helpers/tmp.js')
 
 // XXX: All the tests in this file are skipped on the CI; too flacky there
 const testCb = process.env.CI ? test.cb.skip : test.cb
@@ -287,13 +288,17 @@ testCb("--watch doesn't exit on CssSyntaxError", (t) => {
 })
 
 testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
-  t.plan(0)
+  t.plan(1)
 
   const cp = spawn(
-    `node ${path.resolve('bin/postcss')} -o output.css -w --no-map`,
+    `./bin/postcss test/fixtures/a.css -o ${tmp()} -w --no-map`,
     { shell: true }
   )
+
   cp.on('error', t.end)
-  cp.on('exit', t.end)
+  cp.on('exit', (code) => {
+    t.is(code, 0)
+    t.end()
+  })
   cp.stdin.end()
 })

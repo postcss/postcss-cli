@@ -51,6 +51,11 @@ let configFile
 if (argv.env) process.env.NODE_ENV = argv.env
 if (argv.config) argv.config = path.resolve(argv.config)
 
+if (argv.watch) {
+  process.stdin.on('end', () => process.exit(0))
+  process.stdin.resume()
+}
+
 Promise.resolve()
   .then(() => {
     if (argv.watch && !(argv.output || argv.replace || argv.dir)) {

@@ -3,11 +3,12 @@ const test = require('ava')
 
 const fs = require('fs-extra')
 const path = require('path')
-const { exec } = require('child_process')
+const { exec, spawn } = require('child_process')
 const chokidar = require('chokidar')
 
 const ENV = require('./helpers/env.js')
 const read = require('./helpers/read.js')
+const tmp = require('./helpers/tmp.js')
 
 // XXX: All the tests in this file are skipped on the CI; too flacky there
 const testCb = process.env.CI ? test.cb.skip : test.cb
@@ -284,4 +285,20 @@ testCb("--watch doesn't exit on CssSyntaxError", (t) => {
 
   // Timeout:
   setTimeout(() => t.end('test timeout'), 50000)
+})
+
+testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
+  t.plan(1)
+
+  const cp = spawn(
+    `./bin/postcss test/fixtures/a.css -o ${tmp()} -w --no-map`,
+    { shell: true }
+  )
+
+  cp.on('error', t.end)
+  cp.on('exit', (code) => {
+    t.is(code, 0)
+    t.end()
+  })
+  cp.stdin.end()
 })

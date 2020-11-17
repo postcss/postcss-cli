@@ -1,3 +1,7 @@
+# 8.3.0 / 2020-11-17
+
+- Exit on EOF/`^D` ([#358](https://github.com/postcss/postcss-cli/pull/358))
+
 # 8.2.0 / 2020-10-29
 
 - Allow backslashes in paths for better Windows experence ([#355](https://github.com/postcss/postcss-cli/pull/355))

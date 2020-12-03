@@ -63,7 +63,10 @@ Promise.resolve()
     }
 
     if (input && input.length) {
-      return globber(input.map(slash), { dot: argv.includeDotfiles })
+      return globber(
+        input.map((i) => slash(String(i))),
+        { dot: argv.includeDotfiles }
+      )
     }
 
     if (argv.replace || argv.dir) {

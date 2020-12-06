@@ -56,6 +56,11 @@ if (argv.watch) {
   process.stdin.resume()
 }
 
+/* istanbul ignore next */
+if (parseInt(postcss().version) < 8) {
+  error('Please install PostCSS 8 or above')
+}
+
 Promise.resolve()
   .then(() => {
     if (argv.watch && !(argv.output || argv.replace || argv.dir)) {

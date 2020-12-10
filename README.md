@@ -6,7 +6,7 @@
 [![chat][chat]][chat-url]
 
 <div align="center">
-  <img width="100" height="100" title="CLI" src="http://postcss.github.io/postcss-cli/logo.svg">
+  <img width="100" height="100" title="CLI" src="https://raw.githubusercontent.com/postcss/postcss-cli/HEAD/logo.svg">
   <a href="https://github.com/postcss/postcss">
     <img width="110" height="110" title="PostCSS" src="http://postcss.github.io/postcss/logo.svg" hspace="10">
   </a>

@@ -1,3 +1,8 @@
+# 8.3.1 / 2020-12-12
+
+- Ensure paths are not interpreted as numbers ([#360](https://github.com/postcss/postcss-cli/issues/360))
+- Better errors for incorrect postcss version ([#361](https://github.com/postcss/postcss-cli/issues/361), [#362](https://github.com/postcss/postcss-cli/pull/362))
+
 # 8.3.0 / 2020-11-17
 
 - Exit on EOF/`^D` ([#358](https://github.com/postcss/postcss-cli/pull/358))

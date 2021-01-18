@@ -98,7 +98,7 @@ Note that you **can not** set the `from` or `to` options for postcss in the conf
 
 ### Context
 
-For more advanced usage it's recommend to to use a function in `postcss.config.js`, this gives you access to the CLI context to dynamically apply options and plugins **per file**
+For more advanced usage, it's recommended to use a function in `postcss.config.js`; this gives you access to the CLI context to dynamically apply options and plugins **per file**
 
 |   Name    |    Type    |              Default               | Description          |
 | :-------: | :--------: | :--------------------------------: | :------------------- |

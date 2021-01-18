@@ -6,7 +6,7 @@ const path = require('path')
 const prettyHrtime = require('pretty-hrtime')
 const stdin = require('get-stdin')
 const read = require('read-cache')
-const chalk = require('chalk')
+const { bold, dim, red, cyan, green } = require('colorette')
 const globber = require('globby')
 const slash = require('slash')
 const chokidar = require('chokidar')
@@ -106,7 +106,7 @@ Promise.resolve()
   .then((results) => {
     if (argv.watch) {
       const printMessage = () =>
-        printVerbose(chalk.dim('\nWaiting for file changes...'))
+        printVerbose(dim('\nWaiting for file changes...'))
       const watcher = chokidar.watch(input.concat(dependencies(results)), {
         usePolling: argv.poll,
         interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
@@ -197,7 +197,7 @@ function css(css, file) {
 
   const time = process.hrtime()
 
-  printVerbose(chalk`{cyan Processing {bold ${relativePath}}...}`)
+  printVerbose(cyan(`Processing ${bold(relativePath)}...`))
 
   return rc(ctx, argv.config)
     .then((config) => {
@@ -245,7 +245,7 @@ function css(css, file) {
           return Promise.all(tasks).then(() => {
             const prettyTime = prettyHrtime(process.hrtime(time))
             printVerbose(
-              chalk`{green Finished {bold ${relativePath}} in {bold ${prettyTime}}}`
+              green(`Finished ${bold(relativePath)} in ${bold(prettyTime)}`)
             )
 
             const messages = result.warnings()
@@ -288,7 +288,7 @@ function error(err) {
   if (argv.verbose) console.error()
 
   if (typeof err === 'string') {
-    console.error(chalk.red(err))
+    console.error(red(err))
   } else if (err.name === 'CssSyntaxError') {
     console.error(err.toString())
   } else {

@@ -123,8 +123,14 @@ Promise.resolve()
 
         if (input.includes(file)) recompile.push(file)
 
+        const dependants = depGraph
+          .dependantsOf(file)
+          .concat(getAncestorDirs(file).flatMap(depGraph.dependantsOf))
+          // deduplicate
+          .filter((value, index, array) => array.indexOf(value) === index)
+
         recompile = recompile.concat(
-          depGraph.dependantsOf(file).filter((file) => input.includes(file))
+          dependants.filter((file) => input.includes(file))
         )
 
         if (!recompile.length) recompile = input
@@ -271,9 +277,17 @@ function dependencies(results) {
     if (result.messages <= 0) return
 
     result.messages
-      .filter((msg) => (msg.type === 'dependency' ? msg : ''))
+      .filter((msg) =>
+        msg.type === 'dependency' || msg.type === 'dir-dependency' ? msg : ''
+      )
       .map(depGraph.add)
-      .forEach((dependency) => messages.push(dependency.file))
+      .forEach((dependency) => {
+        if (dependency.type === 'dependency') {
+          messages.push(dependency.file)
+        } else {
+          messages.push(dependency.dir)
+        }
+      })
   })
 
   return messages
@@ -297,4 +311,15 @@ function error(err) {
   // Watch mode shouldn't exit on error
   if (argv.watch) return
   process.exit(1)
+}
+
+// Input: '/imports/components/button.css'
+// Output: ['/imports/components', '/imports', '/']
+function getAncestorDirs(fileOrDir) {
+  const { root } = path.parse(fileOrDir)
+  if (fileOrDir === root) {
+    return []
+  }
+  const parentDir = path.dirname(fileOrDir)
+  return [parentDir, ...getAncestorDirs(parentDir)]
 }

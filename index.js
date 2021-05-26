@@ -282,10 +282,10 @@ function dependencies(results) {
       )
       .map(depGraph.add)
       .forEach((dependency) => {
-        if (dependency.type === 'dependency') {
-          messages.push(dependency.file)
-        } else {
+        if (dependency.type === 'dir-dependency') {
           messages.push(dependency.dir)
+        } else {
+          messages.push(dependency.file)
         }
       })
   })

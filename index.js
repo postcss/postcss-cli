@@ -126,8 +126,6 @@ Promise.resolve()
         const dependants = depGraph
           .dependantsOf(file)
           .concat(getAncestorDirs(file).flatMap(depGraph.dependantsOf))
-          // deduplicate
-          .filter((value, index, array) => array.indexOf(value) === index)
 
         recompile = recompile.concat(
           dependants.filter((file) => input.includes(file))
@@ -135,7 +133,7 @@ Promise.resolve()
 
         if (!recompile.length) recompile = input
 
-        return files(recompile)
+        return files([...new Set(recompile)])
           .then((results) => watcher.add(dependencies(results)))
           .then(printMessage)
           .catch(error)

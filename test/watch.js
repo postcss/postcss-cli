@@ -494,3 +494,120 @@ testCb('--watch watches directory dependencies', (t) => {
   // Timeout:
   setTimeout(() => t.end('test timeout'), 50000)
 })
+
+testCb(
+  '--watch applies glob on dir-dependency (and excludes non matching files)',
+  (t) => {
+    let cp
+    let modifying = null // one of "unrelated.md", "a.css"
+
+    t.plan(1)
+
+    ENV('', [
+      's.css',
+      'base/level-1/b.css',
+      'base/level-1/level-2/a.css',
+      'base/level-1/level-2/unrelated.md',
+    ]).then((dir) => {
+      fs.writeFile(
+        path.join(dir, 'postcss.config.js'),
+        `
+          const fs = require('fs')
+          module.exports = {
+            plugins: [
+              (root, result) => {
+                result.messages.push({
+                  plugin: 'test',
+                  type: 'dir-dependency',
+                  dir: '${path.resolve(dir, 'base')}',
+                  glob: '**/*.css',
+                  parent: result.opts.from,
+                })
+                root.nodes = []
+                root.append(fs.readFileSync('${path.resolve(
+                  dir,
+                  'base/level-1/level-2/a.css'
+                )}', 'utf8'))
+                return root
+              }
+            ]
+          }
+        `
+      )
+        .then(() => {
+          // Init watcher:
+          const watcher = chokidar.watch('.', {
+            cwd: dir,
+            ignoreInitial: true,
+            awaitWriteFinish: true,
+          })
+
+          // On the first output:
+          watcher.on('add', (p) => {
+            if (p === 'output.css') {
+              // Modify unwatched file, shouldn't trigger output
+              modifyUnwatched()
+            }
+          })
+
+          // When the change is picked up:
+          watcher.on('change', (p) => {
+            if (p === 'output.css') {
+              // Assert that change to output.css happened only after modifying the watched a.css
+              t.is(
+                modifying,
+                'a.css',
+                `Unexpected change to ${p} after modifying ${modifying}`
+              )
+              done()
+            } else if (p === 'base/level-1/level-2/unrelated.md') {
+              // Modify watched file next, should trigger output
+              setTimeout(modifyWatched, 250)
+            }
+          })
+
+          // Start postcss-cli:
+          watcher.on('ready', () => {
+            cp = exec(
+              `node ${path.resolve(
+                'bin/postcss'
+              )} "s.css" -o output.css --no-map -w`,
+              { cwd: dir }
+            )
+            cp.on('error', t.end)
+            cp.on('exit', (code) => {
+              if (code) t.end(code)
+            })
+          })
+
+          function modifyUnwatched() {
+            modifying = 'unrelated.md'
+            fs.writeFile(
+              path.join(dir, 'base/level-1/level-2/unrelated.md'),
+              'Some modification'
+            ).catch(done)
+          }
+
+          function modifyWatched() {
+            modifying = 'a.css'
+            fs.writeFile(
+              path.join(dir, 'base/level-1/level-2/a.css'),
+              'a { color: hotpink }'
+            ).catch(done)
+          }
+
+          function done(err) {
+            try {
+              cp.kill()
+            } catch {}
+
+            t.end(err)
+          }
+        })
+        .catch(t.end)
+    })
+
+    // Timeout:
+    setTimeout(() => t.end('test timeout'), 50000)
+  }
+)

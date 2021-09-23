@@ -21,7 +21,7 @@
     "chokidar": "^3.3.0",
     "colorette": "^1.2.1",
     "dependency-graph": "^0.11.0",
-    "fs-extra": "^9.0.0",
+    "fs-extra": "^10.0.0",
     "get-stdin": "^8.0.0",
     "globby": "^11.0.0",
     "postcss-load-config": "^3.0.0",

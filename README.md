@@ -1,6 +1,5 @@
 [![npm][npm]][npm-url]
 [![node][node]][node-url]
-[![Greenkeeper badge](https://badges.greenkeeper.io/postcss/postcss-cli.svg)](https://greenkeeper.io/)
 [![tests][tests]][tests-url]
 [![cover][cover]][cover-url]
 [![chat][chat]][chat-url]
@@ -142,8 +141,8 @@ module.exports = (ctx) => ({
 [npm-url]: https://npmjs.com/package/postcss-cli
 [node]: https://img.shields.io/node/v/postcss-cli.svg
 [node-url]: https://nodejs.org/
-[tests]: http://img.shields.io/travis/postcss/postcss-cli/master.svg
-[tests-url]: https://travis-ci.org/postcss/postcss-cli
+[tests]: https://img.shields.io/github/workflow/status/postcss/postcss-cli/Node.js%20CI/master
+[tests-url]: https://github.com/postcss/postcss-cli/actions?query=branch%3Amaster
 [cover]: https://img.shields.io/coveralls/postcss/postcss-cli/master.svg
 [cover-url]: https://coveralls.io/github/postcss/postcss-cli
 [chat]: https://img.shields.io/gitter/room/postcss/postcss.svg

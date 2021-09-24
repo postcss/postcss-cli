@@ -1,3 +1,11 @@
+# 9.0.0 / 2021-09-24
+
+- **BREAKING:** Require Node.js v12+
+- **BREAKING:** Must specify full file path, including `.js` extension, when loading local plugins with `--use` ([#401](https://github.com/postcss/postcss-cli/pull/401))
+- **BREAKING:** Officially remove support for watching postcss config (was already broken in previous releases)
+- Add support for `dir-dependency` messages ([#383](https://github.com/postcss/postcss-cli/pull/383), [#391](https://github.com/postcss/postcss-cli/pull/391))
+- Update deps
+
 # 8.3.1 / 2020-12-12
 
 - Ensure paths are not interpreted as numbers ([#360](https://github.com/postcss/postcss-cli/issues/360))

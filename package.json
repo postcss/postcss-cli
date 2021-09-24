@@ -1,6 +1,6 @@
 {
   "name": "postcss-cli",
-  "version": "8.3.1",
+  "version": "9.0.0",
   "description": "CLI for PostCSS",
   "type": "module",
   "engines": {

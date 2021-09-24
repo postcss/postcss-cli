@@ -1,14 +1,13 @@
-'use strict'
-const test = require('ava')
+import test from 'ava'
 
-const fs = require('fs-extra')
-const path = require('path')
-const { exec, spawn } = require('child_process')
-const chokidar = require('chokidar')
+import fs from 'fs-extra'
+import path from 'path'
+import { exec, spawn } from 'child_process'
+import chokidar from 'chokidar'
 
-const ENV = require('./helpers/env.js')
-const read = require('./helpers/read.js')
-const tmp = require('./helpers/tmp.js')
+import ENV from './helpers/env.js'
+import read from './helpers/read.js'
+import tmp from './helpers/tmp.js'
 
 // XXX: All the tests in this file are skipped on the CI; too flacky there
 const testCb = process.env.CI ? test.cb.skip : test.cb
@@ -224,7 +223,7 @@ testCb('--watch watches dependencies', (t) => {
 
   ENV('', ['s.css', 'a.css', 'b.css']).then((dir) => {
     fs.writeFile(
-      path.join(dir, 'postcss.config.js'),
+      path.join(dir, 'postcss.config.cjs'),
       `
         const fs = require('fs')
         module.exports = {
@@ -318,7 +317,7 @@ testCb('--watch watches directory dependencies', (t) => {
   ENV('', ['s.css', 'base/level-1/b.css', 'base/level-1/level-2/a.css']).then(
     (dir) => {
       fs.writeFile(
-        path.join(dir, 'postcss.config.js'),
+        path.join(dir, 'postcss.config.cjs'),
         `
           const fs = require('fs')
           module.exports = {
@@ -427,7 +426,7 @@ testCb(
       'base/level-1/level-2/unrelated.md',
     ]).then((dir) => {
       fs.writeFile(
-        path.join(dir, 'postcss.config.js'),
+        path.join(dir, 'postcss.config.cjs'),
         `
           const fs = require('fs')
           module.exports = {

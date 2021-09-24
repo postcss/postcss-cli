@@ -1,12 +1,11 @@
-'use strict'
-const test = require('ava')
+import test from 'ava'
 
-const fs = require('fs-extra')
-const path = require('path')
-const { exec } = require('child_process')
+import fs from 'fs-extra'
+import path from 'path'
+import { exec } from 'child_process'
 
-const tmp = require('./helpers/tmp.js')
-const read = require('./helpers/read.js')
+import tmp from './helpers/tmp.js'
+import read from './helpers/read.js'
 
 test.cb('reads from stdin', (t) => {
   const output = tmp('output.css')

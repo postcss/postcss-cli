@@ -1,11 +1,10 @@
-'use strict'
-const test = require('ava')
+import test from 'ava'
 
-const fs = require('fs-extra')
-const path = require('path')
-const { exec } = require('child_process')
+import fs from 'fs-extra'
+import path from 'path'
+import { exec } from 'child_process'
 
-const read = require('./helpers/read.js')
+import read from './helpers/read.js'
 
 test.cb('writes to stdout', (t) => {
   const cp = exec(

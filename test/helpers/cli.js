@@ -1,8 +1,7 @@
-'use strict'
-const path = require('path')
-const { exec } = require('child_process')
+import path from 'path'
+import { exec } from 'child_process'
 
-module.exports = function (args, cwd) {
+export default function (args, cwd) {
   return new Promise((resolve) => {
     exec(
       `node ${path.resolve('index.js')} ${args.join(' ')}`,

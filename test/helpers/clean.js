@@ -1,5 +1,4 @@
-'use strict'
-const fs = require('fs-extra')
+import fs from 'fs-extra'
 
 Promise.all([
   fs.emptyDir('./test/fixtures/.tmp/'),

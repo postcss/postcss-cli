@@ -9,8 +9,9 @@ import ENV from './helpers/env.js'
 import read from './helpers/read.js'
 import tmp from './helpers/tmp.js'
 
-// XXX: All the tests in this file are skipped on the CI; too flacky there
-const testCb = process.env.CI ? test.cb.skip : test.cb
+// XXX: All the tests in this file are skipped on the Windows CI; too flacky there
+const testCb =
+  process.env.CI && process.platform === 'win32' ? test.cb.skip : test.cb
 
 testCb('--watch works', (t) => {
   let cp

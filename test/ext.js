@@ -23,3 +23,20 @@ test('--ext works', async (t) => {
 
   t.truthy(await fs.pathExists(path.join(dir, 'a.css')))
 })
+
+test('--ext works with no leading dot', async (t) => {
+  const dir = tmp()
+
+  const { error, stderr } = await cli([
+    'test/fixtures/a.sss',
+    '--parser',
+    'sugarss',
+    '-d',
+    dir,
+    '--ext',
+    'css',
+  ])
+  t.falsy(error, stderr)
+
+  t.truthy(await fs.pathExists(path.join(dir, 'a.css')))
+})

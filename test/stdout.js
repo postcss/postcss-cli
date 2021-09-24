@@ -10,7 +10,7 @@ const read = require('./helpers/read.js')
 test.cb('writes to stdout', (t) => {
   const cp = exec(
     `node ${path.resolve(
-      'bin/postcss'
+      'index.js'
     )} --parser sugarss -u postcss-import --no-map`,
     (error, stdout, stderr) => {
       if (error) t.end(error, stderr)

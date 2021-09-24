@@ -5,7 +5,7 @@ const { exec } = require('child_process')
 module.exports = function (args, cwd) {
   return new Promise((resolve) => {
     exec(
-      `node ${path.resolve('bin/postcss')} ${args.join(' ')}`,
+      `node ${path.resolve('index.js')} ${args.join(' ')}`,
       { cwd },
       (error, stdout, stderr) => {
         resolve({

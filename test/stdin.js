@@ -12,7 +12,7 @@ test.cb('reads from stdin', (t) => {
   const output = tmp('output.css')
 
   const cp = exec(
-    `node ${path.resolve('bin/postcss')} -o ${output} --no-map`,
+    `node ${path.resolve('index.js')} -o ${output} --no-map`,
     (error, stdout, stderr) => {
       if (error) t.end(error, stderr)
 

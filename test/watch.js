@@ -51,9 +51,7 @@ testCb('--watch works', (t) => {
       watcher.on('ready', () => {
         // Using exec() and quoting "*.css" to test watch's glob handling:
         cp = exec(
-          `node ${path.resolve(
-            'bin/postcss'
-          )} "*.css" -o output.css --no-map -w`,
+          `node ${path.resolve('index.js')} "*.css" -o output.css --no-map -w`,
           { cwd: dir }
         )
         cp.on('error', t.end)
@@ -121,7 +119,7 @@ testCb('--watch dependencies', (t) => {
       watcher.on('ready', () => {
         cp = exec(
           `node ${path.resolve(
-            'bin/postcss'
+            'index.js'
           )} import.css -o output.css -u postcss-import -w --no-map`,
           { cwd: dir }
         )
@@ -172,7 +170,7 @@ testCb("--watch doesn't exit on CssSyntaxError", (t) => {
 
       let killed = false
       const cp = exec(
-        `node ${path.resolve('bin/postcss')} a.css -o output.css -w --no-map`,
+        `node ${path.resolve('index.js')} a.css -o output.css -w --no-map`,
         { cwd: dir }
       )
       cp.on('error', t.end)
@@ -207,10 +205,9 @@ testCb("--watch doesn't exit on CssSyntaxError", (t) => {
 testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
   t.plan(1)
 
-  const cp = spawn(
-    `./bin/postcss test/fixtures/a.css -o ${tmp()} -w --no-map`,
-    { shell: true }
-  )
+  const cp = spawn(`./index.js test/fixtures/a.css -o ${tmp()} -w --no-map`, {
+    shell: true,
+  })
 
   cp.on('error', t.end)
   cp.on('exit', (code) => {
@@ -281,7 +278,7 @@ testCb('--watch watches dependencies', (t) => {
           // Using exec() and quoting "*.css" to test watch's glob handling:
           cp = exec(
             `node ${path.resolve(
-              'bin/postcss'
+              'index.js'
             )} "s.css" -o output.css --no-map -w`,
             { cwd: dir }
           )
@@ -382,7 +379,7 @@ testCb('--watch watches directory dependencies', (t) => {
             // Using exec() and quoting "*.css" to test watch's glob handling:
             cp = exec(
               `node ${path.resolve(
-                'bin/postcss'
+                'index.js'
               )} "s.css" -o output.css --no-map -w`,
               { cwd: dir }
             )
@@ -490,7 +487,7 @@ testCb(
           watcher.on('ready', () => {
             cp = exec(
               `node ${path.resolve(
-                'bin/postcss'
+                'index.js'
               )} "s.css" -o output.css --no-map -w`,
               { cwd: dir }
             )

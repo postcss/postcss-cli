@@ -34,7 +34,7 @@ test('plugin not found', (t) => {
       t.is(code, 1, 'expected non-zero error code')
       t.regex(
         error.toString(),
-        /Plugin Error: Cannot find module 'postcss-plugin'/
+        /Plugin Error: Cannot find package 'postcss-plugin'/
       )
     }
   )
@@ -44,12 +44,12 @@ test('plugin throws on require', (t) => {
   return cli([
     'test/fixtures/a.css',
     '-u',
-    './test/fixtures/_bad-plugin',
+    './test/fixtures/_bad-plugin.js',
     '-o',
     tmp(),
   ]).then(({ error, code }) => {
     t.is(code, 1, 'expected non-zero error code')
-    t.regex(error.toString(), /Plugin Error \(.*bad-plugin\): This fails/)
+    t.regex(error.toString(), /Plugin Error \(.*bad-plugin.js\): This fails/)
   })
 })
 

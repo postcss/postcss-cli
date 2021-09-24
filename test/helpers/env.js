@@ -1,11 +1,10 @@
-'use strict'
-const fs = require('fs-extra')
-const path = require('path')
-const globby = require('globby')
+import fs from 'fs-extra'
+import path from 'path'
+import globby from 'globby'
 
-const tmp = require('./tmp.js')
+import tmp from './tmp.js'
 
-module.exports = function (config, fixtures) {
+export default function (config, fixtures) {
   fixtures = fixtures || '**/*'
   const dir = tmp()
 
@@ -15,6 +14,6 @@ module.exports = function (config, fixtures) {
         return fs.copy(path.join('test/fixtures', item), path.join(dir, item))
       })
     }),
-    fs.outputFile(path.join(dir, 'postcss.config.js'), config),
+    fs.outputFile(path.join(dir, 'postcss.config.cjs'), config),
   ]).then(() => dir)
 }

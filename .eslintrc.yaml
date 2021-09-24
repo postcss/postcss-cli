@@ -1,5 +1,7 @@
 env:
   node: true
+parserOptions:
+  sourceType: module
 extends: problems
 rules:
   no-console: off

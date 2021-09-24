@@ -20,5 +20,3 @@ jobs:
         node-version: ${{ matrix.node }}
     - run: npm install
     - run: npm run ci
-    - run: nyc report --reporter=text-lcov | coveralls
-      continue-on-error: true

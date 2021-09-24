@@ -1,7 +1,6 @@
-'use strict'
-const test = require('ava')
+import test from 'ava'
 
-const cli = require('./helpers/cli.js')
+import cli from './helpers/cli.js'
 
 test('--help', async (t) => {
   const help = await cli(['--help'])

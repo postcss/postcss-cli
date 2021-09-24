@@ -1,11 +1,10 @@
-'use strict'
-const test = require('ava')
+import test from 'ava'
 
-const fs = require('fs-extra')
-const path = require('path')
+import fs from 'fs-extra'
+import path from 'path'
 
-const cli = require('./helpers/cli.js')
-const tmp = require('./helpers/tmp.js')
+import cli from './helpers/cli.js'
+import tmp from './helpers/tmp.js'
 
 test('--ext works', async (t) => {
   const dir = tmp()

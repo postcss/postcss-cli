@@ -1,12 +1,11 @@
-'use strict'
-const test = require('ava')
+import test from 'ava'
 
-const fs = require('fs-extra')
-const path = require('path')
+import fs from 'fs-extra'
+import path from 'path'
 
-const cli = require('./helpers/cli.js')
-const tmp = require('./helpers/tmp.js')
-const read = require('./helpers/read.js')
+import cli from './helpers/cli.js'
+import tmp from './helpers/tmp.js'
+import read from './helpers/read.js'
 
 test('--replace works', async (t) => {
   const dir = tmp()

@@ -1,23 +1,25 @@
-'use strict'
+#!/usr/bin/env node
 
-const fs = require('fs-extra')
-const path = require('path')
+import fs from 'fs-extra'
+import path from 'path'
 
-const prettyHrtime = require('pretty-hrtime')
-const stdin = require('get-stdin')
-const read = require('read-cache')
-const { bold, dim, red, cyan, green } = require('colorette')
-const globber = require('globby')
-const slash = require('slash')
-const chokidar = require('chokidar')
+import prettyHrtime from 'pretty-hrtime'
+import stdin from 'get-stdin'
+import read from 'read-cache'
+import { bold, dim, red, cyan, green } from 'colorette'
+import globber from 'globby'
+import slash from 'slash'
+import chokidar from 'chokidar'
 
-const postcss = require('postcss')
-const postcssrc = require('postcss-load-config')
-const reporter = require('postcss-reporter/lib/formatter')()
+import postcss from 'postcss'
+import postcssrc from 'postcss-load-config'
+import postcssReporter from 'postcss-reporter/lib/formatter.js'
 
-const argv = require('./lib/args')
-const createDependencyGraph = require('./lib/DependencyGraph')
-const getMapfile = require('./lib/getMapfile')
+import argv from './lib/args.js'
+import createDependencyGraph from './lib/DependencyGraph.js'
+import getMapfile from './lib/getMapfile.js'
+
+const reporter = postcssReporter()
 const depGraph = createDependencyGraph()
 
 let input = argv._
@@ -25,25 +27,33 @@ const { dir, output } = argv
 
 if (argv.map) argv.map = { inline: false }
 
-const cliConfig = {
-  options: {
-    map: argv.map !== undefined ? argv.map : { inline: true },
-    parser: argv.parser ? require(argv.parser) : undefined,
-    syntax: argv.syntax ? require(argv.syntax) : undefined,
-    stringifier: argv.stringifier ? require(argv.stringifier) : undefined,
-  },
-  plugins: argv.use
-    ? argv.use.map((plugin) => {
-        try {
-          return require(plugin)()
-        } catch (e) {
-          const msg = e.message || `Cannot find module '${plugin}'`
-          let prefix = msg.includes(plugin) ? '' : ` (${plugin})`
-          if (e.name && e.name !== 'Error') prefix += `: ${e.name}`
-          return error(`Plugin Error${prefix}: ${msg}'`)
-        }
-      })
-    : [],
+let cliConfig
+
+async function buildCliConfig() {
+  cliConfig = {
+    options: {
+      map: argv.map !== undefined ? argv.map : { inline: true },
+      parser: argv.parser ? await import(argv.parser) : undefined,
+      syntax: argv.syntax ? await import(argv.syntax) : undefined,
+      stringifier: argv.stringifier
+        ? await import(argv.stringifier)
+        : undefined,
+    },
+    plugins: argv.use
+      ? await Promise.all(
+          argv.use.map(async (plugin) => {
+            try {
+              return (await import(plugin)).default()
+            } catch (e) {
+              const msg = e.message || `Cannot find module '${plugin}'`
+              let prefix = msg.includes(plugin) ? '' : ` (${plugin})`
+              if (e.name && e.name !== 'Error') prefix += `: ${e.name}`
+              return error(`Plugin Error${prefix}: ${msg}'`)
+            }
+          })
+        )
+      : [],
+  }
 }
 
 let configFile
@@ -61,7 +71,7 @@ if (parseInt(postcss().version) < 8) {
   error('Please install PostCSS 8 or above')
 }
 
-Promise.resolve()
+buildCliConfig()
   .then(() => {
     if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
       error('Cannot write to stdout in watch mode')

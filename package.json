@@ -2,20 +2,20 @@
   "name": "postcss-cli",
   "version": "8.3.1",
   "description": "CLI for PostCSS",
-  "main": "index.js",
+  "type": "module",
   "engines": {
     "node": ">=12"
   },
   "bin": {
-    "postcss": "./bin/postcss"
+    "postcss": "./index.js"
   },
   "scripts": {
-    "ci": "eslint . && nyc ava -v && npm run prettier -- --list-different",
+    "ci": "eslint . && c8 ava -v && npm run prettier -- --list-different",
     "clean": "node test/helpers/clean.js",
     "prettier": "prettier --single-quote --no-semi \"**/*.{js,md}\"",
     "format": "npm run prettier -- --write && eslint . --fix",
     "pretest": "npm run clean && npm run format",
-    "test": "nyc ava -v"
+    "test": "c8 ava -v"
   },
   "dependencies": {
     "chokidar": "^3.3.0",
@@ -33,10 +33,10 @@
   },
   "devDependencies": {
     "ava": "^3.1.0",
+    "c8": "^7.9.0",
     "coveralls": "^3.0.0",
     "eslint": "^7.8.0",
     "eslint-config-problems": "5.0.0",
-    "nyc": "^15.0.0",
     "postcss": "^8.0.4",
     "postcss-import": "^14.0.0",
     "prettier": "~2.4.0",

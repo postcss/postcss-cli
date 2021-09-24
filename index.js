@@ -7,7 +7,7 @@ import prettyHrtime from 'pretty-hrtime'
 import stdin from 'get-stdin'
 import read from 'read-cache'
 import { bold, dim, red, cyan, green } from 'colorette'
-import globber from 'globby'
+import { globby } from 'globby'
 import slash from 'slash'
 import chokidar from 'chokidar'
 
@@ -78,7 +78,7 @@ buildCliConfig()
     }
 
     if (input && input.length) {
-      return globber(
+      return globby(
         input.map((i) => slash(String(i))),
         { dot: argv.includeDotfiles }
       )

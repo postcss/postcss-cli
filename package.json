@@ -47,7 +47,6 @@
     "postcss": "^8.0.0"
   },
   "files": [
-    "bin",
     "index.js",
     "lib",
     "!*.test.js"

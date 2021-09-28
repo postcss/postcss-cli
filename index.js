@@ -75,6 +75,8 @@ buildCliConfig()
   .then(() => {
     if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
       error('Cannot write to stdout in watch mode')
+      // Need to explicitly exit here, since error() doesn't exit in watch mode
+      process.exit(1)
     }
 
     if (input && input.length) {

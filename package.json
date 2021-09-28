@@ -49,7 +49,7 @@
   "files": [
     "index.js",
     "lib",
-    "!*.test.js"
+    "!**/*.test.js"
   ],
   "keywords": [
     "cli",

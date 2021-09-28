@@ -1,3 +1,8 @@
+# 9.0.1 / 2021-09-28
+
+- Actually exit with error when attempting to stdout in watch mode
+- Remove `bin/` from `files` in package.json
+
 # 9.0.0 / 2021-09-24
 
 - **BREAKING:** Require Node.js v12+

@@ -6,7 +6,7 @@ import path from 'path'
 import prettyHrtime from 'pretty-hrtime'
 import stdin from 'get-stdin'
 import read from 'read-cache'
-import { bold, dim, red, cyan, green } from 'nanocolors'
+import pc from 'picocolors'
 import { globby } from 'globby'
 import slash from 'slash'
 import chokidar from 'chokidar'
@@ -118,7 +118,7 @@ buildCliConfig()
   .then((results) => {
     if (argv.watch) {
       const printMessage = () =>
-        printVerbose(dim('\nWaiting for file changes...'))
+        printVerbose(pc.dim('\nWaiting for file changes...'))
       const watcher = chokidar.watch(input.concat(dependencies(results)), {
         usePolling: argv.poll,
         interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
@@ -213,7 +213,7 @@ function css(css, file) {
 
   const time = process.hrtime()
 
-  printVerbose(cyan(`Processing ${bold(relativePath)}...`))
+  printVerbose(pc.cyan(`Processing ${pc.bold(relativePath)}...`))
 
   return rc(ctx, argv.config)
     .then((config) => {
@@ -261,7 +261,9 @@ function css(css, file) {
           return Promise.all(tasks).then(() => {
             const prettyTime = prettyHrtime(process.hrtime(time))
             printVerbose(
-              green(`Finished ${bold(relativePath)} in ${bold(prettyTime)}`)
+              pc.green(
+                `Finished ${pc.bold(relativePath)} in ${pc.bold(prettyTime)}`
+              )
             )
 
             const messages = result.warnings()
@@ -316,7 +318,7 @@ function error(err) {
   if (argv.verbose) console.error()
 
   if (typeof err === 'string') {
-    console.error(red(err))
+    console.error(pc.red(err))
   } else if (err.name === 'CssSyntaxError') {
     console.error(err.toString())
   } else {

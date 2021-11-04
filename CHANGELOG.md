@@ -1,3 +1,8 @@
+# 9.0.2 / 2021-11-04
+
+- Switch to picocolors ([#409](https://github.com/postcss/postcss-cli/pull/409))
+- Remove test files from npm package
+
 # 9.0.1 / 2021-09-28
 
 - Actually exit with error when attempting to stdout in watch mode

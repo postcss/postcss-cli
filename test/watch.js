@@ -152,6 +152,7 @@ testCb('--watch dependencies', (t) => {
 
 testCb("--watch doesn't exit on CssSyntaxError", (t) => {
   t.plan(0)
+  t.timeout(50000)
 
   ENV('', ['a.css'])
     .then((dir) => {
@@ -197,9 +198,6 @@ testCb("--watch doesn't exit on CssSyntaxError", (t) => {
       }
     })
     .catch(t.end)
-
-  // Timeout:
-  setTimeout(() => t.end('test timeout'), 50000)
 })
 
 testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {

@@ -150,7 +150,7 @@ testCb('--watch dependencies', (t) => {
   setTimeout(() => t.end('test timeout'), 50000)
 })
 
-testCb("--watch doesn't exit on CssSyntaxError", (t) => {
+test.skip("--watch doesn't exit on CssSyntaxError", (t) => {
   t.plan(0)
   t.timeout(50000)
 

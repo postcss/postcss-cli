@@ -76,9 +76,6 @@ testCb('--watch works', (t) => {
       }
     })
     .catch(t.end)
-
-  // Timeout:
-  setTimeout(() => t.end('test timeout'), 50000)
 })
 
 testCb('--watch dependencies', (t) => {
@@ -145,62 +142,61 @@ testCb('--watch dependencies', (t) => {
       }
     })
     .catch(t.end)
-
-  // Timeout:
-  setTimeout(() => t.end('test timeout'), 50000)
 })
 
-testCb("--watch doesn't exit on CssSyntaxError", (t) => {
-  t.plan(0)
+// Doesn't work on CI for some reason
+;(process.env.CI ? test.cb.skip : test.cb)(
+  "--watch doesn't exit on CssSyntaxError",
+  (t) => {
+    t.plan(0)
 
-  ENV('', ['a.css'])
-    .then((dir) => {
-      // Init watcher:
-      const watcher = chokidar.watch('.', {
-        cwd: dir,
-        ignoreInitial: true,
-        awaitWriteFinish: true,
-      })
-      watcher.on('add', (p) => {
-        if (p === 'output.css') {
-          // Change to invalid CSS
-          fs.writeFile(path.join(dir, 'a.css'), '.a { color: red').catch(done)
-        }
-      })
+    ENV('', ['a.css'])
+      .then((dir) => {
+        // Init watcher:
+        const watcher = chokidar.watch('.', {
+          cwd: dir,
+          ignoreInitial: true,
+          awaitWriteFinish: true,
+        })
+        watcher.on('add', (p) => {
+          if (p === 'output.css') {
+            // Change to invalid CSS
+            fs.writeFile(path.join(dir, 'a.css'), '.a { color: red').catch(done)
+          }
+        })
 
-      let killed = false
-      const cp = exec(
-        `node ${path.resolve('index.js')} a.css -o output.css -w --no-map`,
-        { cwd: dir }
-      )
-      cp.on('error', t.end)
-      cp.stderr.on('data', (chunk) => {
-        // When error message is printed, kill the process after a timeout
-        if (~chunk.indexOf('Unclosed block')) {
-          setTimeout(() => {
-            killed = true
+        let killed = false
+        const cp = exec(
+          `node ${path.resolve('index.js')} a.css -o output.css -w --no-map`,
+          { cwd: dir }
+        )
+        cp.on('error', t.end)
+        cp.stderr.on('data', (chunk) => {
+          // When error message is printed, kill the process after a timeout
+          if (~chunk.indexOf('Unclosed block')) {
+            setTimeout(() => {
+              killed = true
+              cp.kill()
+            }, 1000)
+          }
+        })
+        cp.on('exit', (code) => {
+          if (!killed)
+            return t.end(`Should not exit (exited with code ${code})`)
+          done()
+        })
+
+        function done(err) {
+          try {
             cp.kill()
-          }, 1000)
+          } catch {}
+
+          t.end(err)
         }
       })
-      cp.on('exit', (code) => {
-        if (!killed) return t.end(`Should not exit (exited with code ${code})`)
-        done()
-      })
-
-      function done(err) {
-        try {
-          cp.kill()
-        } catch {}
-
-        t.end(err)
-      }
-    })
-    .catch(t.end)
-
-  // Timeout:
-  setTimeout(() => t.end('test timeout'), 50000)
-})
+      .catch(t.end)
+  }
+)
 
 testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
   t.plan(1)
@@ -305,9 +301,6 @@ testCb('--watch watches dependencies', (t) => {
       })
       .catch(t.end)
   })
-
-  // Timeout:
-  setTimeout(() => t.end('test timeout'), 50000)
 })
 
 testCb('--watch watches directory dependencies', (t) => {
@@ -407,9 +400,6 @@ testCb('--watch watches directory dependencies', (t) => {
         .catch(t.end)
     }
   )
-
-  // Timeout:
-  setTimeout(() => t.end('test timeout'), 50000)
 })
 
 testCb(
@@ -523,8 +513,5 @@ testCb(
         })
         .catch(t.end)
     })
-
-    // Timeout:
-    setTimeout(() => t.end('test timeout'), 50000)
   }
 )

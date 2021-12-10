@@ -1,3 +1,7 @@
+# 9.1.0 / 2021-12-10
+
+- Don't write to files if they're unchanged ([#320](https://github.com/postcss/postcss-cli/issues/320), [#417](https://github.com/postcss/postcss-cli/pull/417))
+
 # 9.0.2 / 2021-11-04
 
 - Switch to picocolors ([#409](https://github.com/postcss/postcss-cli/pull/409))

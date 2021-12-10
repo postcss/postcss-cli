@@ -250,11 +250,11 @@ function css(css, file) {
           const tasks = []
 
           if (options.to) {
-            tasks.push(fs.outputFile(options.to, result.css))
+            tasks.push(outputFile(options.to, result.css))
 
             if (result.map) {
               const mapfile = getMapfile(options)
-              tasks.push(fs.outputFile(mapfile, result.map.toString()))
+              tasks.push(outputFile(mapfile, result.map.toString()))
             }
           } else process.stdout.write(result.css, 'utf8')
 
@@ -278,6 +278,13 @@ function css(css, file) {
     .catch((err) => {
       throw err
     })
+
+  async function outputFile(file, string) {
+    const fileExists = await fs.pathExists(file)
+    const currentValue = fileExists ? await fs.readFile(file, 'utf8') : null
+    if (currentValue === string) return
+    return fs.outputFile(file, string)
+  }
 }
 
 function dependencies(results) {

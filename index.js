@@ -62,7 +62,7 @@ if (argv.env) process.env.NODE_ENV = argv.env
 if (argv.config) argv.config = path.resolve(argv.config)
 
 if (argv.watch) {
-  process.stdin.on('end', () => process.exit(0))
+  process.on('SIGINT', () => process.exit(0))
   process.stdin.resume()
 }
 

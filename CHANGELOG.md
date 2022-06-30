@@ -1,3 +1,8 @@
+# 10.0.0 / 2022-06-29
+
+- **BREAKING:** Drop Node 12 support ([#438](https://github.com/postcss/postcss-cli/pull/438))
+- Add support for ESM config files ([#437](https://github.com/postcss/postcss-cli/pull/437))
+
 # 9.1.0 / 2021-12-10
 
 - Don't write to files if they're unchanged ([#320](https://github.com/postcss/postcss-cli/issues/320), [#417](https://github.com/postcss/postcss-cli/pull/417))

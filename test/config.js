@@ -28,6 +28,31 @@ test('supports common config', async (t) => {
   )
 })
 
+test('supports ESM config', async (t) => {
+  const env = `import postcssImport from 'postcss-import'
+  export default function () {
+    return {
+      plugins: [
+        postcssImport()
+      ]
+    }
+  }`
+
+  const dir = await ENV(env, ['a.css'], 'mjs')
+
+  const { error, stderr } = await cli(
+    ['a.css', '-o', 'output.css', '--no-map'],
+    dir
+  )
+
+  t.falsy(error, stderr)
+
+  t.is(
+    await read(path.join(dir, 'output.css')),
+    await read('test/fixtures/a.css')
+  )
+})
+
 test("doesn't error on empty config", async (t) => {
   const env = `module.exports = {}`
 

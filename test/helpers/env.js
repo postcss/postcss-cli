@@ -4,8 +4,7 @@ import { globby } from 'globby'
 
 import tmp from './tmp.js'
 
-export default function (config, fixtures) {
-  fixtures = fixtures || '**/*'
+export default function (config, fixtures = '**/*', extension = 'cjs') {
   const dir = tmp()
 
   return Promise.all([
@@ -14,6 +13,6 @@ export default function (config, fixtures) {
         return fs.copy(path.join('test/fixtures', item), path.join(dir, item))
       })
     }),
-    fs.outputFile(path.join(dir, 'postcss.config.cjs'), config),
+    fs.outputFile(path.join(dir, `postcss.config.${extension}`), config),
   ]).then(() => dir)
 }

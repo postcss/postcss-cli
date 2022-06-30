@@ -167,7 +167,9 @@ testCb('--watch dependencies', (t) => {
 
         let killed = false
         const cp = exec(
-          `node ${path.resolve('index.js')} a.css -o output.css -w --no-map`,
+          `node ${path.resolve(
+            'index.js'
+          )} a.css -o output.css -u postcss-import -w --no-map`,
           { cwd: dir }
         )
         cp.on('error', t.end)

@@ -205,6 +205,10 @@ testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
 
   const cp = spawn(`./index.js test/fixtures/a.css -o ${tmp()} -w --no-map`, {
     shell: true,
+    env: {
+      ...process.env,
+      FORCE_IS_TTY: true,
+    },
   })
 
   cp.on('error', t.end)
@@ -212,6 +216,7 @@ testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
     t.is(code, 0)
     t.end()
   })
+
   cp.stdin.end()
 })
 

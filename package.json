@@ -1,5 +1,5 @@
 {
-  "name": "postcss-cli",
+  "name": "@0xradical/postcss-cli",
   "version": "10.0.0",
   "description": "CLI for PostCSS",
   "type": "module",

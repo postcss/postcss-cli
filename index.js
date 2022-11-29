@@ -61,7 +61,13 @@ let configFile
 if (argv.env) process.env.NODE_ENV = argv.env
 if (argv.config) argv.config = path.resolve(argv.config)
 
-if (argv.watch) {
+let { isTTY } = process.stdin
+
+if (process.env.FORCE_IS_TTY === 'true') {
+  isTTY = true
+}
+
+if (argv.watch && isTTY) {
   process.stdin.on('end', () => process.exit(0))
   process.stdin.resume()
 }

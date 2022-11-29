@@ -1,3 +1,8 @@
+# 10.1.0 / 2022-11-29
+
+- Allow running `--watch` mode in non-TTY contexts, like Docker ([#448](https://github.com/postcss/postcss-cli/pull/448))
+- Update dependencies
+
 # 10.0.0 / 2022-06-29
 
 - **BREAKING:** Drop Node 12 support ([#438](https://github.com/postcss/postcss-cli/pull/438))

@@ -41,7 +41,7 @@
 
 # 8.2.0 / 2020-10-29
 
-- Allow backslashes in paths for better Windows experence ([#355](https://github.com/postcss/postcss-cli/pull/355))
+- Allow backslashes in paths for better Windows experience ([#355](https://github.com/postcss/postcss-cli/pull/355))
 
 # 8.1.0 / 2020-10-08
 
@@ -76,7 +76,7 @@
 
 # 6.1.3 / 2019-07-08
 
-- Fix external sorcemap filenames when the directory name contains `.css` ([#283](https://github.com/postcss/postcss-cli/issues/283), [#286](https://github.com/postcss/postcss-cli/pull/286))
+- Fix external sourcemap filenames when the directory name contains `.css` ([#283](https://github.com/postcss/postcss-cli/issues/283), [#286](https://github.com/postcss/postcss-cli/pull/286))
 
 # 6.1.2 / 2019-02-22
 
@@ -331,4 +331,4 @@ Migration guide: https://github.com/postcss/postcss-cli/wiki/Migrating-from-v2-t
 
 # 0.1.0 / 2015-03-11
 
-- initial implementaion
+- initial implementation

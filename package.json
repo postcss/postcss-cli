@@ -39,7 +39,7 @@
     "eslint-config-problems": "7.0.1",
     "postcss": "^8.0.4",
     "postcss-import": "^15.0.0",
-    "prettier": "~2.8.0",
+    "prettier": "~3.0.0",
     "sugarss": "^4.0.0",
     "uuid": "^9.0.0"
   },

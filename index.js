@@ -50,7 +50,7 @@ async function buildCliConfig() {
               if (e.name && e.name !== 'Error') prefix += `: ${e.name}`
               return error(`Plugin Error${prefix}: ${msg}'`)
             }
-          })
+          }),
         )
       : [],
   }
@@ -88,13 +88,13 @@ buildCliConfig()
     if (input && input.length) {
       return globby(
         input.map((i) => slash(String(i))),
-        { dot: argv.includeDotfiles }
+        { dot: argv.includeDotfiles },
       )
     }
 
     if (argv.replace || argv.dir) {
       error(
-        'Input Error: Cannot use --dir or --replace when reading from stdin'
+        'Input Error: Cannot use --dir or --replace when reading from stdin',
       )
     }
 
@@ -111,7 +111,7 @@ buildCliConfig()
 
     if (i.length > 1 && !argv.dir && !argv.replace) {
       error(
-        'Input Error: Must use --dir or --replace with multiple input files'
+        'Input Error: Must use --dir or --replace with multiple input files',
       )
     }
 
@@ -146,7 +146,7 @@ buildCliConfig()
           .concat(getAncestorDirs(file).flatMap(depGraph.dependantsOf))
 
         recompile = recompile.concat(
-          dependants.filter((file) => input.includes(file))
+          dependants.filter((file) => input.includes(file)),
         )
 
         if (!recompile.length) recompile = input
@@ -171,7 +171,7 @@ function rc(ctx, path) {
     .then((rc) => {
       if (rc.options.from || rc.options.to) {
         error(
-          'Config Error: Can not set from or to options in config file, use CLI arguments instead'
+          'Config Error: Can not set from or to options in config file, use CLI arguments instead',
         )
       }
       configFile = rc.file
@@ -195,7 +195,7 @@ function files(files) {
       }
 
       return read(file).then((content) => css(content, file))
-    })
+    }),
   )
 }
 
@@ -246,7 +246,7 @@ function css(css, file) {
 
       if (!options.to && config.options.map && !config.options.map.inline) {
         error(
-          'Output Error: Cannot output external sourcemaps when writing to STDOUT'
+          'Output Error: Cannot output external sourcemaps when writing to STDOUT',
         )
       }
 
@@ -268,8 +268,8 @@ function css(css, file) {
             const prettyTime = prettyHrtime(process.hrtime(time))
             printVerbose(
               pc.green(
-                `Finished ${pc.bold(relativePath)} in ${pc.bold(prettyTime)}`
-              )
+                `Finished ${pc.bold(relativePath)} in ${pc.bold(prettyTime)}`,
+              ),
             )
 
             const messages = result.warnings()
@@ -303,7 +303,7 @@ function dependencies(results) {
 
     result.messages
       .filter((msg) =>
-        msg.type === 'dependency' || msg.type === 'dir-dependency' ? msg : ''
+        msg.type === 'dependency' || msg.type === 'dir-dependency' ? msg : '',
       )
       .map(depGraph.add)
       .forEach((dependency) => {
@@ -311,7 +311,7 @@ function dependencies(results) {
           messages.push(
             dependency.glob
               ? path.join(dependency.dir, dependency.glob)
-              : dependency.dir
+              : dependency.dir,
           )
         } else {
           messages.push(dependency.file)

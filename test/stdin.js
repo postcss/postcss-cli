@@ -21,7 +21,7 @@ test.cb('reads from stdin', (t) => {
           t.end()
         })
         .catch(t.end)
-    }
+    },
   )
 
   fs.createReadStream('test/fixtures/a.css').pipe(cp.stdin)

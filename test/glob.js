@@ -19,14 +19,14 @@ test('works with glob patterns', async (t) => {
 
   t.is(
     await read(path.join(output, 'a.css')),
-    await read('test/fixtures/glob/a.css')
+    await read('test/fixtures/glob/a.css'),
   )
   t.is(
     await read(path.join(output, 'b.css')),
-    await read('test/fixtures/glob/b.css')
+    await read('test/fixtures/glob/b.css'),
   )
   t.is(
     await read(path.join(output, 's.css')),
-    await read('test/fixtures/glob/s.css')
+    await read('test/fixtures/glob/s.css'),
   )
 })

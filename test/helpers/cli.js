@@ -13,7 +13,7 @@ export default function (args, cwd) {
           stdout,
           stderr,
         })
-      }
+      },
     )
   })
 }

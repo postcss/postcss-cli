@@ -22,7 +22,7 @@ test('--map && writing to stdout', (t) => {
     t.is(code, 1, 'expected non-zero error code')
     t.regex(
       error.toString(),
-      /Output Error: Cannot output external sourcemaps when writing to STDOUT/
+      /Output Error: Cannot output external sourcemaps when writing to STDOUT/,
     )
   })
 })
@@ -33,9 +33,9 @@ test('plugin not found', (t) => {
       t.is(code, 1, 'expected non-zero error code')
       t.regex(
         error.toString(),
-        /Plugin Error: Cannot find package 'postcss-plugin'/
+        /Plugin Error: Cannot find package 'postcss-plugin'/,
       )
-    }
+    },
   )
 })
 
@@ -58,8 +58,8 @@ test('CssSyntaxError', (t) => {
       t.is(code, 1, 'expected non-zero error code')
       t.regex(
         error.toString(),
-        /CssSyntaxError: .*a.css:1:4: Unnecessary curly bracket/
+        /CssSyntaxError: .*a.css:1:4: Unnecessary curly bracket/,
       )
-    }
+    },
   )
 })

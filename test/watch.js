@@ -52,7 +52,7 @@ testCb('--watch works', (t) => {
         // Using exec() and quoting "*.css" to test watch's glob handling:
         cp = exec(
           `node ${path.resolve('index.js')} "*.css" -o output.css --no-map -w`,
-          { cwd: dir }
+          { cwd: dir },
         )
         cp.on('error', t.end)
         cp.on('exit', (code) => {
@@ -63,7 +63,7 @@ testCb('--watch works', (t) => {
       // Helper functions:
       function isEqual(p, expected) {
         return Promise.all([read(path.join(dir, p)), read(expected)]).then(
-          ([a, e]) => t.is(a, e)
+          ([a, e]) => t.is(a, e),
         )
       }
 
@@ -116,9 +116,9 @@ testCb('--watch dependencies', (t) => {
       watcher.on('ready', () => {
         cp = exec(
           `node ${path.resolve(
-            'index.js'
+            'index.js',
           )} import.css -o output.css -u postcss-import -w --no-map`,
-          { cwd: dir }
+          { cwd: dir },
         )
 
         cp.on('error', t.end)
@@ -130,7 +130,7 @@ testCb('--watch dependencies', (t) => {
       // Helper functions:
       function isEqual(p, expected) {
         return Promise.all([read(path.join(dir, p)), read(expected)]).then(
-          ([a, e]) => t.is(a, e)
+          ([a, e]) => t.is(a, e),
         )
       }
 
@@ -168,9 +168,9 @@ testCb('--watch dependencies', (t) => {
         let killed = false
         const cp = exec(
           `node ${path.resolve(
-            'index.js'
+            'index.js',
           )} a.css -o output.css -u postcss-import -w --no-map`,
-          { cwd: dir }
+          { cwd: dir },
         )
         cp.on('error', t.end)
         cp.stderr.on('data', (chunk) => {
@@ -197,7 +197,7 @@ testCb('--watch dependencies', (t) => {
         }
       })
       .catch(t.end)
-  }
+  },
 )
 
 testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
@@ -246,7 +246,7 @@ testCb('--watch watches dependencies', (t) => {
             }
           ]
         }
-      `
+      `,
     )
       .then(() => {
         // Init watcher:
@@ -281,9 +281,9 @@ testCb('--watch watches dependencies', (t) => {
           // Using exec() and quoting "*.css" to test watch's glob handling:
           cp = exec(
             `node ${path.resolve(
-              'index.js'
+              'index.js',
             )} "s.css" -o output.css --no-map -w`,
-            { cwd: dir }
+            { cwd: dir },
           )
           cp.on('error', t.end)
           cp.on('exit', (code) => {
@@ -294,7 +294,7 @@ testCb('--watch watches dependencies', (t) => {
         // Helper functions:
         function isEqual(p, expected) {
           return Promise.all([read(path.join(dir, p)), read(expected)]).then(
-            ([a, e]) => t.is(a, e)
+            ([a, e]) => t.is(a, e),
           )
         }
 
@@ -333,13 +333,13 @@ testCb('--watch watches directory dependencies', (t) => {
                 root.nodes = []
                 root.append(fs.readFileSync('${path.resolve(
                   dir,
-                  'base/level-1/level-2/a.css'
+                  'base/level-1/level-2/a.css',
                 )}', 'utf8'))
                 return root
               }
             ]
           }
-        `
+        `,
       )
         .then(() => {
           // Init watcher:
@@ -358,8 +358,8 @@ testCb('--watch watches directory dependencies', (t) => {
                 .then((css) =>
                   fs.writeFile(
                     path.join(dir, 'base/level-1/level-2/a.css'),
-                    css
-                  )
+                    css,
+                  ),
                 )
                 .catch(done)
             }
@@ -379,9 +379,9 @@ testCb('--watch watches directory dependencies', (t) => {
             // Using exec() and quoting "*.css" to test watch's glob handling:
             cp = exec(
               `node ${path.resolve(
-                'index.js'
+                'index.js',
               )} "s.css" -o output.css --no-map -w`,
-              { cwd: dir }
+              { cwd: dir },
             )
             cp.on('error', t.end)
             cp.on('exit', (code) => {
@@ -392,7 +392,7 @@ testCb('--watch watches directory dependencies', (t) => {
           // Helper functions:
           function isEqual(p, expected) {
             return Promise.all([read(path.join(dir, p)), read(expected)]).then(
-              ([a, e]) => t.is(a, e)
+              ([a, e]) => t.is(a, e),
             )
           }
 
@@ -405,7 +405,7 @@ testCb('--watch watches directory dependencies', (t) => {
           }
         })
         .catch(t.end)
-    }
+    },
   )
 })
 
@@ -440,13 +440,13 @@ testCb(
                 root.nodes = []
                 root.append(fs.readFileSync('${path.resolve(
                   dir,
-                  'base/level-1/level-2/a.css'
+                  'base/level-1/level-2/a.css',
                 )}', 'utf8'))
                 return root
               }
             ]
           }
-        `
+        `,
       )
         .then(() => {
           // Init watcher:
@@ -471,7 +471,7 @@ testCb(
               t.is(
                 modifying,
                 'a.css',
-                `Unexpected change to ${p} after modifying ${modifying}`
+                `Unexpected change to ${p} after modifying ${modifying}`,
               )
               done()
             } else if (p === 'base/level-1/level-2/unrelated.md') {
@@ -484,9 +484,9 @@ testCb(
           watcher.on('ready', () => {
             cp = exec(
               `node ${path.resolve(
-                'index.js'
+                'index.js',
               )} "s.css" -o output.css --no-map -w`,
-              { cwd: dir }
+              { cwd: dir },
             )
             cp.on('error', t.end)
             cp.on('exit', (code) => {
@@ -498,7 +498,7 @@ testCb(
             modifying = 'unrelated.md'
             fs.writeFile(
               path.join(dir, 'base/level-1/level-2/unrelated.md'),
-              'Some modification'
+              'Some modification',
             ).catch(done)
           }
 
@@ -506,7 +506,7 @@ testCb(
             modifying = 'a.css'
             fs.writeFile(
               path.join(dir, 'base/level-1/level-2/a.css'),
-              'a { color: hotpink }'
+              'a { color: hotpink }',
             ).catch(done)
           }
 
@@ -520,5 +520,5 @@ testCb(
         })
         .catch(t.end)
     })
-  }
+  },
 )

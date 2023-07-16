@@ -9,7 +9,7 @@ import read from './helpers/read.js'
 test.cb('writes to stdout', (t) => {
   const cp = exec(
     `node ${path.resolve(
-      'index.js'
+      'index.js',
     )} --parser sugarss -u postcss-import --no-map`,
     (error, stdout, stderr) => {
       if (error) t.end(error, stderr)
@@ -20,7 +20,7 @@ test.cb('writes to stdout', (t) => {
           t.end()
         })
         .catch(t.end)
-    }
+    },
   )
 
   fs.createReadStream('./test/fixtures/a.sss').pipe(cp.stdin)

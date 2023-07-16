@@ -17,6 +17,6 @@ test('--version', async (t) => {
 
   t.truthy(
     version.stdout.length > 5,
-    'expected --version to output version info'
+    'expected --version to output version info',
   )
 })

@@ -1,3 +1,8 @@
+# 11.0.0 / 2023-12-05
+
+- **BREAKING:** Require Node.js v18+ ([#464](https://github.com/postcss/postcss-cli/pull/464))
+- Upgrade to [`postcss-load-config@5`](https://github.com/postcss/postcss-load-config/blob/main/CHANGELOG.md#50-2023-11-20) for improved ESM & TS config support ([#461](https://github.com/postcss/postcss-cli/issues/461), [#462](https://github.com/postcss/postcss-cli/pull/462))
+
 # 10.1.0 / 2022-11-29
 
 - Allow running `--watch` mode in non-TTY contexts, like Docker ([#448](https://github.com/postcss/postcss-cli/pull/448))

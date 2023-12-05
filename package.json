@@ -22,7 +22,7 @@
     "dependency-graph": "^0.11.0",
     "fs-extra": "^11.0.0",
     "get-stdin": "^9.0.0",
-    "globby": "^13.0.0",
+    "globby": "^14.0.0",
     "picocolors": "^1.0.0",
     "postcss-load-config": "^4.0.0",
     "postcss-reporter": "^7.0.0",

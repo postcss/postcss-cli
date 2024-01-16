@@ -63,3 +63,17 @@ test('CssSyntaxError', (t) => {
     },
   )
 })
+
+test('fails on invalid explicit config', async (t) => {
+  const output = tmp('output-ignore.css')
+
+  const { stderr, code } = await cli([
+    'test/fixtures/a.css',
+    '-o',
+    output,
+    '--config',
+    '/foo/bar',
+  ])
+  t.is(code, 1, 'expected non-zero error code')
+  t.regex(stderr, /No PostCSS Config found/)
+})

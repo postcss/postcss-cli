@@ -178,6 +178,7 @@ function rc(ctx, path, cliConfigPath) {
       return rc
     })
     .catch((err) => {
+      // if a config path is passed explicitly in CLI do not ignore the error
       if (!err.message.includes('No PostCSS Config found') || cliConfigPath) throw err
     })
 }

@@ -164,7 +164,7 @@ buildCliConfig()
     process.exit(1)
   })
 
-function rc(ctx, path) {
+function rc(ctx, path, cliConfigPath) {
   if (argv.use) return Promise.resolve(cliConfig)
 
   return postcssrc(ctx, path)
@@ -178,7 +178,8 @@ function rc(ctx, path) {
       return rc
     })
     .catch((err) => {
-      if (!err.message.includes('No PostCSS Config found')) throw err
+      // if a config path is passed explicitly in CLI do not ignore the error
+      if (!err.message.includes('No PostCSS Config found') || cliConfigPath) throw err
     })
 }
 
@@ -202,6 +203,8 @@ function files(files) {
 function css(css, file) {
   const ctx = { options: cliConfig.options }
 
+  const origArgvConfig = argv.config
+
   if (file !== 'stdin') {
     ctx.file = {
       dirname: path.dirname(file),
@@ -221,7 +224,7 @@ function css(css, file) {
 
   printVerbose(pc.cyan(`Processing ${pc.bold(relativePath)}...`))
 
-  return rc(ctx, argv.config)
+  return rc(ctx, argv.config, origArgvConfig)
     .then((config) => {
       config = config || cliConfig
       const options = { ...config.options }

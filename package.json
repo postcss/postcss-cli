@@ -24,7 +24,7 @@
     "get-stdin": "^9.0.0",
     "globby": "^14.0.0",
     "picocolors": "^1.0.0",
-    "postcss-load-config": "^5.0.0",
+    "postcss-load-config": "^6.0.0",
     "postcss-reporter": "^7.0.0",
     "pretty-hrtime": "^1.0.3",
     "read-cache": "^1.0.0",

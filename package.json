@@ -18,7 +18,7 @@
     "test": "c8 ava -v"
   },
   "dependencies": {
-    "chokidar": "^3.3.0",
+    "chokidar": "^4.0.0",
     "dependency-graph": "^1.0.0",
     "fs-extra": "^11.0.0",
     "get-stdin": "^9.0.0",

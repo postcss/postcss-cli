@@ -1,3 +1,7 @@
+# 11.0.1 / 2025-03-12
+
+- Update and minimize dependencies
+
 # 11.0.0 / 2023-12-05
 
 - **BREAKING:** Require Node.js v18+ ([#464](https://github.com/postcss/postcss-cli/pull/464))

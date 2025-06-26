@@ -18,3 +18,20 @@ test('works with defaults', async (t) => {
 
   t.is(await read(output), await read('test/fixtures/a.css'))
 })
+
+test('fails on invalid explicit config', async (t) => {
+  const output = tmp('output-ignore.css')
+
+  const { error, stderr } = await cli([
+    'test/fixtures/a.css',
+    '-o',
+    output,
+    '--config',
+    '/foo/bar',
+  ])
+
+  t.regex(
+      stderr,
+      /No PostCSS Config found/,
+  )
+})

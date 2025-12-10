@@ -8,7 +8,6 @@ import { text } from 'stream/consumers'
 import read from 'read-cache'
 import pc from 'picocolors'
 import { glob } from 'tinyglobby'
-import slash from 'slash'
 import chokidar from 'chokidar'
 
 import postcss from 'postcss'
@@ -351,4 +350,11 @@ function getAncestorDirs(fileOrDir) {
   }
   const parentDir = path.dirname(fileOrDir)
   return [parentDir, ...getAncestorDirs(parentDir)]
+}
+
+// From https://github.com/sindresorhus/slash with some improvement
+function slash(filepath) {
+  return filepath.startsWith('\\\\?\\') || filepath.indexOf('\\') === -1
+    ? filepath
+    : filepath.replace(/\\/g, '/')
 }

@@ -309,7 +309,12 @@ function dependencies(results) {
       .forEach((dependency) => {
         if (dependency.type === 'dir-dependency') {
           if (dependency.glob) {
-            messages.push(...globSync(path.join(dependency.dir, dependency.glob), { dot: argv.includeDotfiles }))
+            messages.push(
+              ...globSync(path.join(dependency.dir, dependency.glob), {
+                dot: argv.includeDotfiles,
+                absolute: true,
+              }),
+            )
           } else {
             messages.push(dependency.dir)
           }

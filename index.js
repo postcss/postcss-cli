@@ -7,7 +7,7 @@ import prettyHrtime from 'pretty-hrtime'
 import { text } from 'stream/consumers'
 import read from 'read-cache'
 import pc from 'picocolors'
-import { glob } from 'tinyglobby'
+import { glob, globSync } from 'tinyglobby'
 import slash from 'slash'
 import chokidar from 'chokidar'
 
@@ -308,11 +308,11 @@ function dependencies(results) {
       .map(depGraph.add)
       .forEach((dependency) => {
         if (dependency.type === 'dir-dependency') {
-          messages.push(
-            dependency.glob
-              ? path.join(dependency.dir, dependency.glob)
-              : dependency.dir,
-          )
+          if (dependency.glob) {
+            messages.push(...globSync(path.join(dependency.dir, dependency.glob), { dot: argv.includeDotfiles }))
+          } else {
+            messages.push(dependency.dir)
+          }
         } else {
           messages.push(dependency.file)
         }

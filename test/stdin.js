@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import fs from 'fs-extra'
+import { createReadStream } from 'node:fs'
 import path from 'path'
 import { exec } from 'child_process'
 
@@ -24,5 +24,5 @@ test.cb('reads from stdin', (t) => {
     },
   )
 
-  fs.createReadStream('test/fixtures/a.css').pipe(cp.stdin)
+  createReadStream('test/fixtures/a.css').pipe(cp.stdin)
 })

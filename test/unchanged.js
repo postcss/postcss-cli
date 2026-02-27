@@ -1,4 +1,4 @@
-import fs from 'fs-extra'
+import fs from 'node:fs/promises'
 import test from 'ava'
 
 import cli from './helpers/cli.js'

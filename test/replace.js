@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import fs from 'fs-extra'
+import fs from 'node:fs/promises'
 import path from 'path'
 
 import cli from './helpers/cli.js'
@@ -12,9 +12,10 @@ test('--replace works', async (t) => {
 
   const output = path.join(dir, 'output.css')
 
+  await fs.mkdir(dir, { recursive: true })
   await Promise.all([
-    fs.copy('test/fixtures/import.css', output),
-    fs.copy('test/fixtures/a.css', path.join(dir, 'a.css')),
+    fs.copyFile('test/fixtures/import.css', output),
+    fs.copyFile('test/fixtures/a.css', path.join(dir, 'a.css')),
   ])
 
   const { error, stderr } = await cli([

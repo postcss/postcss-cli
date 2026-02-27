@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import fs from 'fs-extra'
+import fs from 'node:fs/promises'
 import path from 'path'
 
 import prettyHrtime from 'pretty-hrtime'
@@ -286,10 +286,14 @@ function css(css, file) {
     })
 
   async function outputFile(file, string) {
-    const fileExists = await fs.pathExists(file)
+    const fileExists = await fs.access(file).then(
+      () => true,
+      () => false,
+    )
     const currentValue = fileExists ? await fs.readFile(file, 'utf8') : null
     if (currentValue === string) return
-    return fs.outputFile(file, string)
+    await fs.mkdir(path.dirname(file), { recursive: true })
+    return fs.writeFile(file, string)
   }
 }
 

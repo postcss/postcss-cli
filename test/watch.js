@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import fs from 'fs-extra'
+import fs from 'node:fs/promises'
 import path from 'path'
 import { exec, spawn } from 'child_process'
 import chokidar from 'chokidar'

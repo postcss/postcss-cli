@@ -1,6 +1,6 @@
 import test from 'ava'
 
-import fs from 'fs-extra'
+import fs from 'node:fs/promises'
 import path from 'path'
 
 import cli from './helpers/cli.js'
@@ -20,7 +20,12 @@ test('--ext works', async (t) => {
   ])
   t.falsy(error, stderr)
 
-  t.truthy(await fs.pathExists(path.join(dir, 'a.css')))
+  t.truthy(
+    await fs.access(path.join(dir, 'a.css')).then(
+      () => true,
+      () => false,
+    ),
+  )
 })
 
 test('--ext works with no leading dot', async (t) => {
@@ -37,5 +42,10 @@ test('--ext works with no leading dot', async (t) => {
   ])
   t.falsy(error, stderr)
 
-  t.truthy(await fs.pathExists(path.join(dir, 'a.css')))
+  t.truthy(
+    await fs.access(path.join(dir, 'a.css')).then(
+      () => true,
+      () => false,
+    ),
+  )
 })

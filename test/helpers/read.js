@@ -1,4 +1,4 @@
-import fs from 'fs-extra'
+import fs from 'node:fs/promises'
 
 export default function (path) {
   return fs.readFile(path, 'utf8').then(

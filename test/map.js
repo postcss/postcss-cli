@@ -1,5 +1,5 @@
 import test from 'ava'
-import fs from 'fs-extra'
+import fs from 'node:fs/promises'
 
 import cli from './helpers/cli.js'
 import tmp from './helpers/tmp.js'
@@ -35,7 +35,12 @@ test('--map generates external sourcemaps', async (t) => {
 
   t.falsy(error, stderr)
 
-  t.truthy(await fs.pathExists(output.replace('.css', '.css.map')))
+  t.truthy(
+    await fs.access(output.replace('.css', '.css.map')).then(
+      () => true,
+      () => false,
+    ),
+  )
 })
 
 test('--no-map disables internal sourcemaps', async (t) => {

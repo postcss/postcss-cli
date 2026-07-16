@@ -15,7 +15,7 @@ jobs:
     - run: git config --global core.autocrlf input
     - uses: actions/checkout@v6
     - name: Use Node.js ${{ matrix.node }}
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version: ${{ matrix.node }}
     - run: npm install

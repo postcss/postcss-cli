@@ -300,30 +300,24 @@ function css(css, file) {
 function dependencies(results) {
   if (!Array.isArray(results)) results = [results]
 
-  const messages = []
+  return results.flatMap((result) => {
+    if (result.messages.length <= 0) return []
 
-  results.forEach((result) => {
-    if (result.messages <= 0) return
-
-    result.messages
-      .filter((msg) =>
-        msg.type === 'dependency' || msg.type === 'dir-dependency' ? msg : '',
+    return result.messages
+      .filter(
+        (msg) => msg.type === 'dependency' || msg.type === 'dir-dependency',
       )
       .map(depGraph.add)
-      .forEach((dependency) => {
+      .map((dependency) => {
         if (dependency.type === 'dir-dependency') {
-          messages.push(
-            dependency.glob
-              ? path.join(dependency.dir, dependency.glob)
-              : dependency.dir,
-          )
-        } else {
-          messages.push(dependency.file)
+          return dependency.glob
+            ? path.join(dependency.dir, dependency.glob)
+            : dependency.dir
         }
+
+        return dependency.file
       })
   })
-
-  return messages
 }
 
 function printVerbose(message) {

@@ -278,7 +278,6 @@ testCb('--watch watches dependencies', (t) => {
 
         // Start postcss-cli:
         watcher.on('ready', () => {
-          // Using exec() and quoting "*.css" to test watch's glob handling:
           cp = exec(
             `node ${path.resolve(
               'index.js',
@@ -376,7 +375,6 @@ testCb('--watch watches directory dependencies', (t) => {
 
           // Start postcss-cli:
           watcher.on('ready', () => {
-            // Using exec() and quoting "*.css" to test watch's glob handling:
             cp = exec(
               `node ${path.resolve(
                 'index.js',

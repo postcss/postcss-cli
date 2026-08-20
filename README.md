@@ -1,8 +1,6 @@
 [![npm][npm]][npm-url]
 [![node][node]][node-url]
 [![tests][tests]][tests-url]
-[![cover][cover]][cover-url]
-[![chat][chat]][chat-url]
 
 <div align="center">
   <img width="100" height="100" title="CLI" src="https://raw.githubusercontent.com/postcss/postcss-cli/HEAD/logo.svg">
@@ -79,7 +77,7 @@ respecting the glob pattern.
 
 > ℹ️ More details on custom parsers, stringifiers and syntaxes, can be found [here](https://github.com/postcss/postcss#syntaxes).
 
-### [Config](https://github.com/michael-ciniawsky/postcss-load-config)
+### [Config](https://github.com/postcss/postcss-load-config)
 
 If you need to pass options to your plugins, or have a long plugin chain, you'll want to use a configuration file.
 
@@ -145,7 +143,3 @@ module.exports = (ctx) => ({
 [node-url]: https://nodejs.org/
 [tests]: https://img.shields.io/github/workflow/status/postcss/postcss-cli/Node.js%20CI/master
 [tests-url]: https://github.com/postcss/postcss-cli/actions?query=branch%3Amaster
-[cover]: https://img.shields.io/coveralls/postcss/postcss-cli/master.svg
-[cover-url]: https://coveralls.io/github/postcss/postcss-cli
-[chat]: https://img.shields.io/gitter/room/postcss/postcss.svg
-[chat-url]: https://gitter.im/postcss/postcss

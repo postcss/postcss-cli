@@ -2,7 +2,7 @@ import test from 'ava'
 
 import fs from 'node:fs/promises'
 import path from 'path'
-import { exec, spawn } from 'child_process'
+import { spawn } from 'child_process'
 import chokidar from 'chokidar'
 
 import ENV from './helpers/env.js'
@@ -49,9 +49,17 @@ testCb('--watch works', (t) => {
 
       // Start postcss-cli:
       watcher.on('ready', () => {
-        // Using exec() and quoting "*.css" to test watch's glob handling:
-        cp = exec(
-          `node ${path.resolve('index.js')} "*.css" -o output.css --no-map -w`,
+        cp = spawn(
+          'node',
+          [
+            path.resolve('index.js'),
+            // '*.css' arrives as a single literal arg to test watch's glob handling
+            '*.css',
+            '-o',
+            'output.css',
+            '--no-map',
+            '-w',
+          ],
           { cwd: dir },
         )
         cp.on('error', t.end)
@@ -114,10 +122,18 @@ testCb('--watch dependencies', (t) => {
 
       // Start postcss-cli:
       watcher.on('ready', () => {
-        cp = exec(
-          `node ${path.resolve(
-            'index.js',
-          )} import.css -o output.css -u postcss-import -w --no-map`,
+        cp = spawn(
+          'node',
+          [
+            path.resolve('index.js'),
+            'import.css',
+            '-o',
+            'output.css',
+            '-u',
+            'postcss-import',
+            '-w',
+            '--no-map',
+          ],
           { cwd: dir },
         )
 
@@ -144,72 +160,85 @@ testCb('--watch dependencies', (t) => {
     .catch(t.end)
 })
 
-// Doesn't work on CI for some reason
-;(process.env.CI ? test.cb.skip : test.cb)(
-  "--watch doesn't exit on CssSyntaxError",
-  (t) => {
-    t.plan(0)
+testCb("--watch doesn't exit on CssSyntaxError", (t) => {
+  t.plan(0)
 
-    ENV('', ['a.css'])
-      .then((dir) => {
-        // Init watcher:
-        const watcher = chokidar.watch('.', {
-          cwd: dir,
-          ignoreInitial: true,
-          awaitWriteFinish: true,
-        })
-        watcher.on('add', (p) => {
-          if (p === 'output.css') {
-            // Change to invalid CSS
-            fs.writeFile(path.join(dir, 'a.css'), '.a { color: red').catch(done)
-          }
-        })
-
-        let killed = false
-        const cp = exec(
-          `node ${path.resolve(
-            'index.js',
-          )} a.css -o output.css -u postcss-import -w --no-map`,
-          { cwd: dir },
-        )
-        cp.on('error', t.end)
-        cp.stderr.on('data', (chunk) => {
-          // When error message is printed, kill the process after a timeout
-          if (~chunk.indexOf('Unclosed block')) {
-            setTimeout(() => {
-              killed = true
-              cp.kill()
-            }, 1000)
-          }
-        })
-        cp.on('exit', (code) => {
-          if (!killed)
-            return t.end(`Should not exit (exited with code ${code})`)
-          done()
-        })
-
-        function done(err) {
-          try {
-            cp.kill()
-          } catch {}
-
-          t.end(err)
+  ENV('', ['a.css'])
+    .then((dir) => {
+      // Init watcher:
+      const watcher = chokidar.watch('.', {
+        cwd: dir,
+        ignoreInitial: true,
+        awaitWriteFinish: true,
+      })
+      watcher.on('add', (p) => {
+        if (p === 'output.css') {
+          // Change to invalid CSS
+          fs.writeFile(path.join(dir, 'a.css'), '.a { color: red').catch(done)
         }
       })
-      .catch(t.end)
-  },
-)
+
+      let killed = false
+      const cp = spawn(
+        'node',
+        [
+          path.resolve('index.js'),
+          'a.css',
+          '-o',
+          'output.css',
+          '-u',
+          'postcss-import',
+          '-w',
+          '--no-map',
+        ],
+        { cwd: dir },
+      )
+      cp.on('error', t.end)
+      cp.stderr.on('data', (chunk) => {
+        // When error message is printed, kill the process after a timeout
+        if (~chunk.indexOf('Unclosed block')) {
+          setTimeout(() => {
+            killed = true
+            cp.kill()
+          }, 1000)
+        }
+      })
+      cp.on('exit', (code) => {
+        if (!killed) return t.end(`Should not exit (exited with code ${code})`)
+        done()
+      })
+
+      function done(err) {
+        try {
+          cp.kill()
+        } catch {}
+
+        t.end(err)
+      }
+    })
+    .catch(t.end)
+})
 
 testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
   t.plan(1)
 
-  const cp = spawn(`./index.js test/fixtures/a.css -o ${tmp()} -w --no-map`, {
-    shell: true,
-    env: {
-      ...process.env,
-      FORCE_IS_TTY: true,
+  const cp = spawn(
+    'node',
+    [
+      path.resolve('index.js'),
+      'test/fixtures/a.css',
+      '-o',
+      tmp(),
+      '-w',
+      '--no-map',
+    ],
+    {
+      env: {
+        ...process.env,
+        FORCE_IS_TTY: true,
+      },
     },
-  })
+  )
 
   cp.on('error', t.end)
   cp.on('exit', (code) => {
@@ -278,10 +307,16 @@ testCb('--watch watches dependencies', (t) => {
 
         // Start postcss-cli:
         watcher.on('ready', () => {
-          cp = exec(
-            `node ${path.resolve(
-              'index.js',
-            )} "s.css" -o output.css --no-map -w`,
+          cp = spawn(
+            'node',
+            [
+              path.resolve('index.js'),
+              's.css',
+              '-o',
+              'output.css',
+              '--no-map',
+              '-w',
+            ],
             { cwd: dir },
           )
           cp.on('error', t.end)
@@ -375,10 +410,16 @@ testCb('--watch watches directory dependencies', (t) => {
 
           // Start postcss-cli:
           watcher.on('ready', () => {
-            cp = exec(
-              `node ${path.resolve(
-                'index.js',
-              )} "s.css" -o output.css --no-map -w`,
+            cp = spawn(
+              'node',
+              [
+                path.resolve('index.js'),
+                's.css',
+                '-o',
+                'output.css',
+                '--no-map',
+                '-w',
+              ],
               { cwd: dir },
             )
             cp.on('error', t.end)
@@ -480,10 +521,16 @@ testCb(
 
           // Start postcss-cli:
           watcher.on('ready', () => {
-            cp = exec(
-              `node ${path.resolve(
-                'index.js',
-              )} "s.css" -o output.css --no-map -w`,
+            cp = spawn(
+              'node',
+              [
+                path.resolve('index.js'),
+                's.css',
+                '-o',
+                'output.css',
+                '--no-map',
+                '-w',
+              ],
               { cwd: dir },
             )
             cp.on('error', t.end)

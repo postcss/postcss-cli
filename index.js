@@ -45,10 +45,10 @@ async function buildCliConfig() {
             try {
               return (await import(plugin)).default()
             } catch (e) {
-              const msg = e.message || `Cannot find module '${plugin}'`
+              const msg = e.message || `Unknown error in '${plugin}'`
               let prefix = msg.includes(plugin) ? '' : ` (${plugin})`
               if (e.name && e.name !== 'Error') prefix += `: ${e.name}`
-              return error(`Plugin Error${prefix}: ${msg}'`)
+              error(`Plugin Error${prefix}: ${msg}`)
             }
           }),
         )
@@ -85,8 +85,6 @@ buildCliConfig()
   .then(() => {
     if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
       error('Cannot write to stdout in watch mode')
-      // Need to explicitly exit here, since error() doesn't exit in watch mode
-      process.exit(1)
     }
 
     if (input && input.length) {
@@ -158,15 +156,14 @@ buildCliConfig()
         return files([...new Set(recompile)])
           .then((results) => watcher.add(dependencies(results)))
           .then(printMessage)
-          .catch(error)
+          .catch((err) => {
+            // Watch mode shouldn't exit on file processing error
+            error(err, argv.watch)
+          })
       })
     }
   })
-  .catch((err) => {
-    error(err)
-
-    process.exit(1)
-  })
+  .catch(error)
 
 function rc(ctx, path) {
   if (argv.use) return Promise.resolve(cliConfig)
@@ -331,7 +328,7 @@ function printVerbose(message) {
   if (argv.verbose) console.warn(message)
 }
 
-function error(err) {
+function error(err, dontExit) {
   // Seperate error from logging output
   if (argv.verbose) console.error()
 
@@ -342,8 +339,7 @@ function error(err) {
   } else {
     console.error(err)
   }
-  // Watch mode shouldn't exit on error
-  if (argv.watch) return
+  if (dontExit) return
   process.exit(1)
 }
 

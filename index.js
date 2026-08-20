@@ -349,11 +349,15 @@ function error(err) {
 
 // Input: '/imports/components/button.css'
 // Output: ['/imports/components', '/imports', '/']
-function getAncestorDirs(fileOrDir) {
-  const { root } = path.parse(fileOrDir)
-  if (fileOrDir === root) {
-    return []
+function getAncestorDirs(file) {
+  const { root } = path.parse(file)
+  const ancestors = []
+  let current = file
+
+  while (current !== root) {
+    current = path.dirname(current)
+    ancestors.push(current)
   }
-  const parentDir = path.dirname(fileOrDir)
-  return [parentDir, ...getAncestorDirs(parentDir)]
+
+  return ancestors
 }

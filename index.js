@@ -48,7 +48,7 @@ async function buildCliConfig() {
               const msg = e.message || `Unknown error in '${plugin}'`
               let prefix = msg.includes(plugin) ? '' : ` (${plugin})`
               if (e.name && e.name !== 'Error') prefix += `: ${e.name}`
-              error(`Plugin Error${prefix}: ${msg}'`)
+              error(`Plugin Error${prefix}: ${msg}`)
             }
           }),
         )

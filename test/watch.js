@@ -227,13 +227,23 @@ testCb('--watch dependencies', (t) => {
 testCb('--watch does exit on closing stdin (Ctrl-D/EOF)', (t) => {
   t.plan(1)
 
-  const cp = spawn(`./index.js test/fixtures/a.css -o ${tmp()} -w --no-map`, {
-    shell: true,
-    env: {
-      ...process.env,
-      FORCE_IS_TTY: true,
+  const cp = spawn(
+    'node',
+    [
+      path.resolve('index.js'),
+      'test/fixtures/a.css',
+      '-o',
+      tmp(),
+      '-w',
+      '--no-map',
+    ],
+    {
+      env: {
+        ...process.env,
+        FORCE_IS_TTY: true,
+      },
     },
-  })
+  )
 
   cp.on('error', t.end)
   cp.on('exit', (code) => {

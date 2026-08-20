@@ -57,9 +57,13 @@ async function buildCliConfig() {
 }
 
 let configFile
+let argvConfigSet = false
 
 if (argv.env) process.env.NODE_ENV = argv.env
-if (argv.config) argv.config = path.resolve(argv.config)
+if (argv.config) {
+  argvConfigSet = true
+  argv.config = path.resolve(argv.config)
+}
 
 let { isTTY } = process.stdin
 
@@ -178,7 +182,10 @@ function rc(ctx, path) {
       return rc
     })
     .catch((err) => {
-      if (!err.message.includes('No PostCSS Config found')) throw err
+      // if a config path is passed explicitly in CLI do not ignore the error
+      if (!err.message.includes('No PostCSS Config found') || argvConfigSet) {
+        throw err
+      }
     })
 }
 

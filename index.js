@@ -27,35 +27,6 @@ const { dir, output } = argv
 
 if (argv.map) argv.map = { inline: false }
 
-let cliConfig
-
-async function buildCliConfig() {
-  cliConfig = {
-    options: {
-      map: argv.map !== undefined ? argv.map : { inline: true },
-      parser: argv.parser ? await import(argv.parser) : undefined,
-      syntax: argv.syntax ? await import(argv.syntax) : undefined,
-      stringifier: argv.stringifier
-        ? await import(argv.stringifier)
-        : undefined,
-    },
-    plugins: argv.use
-      ? await Promise.all(
-          argv.use.map(async (plugin) => {
-            try {
-              return (await import(plugin)).default()
-            } catch (e) {
-              const msg = e.message || `Unknown error in '${plugin}'`
-              let prefix = msg.includes(plugin) ? '' : ` (${plugin})`
-              if (e.name && e.name !== 'Error') prefix += `: ${e.name}`
-              error(`Plugin Error${prefix}: ${msg}`)
-            }
-          }),
-        )
-      : [],
-  }
-}
-
 let configFile
 let argvConfigSet = false
 
@@ -81,89 +52,103 @@ if (parseInt(postcss().version) < 8) {
   error('Please install PostCSS 8 or above')
 }
 
-buildCliConfig()
-  .then(() => {
-    if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
-      error('Cannot write to stdout in watch mode')
-    }
-
-    if (input && input.length) {
-      return glob(
-        input.map((i) => slash(String(i))),
-        { dot: argv.includeDotfiles },
+const cliConfig = {
+  options: {
+    map: argv.map !== undefined ? argv.map : { inline: true },
+    parser: argv.parser ? await import(argv.parser) : undefined,
+    syntax: argv.syntax ? await import(argv.syntax) : undefined,
+    stringifier: argv.stringifier ? await import(argv.stringifier) : undefined,
+  },
+  plugins: argv.use
+    ? await Promise.all(
+        argv.use.map(async (plugin) => {
+          try {
+            return (await import(plugin)).default()
+          } catch (e) {
+            const msg = e.message || `Unknown error in '${plugin}'`
+            let prefix = msg.includes(plugin) ? '' : ` (${plugin})`
+            if (e.name && e.name !== 'Error') prefix += `: ${e.name}`
+            error(`Plugin Error${prefix}: ${msg}`)
+          }
+        }),
       )
-    }
+    : [],
+}
 
-    if (argv.replace || argv.dir) {
-      error(
-        'Input Error: Cannot use --dir or --replace when reading from stdin',
+if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
+  error('Cannot write to stdout in watch mode')
+}
+
+if (input && input.length) {
+  input = await glob(
+    input.map((i) => slash(String(i))),
+    { dot: argv.includeDotfiles },
+  )
+  if (!input.length) {
+    error('Input Error: You must pass a valid list of files to parse')
+  }
+
+  if (input.length > 1 && !argv.dir && !argv.replace) {
+    error('Input Error: Must use --dir or --replace with multiple input files')
+  }
+
+  input = input.map((i) => path.resolve(i))
+} else {
+  if (argv.replace || argv.dir) {
+    error('Input Error: Cannot use --dir or --replace when reading from stdin')
+  }
+
+  if (argv.watch) {
+    error('Input Error: Cannot run in watch mode when reading from stdin')
+  }
+
+  input = ['stdin']
+}
+
+try {
+  const results = await files(input)
+
+  if (argv.watch) {
+    const printMessage = () =>
+      printVerbose(pc.dim('\nWaiting for file changes...'))
+    const watcher = chokidar.watch(input.concat(dependencies(results)), {
+      usePolling: argv.poll,
+      interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
+      awaitWriteFinish: {
+        stabilityThreshold: 50,
+        pollInterval: 10,
+      },
+    })
+
+    if (configFile) watcher.add(configFile)
+
+    watcher.on('ready', printMessage).on('change', (file) => {
+      let recompile = []
+
+      if (input.includes(file)) recompile.push(file)
+
+      const dependants = depGraph
+        .dependantsOf(file)
+        .concat(getAncestorDirs(file).flatMap(depGraph.dependantsOf))
+
+      recompile = recompile.concat(
+        dependants.filter((file) => input.includes(file)),
       )
-    }
 
-    if (argv.watch) {
-      error('Input Error: Cannot run in watch mode when reading from stdin')
-    }
+      if (!recompile.length) recompile = input
 
-    return ['stdin']
-  })
-  .then((i) => {
-    if (!i || !i.length) {
-      error('Input Error: You must pass a valid list of files to parse')
-    }
-
-    if (i.length > 1 && !argv.dir && !argv.replace) {
-      error(
-        'Input Error: Must use --dir or --replace with multiple input files',
-      )
-    }
-
-    if (i[0] !== 'stdin') i = i.map((i) => path.resolve(i))
-
-    input = i
-
-    return files(input)
-  })
-  .then((results) => {
-    if (argv.watch) {
-      const printMessage = () =>
-        printVerbose(pc.dim('\nWaiting for file changes...'))
-      const watcher = chokidar.watch(input.concat(dependencies(results)), {
-        usePolling: argv.poll,
-        interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
-        awaitWriteFinish: {
-          stabilityThreshold: 50,
-          pollInterval: 10,
-        },
-      })
-
-      if (configFile) watcher.add(configFile)
-
-      watcher.on('ready', printMessage).on('change', (file) => {
-        let recompile = []
-
-        if (input.includes(file)) recompile.push(file)
-
-        const dependants = depGraph
-          .dependantsOf(file)
-          .concat(getAncestorDirs(file).flatMap(depGraph.dependantsOf))
-
-        recompile = recompile.concat(
-          dependants.filter((file) => input.includes(file)),
-        )
-
-        if (!recompile.length) recompile = input
-
-        return files([...new Set(recompile)])
-          .then((results) => watcher.add(dependencies(results)))
-          .then(printMessage)
-          .catch((err) => {
-            // Watch mode shouldn't exit on file processing error
-            error(err, argv.watch)
-          })
-      })
-    }
-  })
-  .catch(error)
+      return files([...new Set(recompile)])
+        .then((results) => watcher.add(dependencies(results)))
+        .then(printMessage)
+        .catch((err) => {
+          // Watch mode shouldn't exit on file processing error
+          error(err, argv.watch)
+        })
+    })
+  }
+} catch (err) {
+  error(err)
+}
 
 function rc(ctx, path) {
   if (argv.use) return Promise.resolve(cliConfig)

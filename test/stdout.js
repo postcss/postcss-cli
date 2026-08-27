@@ -6,22 +6,27 @@ import { exec } from 'node:child_process'
 
 import read from './helpers/read.js'
 
-test.cb('writes to stdout', (t) => {
-  const cp = exec(
-    `node ${path.resolve(
-      'index.js',
-    )} --parser sugarss -u postcss-import --no-map`,
-    (error, stdout, stderr) => {
-      if (error) t.end(error, stderr)
+test('writes to stdout', (t) => {
+  return new Promise((resolve, reject) => {
+    const cp = exec(
+      `node ${path.resolve(
+        'index.js',
+      )} --parser sugarss -u postcss-import --no-map`,
+      (error, stdout) => {
+        if (error) return reject(error)
 
-      Promise.all([stdout.replace(/\r\n/g, '\n'), read('test/fixtures/s.css')])
-        .then(([a, e]) => {
-          t.is(a, e)
-          t.end()
-        })
-        .catch(t.end)
-    },
-  )
+        Promise.all([
+          stdout.replace(/\r\n/g, '\n'),
+          read('test/fixtures/s.css'),
+        ])
+          .then(([a, e]) => {
+            t.is(a, e)
+            resolve()
+          })
+          .catch(reject)
+      },
+    )
 
-  createReadStream('./test/fixtures/a.sss').pipe(cp.stdin)
+    createReadStream('./test/fixtures/a.sss').pipe(cp.stdin)
+  })
 })

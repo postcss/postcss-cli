@@ -172,8 +172,6 @@ function rc(ctx, path) {
 }
 
 function files(files) {
-  if (typeof files === 'string') files = [files]
-
   return Promise.all(
     files.map((file) => {
       if (file === 'stdin') {
@@ -269,9 +267,6 @@ function css(css, file) {
             return result
           })
         })
-    })
-    .catch((err) => {
-      throw err
     })
 }
 

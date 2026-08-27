@@ -186,7 +186,7 @@ function files(files) {
   )
 }
 
-function css(css, file) {
+async function css(css, file) {
   const ctx = { options: cliConfig.options }
 
   if (file !== 'stdin') {
@@ -208,66 +208,57 @@ function css(css, file) {
 
   printVerbose(pc.cyan(`Processing ${pc.bold(relativePath)}...`))
 
-  return rc(ctx, argv.config)
-    .then((config) => {
-      config = config || cliConfig
-      const options = { ...config.options }
+  const config = (await rc(ctx, argv.config)) || cliConfig
+  const options = { ...config.options }
 
-      if (file === 'stdin' && output) file = output
+  if (file === 'stdin' && output) file = output
 
-      // TODO: Unit test this
-      options.from = file === 'stdin' ? path.join(process.cwd(), 'stdin') : file
+  // TODO: Unit test this
+  options.from = file === 'stdin' ? path.join(process.cwd(), 'stdin') : file
 
-      if (output || dir || argv.replace) {
-        const base = argv.base
-          ? file.replace(path.resolve(argv.base), '')
-          : path.basename(file)
-        options.to = output || (argv.replace ? file : path.join(dir, base))
+  if (output || dir || argv.replace) {
+    const base = argv.base
+      ? file.replace(path.resolve(argv.base), '')
+      : path.basename(file)
+    options.to = output || (argv.replace ? file : path.join(dir, base))
 
-        if (argv.ext) {
-          options.to = options.to.replace(path.extname(options.to), argv.ext)
-        }
+    if (argv.ext) {
+      options.to = options.to.replace(path.extname(options.to), argv.ext)
+    }
 
-        options.to = path.resolve(options.to)
-      }
+    options.to = path.resolve(options.to)
+  }
 
-      if (!options.to && config.options.map && !config.options.map.inline) {
-        error(
-          'Output Error: Cannot output external sourcemaps when writing to STDOUT',
-        )
-      }
+  if (!options.to && config.options.map && !config.options.map.inline) {
+    error(
+      'Output Error: Cannot output external sourcemaps when writing to STDOUT',
+    )
+  }
 
-      return postcss(config.plugins)
-        .process(css, options)
-        .then((result) => {
-          const tasks = []
+  const result = await postcss(config.plugins).process(css, options)
+  const tasks = []
 
-          if (options.to) {
-            tasks.push(outputFile(options.to, result.css))
+  if (options.to) {
+    tasks.push(outputFile(options.to, result.css))
 
-            if (result.map) {
-              const mapfile = getMapfile(options)
-              tasks.push(outputFile(mapfile, result.map.toString()))
-            }
-          } else process.stdout.write(result.css, 'utf8')
+    if (result.map) {
+      const mapfile = getMapfile(options)
+      tasks.push(outputFile(mapfile, result.map.toString()))
+    }
+  } else process.stdout.write(result.css, 'utf8')
 
-          return Promise.all(tasks).then(() => {
-            const prettyTime = prettyHrtime(process.hrtime(time))
-            printVerbose(
-              pc.green(
-                `Finished ${pc.bold(relativePath)} in ${pc.bold(prettyTime)}`,
-              ),
-            )
+  await Promise.all(tasks)
+  const prettyTime = prettyHrtime(process.hrtime(time))
+  printVerbose(
+    pc.green(`Finished ${pc.bold(relativePath)} in ${pc.bold(prettyTime)}`),
+  )
 
-            const messages = result.warnings()
-            if (messages.length) {
-              console.warn(reporter({ ...result, messages }))
-            }
+  const messages = result.warnings()
+  if (messages.length) {
+    console.warn(reporter({ ...result, messages }))
+  }
 
-            return result
-          })
-        })
-    })
+  return result
 }
 
 function dependencies(results) {

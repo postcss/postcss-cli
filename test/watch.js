@@ -62,11 +62,12 @@ maybeTest('--watch works', async (t) => {
       ],
       { cwd: dir },
     )
-    promise.finally(() => {
+    const cleanup = () => {
       try {
         if (processRunning) cp.kill()
       } catch {}
-    })
+    }
+    promise.then(cleanup, cleanup)
     cp.on('error', (err) => {
       processRunning = false
       reject(err)
@@ -136,11 +137,12 @@ maybeTest('--watch postcss-import dependencies', async (t) => {
       ],
       { cwd: dir },
     )
-    promise.finally(() => {
+    const cleanup = () => {
       try {
         if (processRunning) cp.kill()
       } catch {}
-    })
+    }
+    promise.then(cleanup, cleanup)
     cp.on('error', (err) => {
       processRunning = false
       reject(err)
@@ -203,12 +205,12 @@ maybeTest("--watch doesn't exit on CssSyntaxError", async (t) => {
       setTimeout(() => {
         killed = true
         cp.kill()
-        resolve()
       }, 1000)
     }
   })
   cp.on('exit', (code) => {
     if (!killed) reject(`Should not exit (exited with code ${code})`)
+    else resolve()
   })
 
   await promise
@@ -312,11 +314,12 @@ maybeTest('--watch watches dependencies', async (t) => {
       [path.resolve('index.js'), 's.css', '-o', 'output.css', '--no-map', '-w'],
       { cwd: dir },
     )
-    promise.finally(() => {
+    const cleanup = () => {
       try {
         if (processRunning) cp.kill()
       } catch {}
-    })
+    }
+    promise.then(cleanup, cleanup)
     cp.on('error', (err) => {
       processRunning = false
       reject(err)
@@ -408,11 +411,12 @@ maybeTest('--watch watches directory dependencies', async (t) => {
       [path.resolve('index.js'), 's.css', '-o', 'output.css', '--no-map', '-w'],
       { cwd: dir },
     )
-    promise.finally(() => {
+    const cleanup = () => {
       try {
         if (processRunning) cp.kill()
       } catch {}
-    })
+    }
+    promise.then(cleanup, cleanup)
     cp.on('error', (err) => {
       processRunning = false
       reject(err)
@@ -521,11 +525,12 @@ maybeTest(
         ],
         { cwd: dir },
       )
-      promise.finally(() => {
+      const cleanup = () => {
         try {
           if (processRunning) cp.kill()
         } catch {}
-      })
+      }
+      promise.then(cleanup, cleanup)
       cp.on('error', (err) => {
         processRunning = false
         reject(err)

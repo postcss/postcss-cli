@@ -21,6 +21,17 @@ import outputFile from './lib/outputFile.js'
 const reporter = postcssReporter()
 const depGraph = createDependencyGraph()
 
+const expandGlob = async (patterns) => {
+  if (!Array.isArray(patterns)) patterns = [patterns]
+
+  const paths = await glob(
+    patterns.map((i) => slash(String(i))),
+    { dot: argv.includeDotfiles },
+  )
+
+  return paths.map((i) => path.resolve(i))
+}
+
 let input = argv._
 const { dir, output } = argv
 
@@ -79,10 +90,8 @@ if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
 }
 
 if (input && input.length) {
-  input = await glob(
-    input.map((i) => slash(String(i))),
-    { dot: argv.includeDotfiles },
-  )
+  input = await expandGlob(input)
+
   if (!input.length) {
     error('Input Error: You must pass a valid list of files to parse')
   }
@@ -90,8 +99,6 @@ if (input && input.length) {
   if (input.length > 1 && !argv.dir && !argv.replace) {
     error('Input Error: Must use --dir or --replace with multiple input files')
   }
-
-  input = input.map((i) => path.resolve(i))
 } else {
   if (argv.replace || argv.dir) {
     error('Input Error: Cannot use --dir or --replace when reading from stdin')
@@ -110,7 +117,8 @@ try {
   if (argv.watch) {
     const printMessage = () =>
       printVerbose(pc.dim('\nWaiting for file changes...'))
-    const watcher = chokidar.watch(input.concat(dependencies(results)), {
+    const deps = await dependencies(results)
+    const watcher = chokidar.watch(input.concat(deps), {
       usePolling: argv.poll,
       interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
       awaitWriteFinish: {
@@ -137,7 +145,8 @@ try {
       if (!recompile.length) recompile = input
 
       return files([...new Set(recompile)])
-        .then((results) => watcher.add(dependencies(results)))
+        .then((results) => dependencies(results))
+        .then((deps) => watcher.add(deps))
         .then(printMessage)
         .catch((err) => {
           // Watch mode shouldn't exit on file processing error
@@ -260,27 +269,34 @@ async function css(css, file) {
   return result
 }
 
-function dependencies(results) {
+async function dependencies(results) {
   if (!Array.isArray(results)) results = [results]
 
-  return results.flatMap((result) => {
-    if (result.messages.length <= 0) return []
+  const depArrays = await Promise.all(
+    results.map(async (result) => {
+      if (result.messages.length <= 0) return []
 
-    return result.messages
-      .filter(
-        (msg) => msg.type === 'dependency' || msg.type === 'dir-dependency',
+      return Promise.all(
+        result.messages
+          .filter(
+            (msg) => msg.type === 'dependency' || msg.type === 'dir-dependency',
+          )
+          .map(depGraph.add)
+          .map(async (dependency) => {
+            if (dependency.type === 'dir-dependency') {
+              return dependency.glob
+                ? await expandGlob(path.join(dependency.dir, dependency.glob))
+                : dependency.dir
+            }
+
+            return dependency.file
+          }),
       )
-      .map(depGraph.add)
-      .map((dependency) => {
-        if (dependency.type === 'dir-dependency') {
-          return dependency.glob
-            ? path.join(dependency.dir, dependency.glob)
-            : dependency.dir
-        }
+    }),
+  )
 
-        return dependency.file
-      })
-  })
+  // depth of 2 is needed because glob dir-dependency can return an array of files
+  return depArrays.flat(2)
 }
 
 function printVerbose(message) {

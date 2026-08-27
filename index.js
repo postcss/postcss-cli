@@ -33,7 +33,7 @@ const expandGlob = async (patterns) => {
 }
 
 let input = argv._
-const { dir, output } = argv
+const { dir, output, replace } = argv
 
 if (argv.map) argv.map = { inline: false }
 
@@ -85,7 +85,7 @@ const cliConfig = {
     : [],
 }
 
-if (argv.watch && !(argv.output || argv.replace || argv.dir)) {
+if (argv.watch && !(output || replace || dir)) {
   error('Cannot write to stdout in watch mode')
 }
 
@@ -96,11 +96,11 @@ if (input && input.length) {
     error('Input Error: You must pass a valid list of files to parse')
   }
 
-  if (input.length > 1 && !argv.dir && !argv.replace) {
+  if (input.length > 1 && !dir && !replace) {
     error('Input Error: Must use --dir or --replace with multiple input files')
   }
 } else {
-  if (argv.replace || argv.dir) {
+  if (replace || dir) {
     error('Input Error: Cannot use --dir or --replace when reading from stdin')
   }
 
@@ -203,20 +203,18 @@ async function css(css, file) {
       basename: path.basename(file),
       extname: path.extname(file),
     }
-
-    if (!argv.config) argv.config = path.dirname(file)
   }
 
   const relativePath =
     file !== 'stdin' ? path.relative(path.resolve(), file) : file
 
-  if (!argv.config) argv.config = process.cwd()
+  const configDir = argv.config || ctx.file?.dirname || process.cwd()
 
   const time = process.hrtime()
 
   printVerbose(pc.cyan(`Processing ${pc.bold(relativePath)}...`))
 
-  const config = (await rc(ctx, argv.config)) || cliConfig
+  const config = (await rc(ctx, configDir)) || cliConfig
   const options = { ...config.options }
 
   if (file === 'stdin' && output) file = output
@@ -224,11 +222,11 @@ async function css(css, file) {
   // TODO: Unit test this
   options.from = file === 'stdin' ? path.join(process.cwd(), 'stdin') : file
 
-  if (output || dir || argv.replace) {
+  if (output || dir || replace) {
     const base = argv.base
       ? file.replace(path.resolve(argv.base), '')
       : path.basename(file)
-    options.to = output || (argv.replace ? file : path.join(dir, base))
+    options.to = output || (replace ? file : path.join(dir, base))
 
     if (argv.ext) {
       options.to = options.to.replace(path.extname(options.to), argv.ext)

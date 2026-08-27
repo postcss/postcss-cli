@@ -7,22 +7,24 @@ import { exec } from 'node:child_process'
 import tmp from './helpers/tmp.js'
 import read from './helpers/read.js'
 
-test.cb('reads from stdin', (t) => {
+test('reads from stdin', (t) => {
   const output = tmp('output.css')
 
-  const cp = exec(
-    `node ${path.resolve('index.js')} -o ${output} --no-map`,
-    (error, stdout, stderr) => {
-      if (error) t.end(error, stderr)
+  return new Promise((resolve, reject) => {
+    const cp = exec(
+      `node ${path.resolve('index.js')} -o ${output} --no-map`,
+      (error) => {
+        if (error) return reject(error)
 
-      Promise.all([read(output), read('test/fixtures/a.css')])
-        .then(([a, e]) => {
-          t.is(a, e)
-          t.end()
-        })
-        .catch(t.end)
-    },
-  )
+        Promise.all([read(output), read('test/fixtures/a.css')])
+          .then(([a, e]) => {
+            t.is(a, e)
+            resolve()
+          })
+          .catch(reject)
+      },
+    )
 
-  createReadStream('test/fixtures/a.css').pipe(cp.stdin)
+    createReadStream('test/fixtures/a.css').pipe(cp.stdin)
+  })
 })

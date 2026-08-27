@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import fs from 'node:fs/promises'
 import path from 'path'
 
 import prettyHrtime from 'pretty-hrtime'
@@ -18,6 +17,7 @@ import postcssReporter from 'postcss-reporter/lib/formatter.js'
 import argv from './lib/args.js'
 import createDependencyGraph from './lib/DependencyGraph.js'
 import getMapfile from './lib/getMapfile.js'
+import outputFile from './lib/outputFile.js'
 
 const reporter = postcssReporter()
 const depGraph = createDependencyGraph()
@@ -288,17 +288,6 @@ function css(css, file) {
     .catch((err) => {
       throw err
     })
-
-  async function outputFile(file, string) {
-    const fileExists = await fs.access(file).then(
-      () => true,
-      () => false,
-    )
-    const currentValue = fileExists ? await fs.readFile(file, 'utf8') : null
-    if (currentValue === string) return
-    await fs.mkdir(path.dirname(file), { recursive: true })
-    return fs.writeFile(file, string)
-  }
 }
 
 function dependencies(results) {

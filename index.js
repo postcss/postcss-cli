@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-import path from 'path'
-
+import path from 'node:path'
+import { text } from 'node:stream/consumers'
 import prettyHrtime from 'pretty-hrtime'
-import { text } from 'stream/consumers'
 import read from 'read-cache'
 import pc from 'picocolors'
 import { glob } from 'tinyglobby'

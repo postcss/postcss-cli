@@ -1,8 +1,8 @@
 import test from 'ava'
 
 import { createReadStream } from 'node:fs'
-import path from 'path'
-import { exec } from 'child_process'
+import path from 'node:path'
+import { exec } from 'node:child_process'
 
 import read from './helpers/read.js'
 

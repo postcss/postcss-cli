@@ -1,5 +1,5 @@
 import test from 'ava'
-import path from 'path'
+import path from 'node:path'
 
 import cli from './helpers/cli.js'
 import tmp from './helpers/tmp.js'

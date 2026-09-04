@@ -1,3 +1,14 @@
+# 12.0.0 / 2026-09-04
+
+- If using a YAML config, the `yaml` package must be installed separately ([#478](https://github.com/postcss/postcss-cli/pull/478))
+- Requires Node.js v22+ ([#525](https://github.com/postcss/postcss-cli/pull/525))
+- Errors if `--config` is passed, but no config is found ([#467](https://github.com/postcss/postcss-cli/issues/467), [#522](https://github.com/postcss/postcss-cli/pull/522))
+- Now properly exits with an error if invalid options/configuration are passed in watch mode ([#527](https://github.com/postcss/postcss-cli/pull/527))
+- Upgrade to chokidar v5; which results in slightly different handling of `dir-dependency` messages in watch mode ([#501](https://github.com/postcss/postcss-cli/pull/501))
+- Properly watchs all config files if there are multiple config files ([#536](https://github.com/postcss/postcss-cli/pull/536))
+- Minimized dependencies by removing fs-extra ([#510](https://github.com/postcss/postcss-cli/pull/510))
+- Internal refactoring
+
 # 11.0.1 / 2025-03-12
 
 - Update and minimize dependencies

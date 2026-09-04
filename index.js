@@ -37,7 +37,8 @@ const { dir, output, replace } = argv
 
 if (argv.map) argv.map = { inline: false }
 
-let configFile
+// will be just one config file in the vast majority of cases
+const configFiles = new Set()
 let argvConfigSet = false
 
 if (argv.env) process.env.NODE_ENV = argv.env
@@ -127,20 +128,23 @@ try {
       },
     })
 
-    if (configFile) watcher.add(configFile)
+    if (configFiles.size) watcher.add([...configFiles])
 
     watcher.on('ready', printMessage).on('change', (file) => {
       let recompile = []
 
-      if (input.includes(file)) recompile.push(file)
+      // if it's a config file, skip to recompiling everything
+      if (!configFiles.has(file)) {
+        if (input.includes(file)) recompile.push(file)
 
-      const dependants = depGraph
-        .dependantsOf(file)
-        .concat(getAncestorDirs(file).flatMap(depGraph.dependantsOf))
+        const dependants = depGraph
+          .dependantsOf(file)
+          .concat(getAncestorDirs(file).flatMap(depGraph.dependantsOf))
 
-      recompile = recompile.concat(
-        dependants.filter((file) => input.includes(file)),
-      )
+        recompile = recompile.concat(
+          dependants.filter((file) => input.includes(file)),
+        )
+      }
 
       if (!recompile.length) recompile = input
 
@@ -168,7 +172,7 @@ function rc(ctx, path) {
           'Config Error: Can not set from or to options in config file, use CLI arguments instead',
         )
       }
-      configFile = rc.file
+      configFiles.add(rc.file)
       return rc
     })
     .catch((err) => {

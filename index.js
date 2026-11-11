@@ -120,8 +120,9 @@ try {
       printVerbose(pc.dim('\nWaiting for file changes...'))
     const deps = await dependencies(results)
     const watcher = chokidar.watch(input.concat(deps), {
-      usePolling: argv.poll,
-      interval: argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
+      backend: argv.poll ? 'polling' : 'auto',
+      pollingInterval:
+        argv.poll && typeof argv.poll === 'number' ? argv.poll : 100,
       awaitWriteFinish: {
         stabilityThreshold: 50,
         pollInterval: 10,

@@ -6,7 +6,6 @@ import prettyHrtime from 'pretty-hrtime'
 import read from 'read-cache'
 import pc from 'picocolors'
 import { glob } from 'tinyglobby'
-import slash from 'slash'
 import chokidar from 'chokidar'
 
 import postcss from 'postcss'
@@ -25,7 +24,12 @@ const expandGlob = async (patterns) => {
   if (!Array.isArray(patterns)) patterns = [patterns]
 
   const paths = await glob(
-    patterns.map((i) => slash(String(i))),
+    patterns.map((i) => {
+      const pattern = String(i)
+      return pattern.startsWith('\\\\?\\')
+        ? pattern
+        : pattern.replace(/\\/g, '/')
+    }),
     { dot: argv.includeDotfiles },
   )
 
